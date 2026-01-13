@@ -279,6 +279,18 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     gap: 4,
   },
+  courseDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginTop: 4,
+    marginBottom: 4,
+    alignSelf: 'flex-start',
+    gap: 4,
+  },
   courseName: {
     fontSize: 12,
     color: '#2e7d32',
