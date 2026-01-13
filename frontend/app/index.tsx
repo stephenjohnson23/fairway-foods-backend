@@ -181,21 +181,6 @@ export default function LoginScreen() {
           <View style={styles.content}>
             <Text style={styles.title}>Fairway Foods</Text>
             
-            {selectedCourseName && (
-              <View style={styles.courseContainer}>
-                <View style={styles.courseInfo}>
-                  <Ionicons name="golf" size={16} color="#fff" />
-                  <Text style={styles.courseText}>{selectedCourseName}</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.changeCourseButton}
-                  onPress={handleChangeCourse}
-                >
-                  <Text style={styles.changeCourseText}>Change Course</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-            
             <Text style={styles.subtitle}>
               {isLogin ? 'Login to your account' : 'Create new account'}
             </Text>
