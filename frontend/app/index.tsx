@@ -24,6 +24,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectedCourseName, setSelectedCourseName] = useState('');
 
   useEffect(() => {
     checkCourseSelection();
@@ -31,8 +32,12 @@ export default function LoginScreen() {
 
   const checkCourseSelection = async () => {
     const courseId = await AsyncStorage.getItem('selectedCourseId');
+    const courseName = await AsyncStorage.getItem('selectedCourseName');
+    
     if (!courseId) {
       router.replace('/select-course');
+    } else if (courseName) {
+      setSelectedCourseName(courseName);
     }
   };
 
