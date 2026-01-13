@@ -250,7 +250,21 @@ export default function OrdersScreen() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="receipt-outline" size={64} color="#ccc" />
-            <Text style={styles.emptyText}>No orders yet</Text>
+            <Text style={styles.emptyText}>
+              {user === false 
+                ? 'Please login to view your order history' 
+                : user && user.role === 'user'
+                ? 'You have no orders yet'
+                : 'No orders yet'}
+            </Text>
+            {user === false && (
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={() => router.replace('/')}
+              >
+                <Text style={styles.loginButtonText}>Go to Login</Text>
+              </TouchableOpacity>
+            )}
           </View>
         }
       />
