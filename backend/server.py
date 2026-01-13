@@ -90,6 +90,7 @@ class CreateOrder(BaseModel):
     customerName: str
     teeOffTime: str
     totalAmount: float
+    courseId: str
 
 class UpdateOrderStatus(BaseModel):
     status: str
