@@ -161,8 +161,16 @@ export default function MenuScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View>
+        <View style={styles.headerLeft}>
           <Text style={styles.headerTitle}>Menu</Text>
+          <TouchableOpacity
+            style={styles.courseSelector}
+            onPress={handleSwitchCourse}
+          >
+            <Ionicons name="golf" size={14} color="#2e7d32" />
+            <Text style={styles.courseName}>{selectedCourseName || 'Select Course'}</Text>
+            <Ionicons name="chevron-down" size={14} color="#2e7d32" />
+          </TouchableOpacity>
           <Text style={styles.headerSubtitle}>
             {user ? `Welcome, ${user.name}` : 'Guest User'}
           </Text>
