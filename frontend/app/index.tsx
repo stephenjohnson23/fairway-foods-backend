@@ -115,9 +115,9 @@ export default function LoginScreen() {
         let targetRoute = '/select-course';
         
         if (data.user.role === 'superuser') {
-          targetRoute = '/user-management';
+          targetRoute = '/admin-panel';
         } else if (data.user.role === 'admin') {
-          targetRoute = '/admin';
+          targetRoute = '/admin-panel';
         } else if (hasDefaultCourse) {
           if (data.user.role === 'kitchen') {
             targetRoute = '/kitchen';
