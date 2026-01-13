@@ -301,6 +301,8 @@ export default function AdminScreen() {
     );
   }
 
+  const selectedCourse = courses.find(c => c.id === selectedCourseId);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -318,11 +320,55 @@ export default function AdminScreen() {
         </View>
       </View>
 
+      {courses.length > 1 && (
+        <View style={styles.courseSelectorContainer}>
+          <Text style={styles.courseSelectorLabel}>Managing menu for:</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.courseChipsScroll}>
+            {courses.map((course) => (
+              <TouchableOpacity
+                key={course.id}
+                style={[
+                  styles.courseChip,
+                  selectedCourseId === course.id && styles.courseChipActive
+                ]}
+                onPress={() => handleCourseChange(course.id)}
+              >
+                <Ionicons 
+                  name="golf" 
+                  size={16} 
+                  color={selectedCourseId === course.id ? '#fff' : '#2e7d32'} 
+                />
+                <Text style={[
+                  styles.courseChipText,
+                  selectedCourseId === course.id && styles.courseChipTextActive
+                ]}>
+                  {course.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      {courses.length === 1 && (
+        <View style={styles.singleCourseHeader}>
+          <Ionicons name="golf" size={18} color="#2e7d32" />
+          <Text style={styles.singleCourseName}>{selectedCourse?.name}</Text>
+        </View>
+      )}
+
       <FlatList
         data={menuItems}
         renderItem={renderMenuItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <Ionicons name="restaurant-outline" size={64} color="#ccc" />
+            <Text style={styles.emptyText}>No menu items yet</Text>
+            <Text style={styles.emptySubtext}>Tap + to add your first item</Text>
+          </View>
+        }
       />
 
       <Modal
