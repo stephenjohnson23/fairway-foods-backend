@@ -46,15 +46,12 @@ export default function CartScreen() {
       const userData = await AsyncStorage.getItem('user');
       if (userData) {
         const user = JSON.parse(userData);
-        // Pre-fill from profile data
+        // Pre-fill name from profile data
         if (user.profile) {
           if (user.profile.displayName) {
             setCustomerName(user.profile.displayName);
           } else if (user.name) {
             setCustomerName(user.name);
-          }
-          if (user.profile.defaultTeeOffTime) {
-            setTeeOffTime(user.profile.defaultTeeOffTime);
           }
         } else if (user.name) {
           setCustomerName(user.name);
