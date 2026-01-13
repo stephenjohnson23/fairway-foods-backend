@@ -95,7 +95,7 @@ export default function CourseSelectionScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Select Golf Course</Text>
-        <Text style={styles.subtitle}>Choose where you're playing today</Text>
+        <Text style={styles.subtitle}>Choose where you&apos;re playing today</Text>
       </View>
 
       <FlatList
