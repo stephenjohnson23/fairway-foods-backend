@@ -54,8 +54,12 @@ export default function LoginScreen() {
       await AsyncStorage.setItem('token', data.token);
       await AsyncStorage.setItem('user', JSON.stringify(data.user));
 
-      // Navigate to menu
-      router.replace('/menu');
+      // Navigate based on role
+      if (data.user.role === 'kitchen') {
+        router.replace('/kitchen');
+      } else {
+        router.replace('/menu');
+      }
     } catch (error: any) {
       Alert.alert('Error', error.message);
     } finally {
