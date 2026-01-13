@@ -496,6 +496,72 @@ const styles = StyleSheet.create({
   logoutButton: {
     padding: 8,
   },
+  courseSelectorContainer: {
+    backgroundColor: '#fff',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  courseSelectorLabel: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 8,
+  },
+  courseChipsScroll: {
+    flexDirection: 'row',
+  },
+  courseChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e8f5e9',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    marginRight: 8,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#c8e6c9',
+  },
+  courseChipActive: {
+    backgroundColor: '#2e7d32',
+    borderColor: '#2e7d32',
+  },
+  courseChipText: {
+    fontSize: 13,
+    color: '#2e7d32',
+    fontWeight: '500',
+  },
+  courseChipTextActive: {
+    color: '#fff',
+  },
+  singleCourseHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e8f5e9',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  singleCourseName: {
+    fontSize: 14,
+    color: '#2e7d32',
+    fontWeight: '500',
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#666',
+    marginTop: 16,
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 4,
+  },
   listContent: {
     padding: 16,
   },
