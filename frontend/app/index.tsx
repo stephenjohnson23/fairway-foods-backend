@@ -29,17 +29,48 @@ export default function LoginScreen() {
   const [selectedCourseName, setSelectedCourseName] = useState('');
 
   useEffect(() => {
-    checkCourseSelection();
+    // Check if user is already logged in
+    checkExistingSession();
   }, []);
 
-  const checkCourseSelection = async () => {
-    const courseId = await AsyncStorage.getItem('selectedCourseId');
-    const courseName = await AsyncStorage.getItem('selectedCourseName');
+  const checkExistingSession = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const userData = await AsyncStorage.getItem('user');
     
-    if (!courseId) {
-      router.replace('/select-course');
-    } else if (courseName) {
-      setSelectedCourseName(courseName);
+    if (token && userData) {
+      // User is already logged in, redirect based on role
+      const user = JSON.parse(userData);
+      navigateBasedOnRole(user);
+    }
+  };
+
+  const navigateBasedOnRole = async (user: any) => {
+    // Check if user has a default course set
+    const courseId = await AsyncStorage.getItem('selectedCourseId');
+    
+    if (user.role === 'superuser') {
+      router.replace('/user-management');
+    } else if (user.role === 'kitchen') {
+      if (!courseId) {
+        router.replace('/select-course');
+      } else {
+        router.replace('/kitchen');
+      }
+    } else if (user.role === 'cashier') {
+      if (!courseId) {
+        router.replace('/select-course');
+      } else {
+        router.replace('/cashier');
+      }
+    } else if (user.role === 'admin') {
+      router.replace('/admin');
+    } else {
+      // Regular user - needs to select course first if not set
+      if (!courseId) {
+        router.replace('/select-course');
+      } else {
+        router.replace('/menu');
+      }
     }
   };
 
