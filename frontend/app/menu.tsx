@@ -121,6 +121,12 @@ export default function MenuScreen() {
     router.push('/select-course');
   };
 
+  const canSwitchCourse = () => {
+    // Only regular users, guests, and super users can switch courses
+    // Kitchen, Cashier, and Admin are locked to their assigned courses
+    return !user || user.role === 'user' || user.role === 'superuser';
+  };
+
   const renderMenuItem = ({ item }: { item: MenuItem }) => (
     <View style={styles.menuItem}>
       {item.image ? (
