@@ -188,9 +188,14 @@ export default function OrdersScreen() {
           <Ionicons name="arrow-back" size={24} color="#2e7d32" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Kitchen Orders</Text>
-        <TouchableOpacity onPress={onRefresh} style={styles.refreshButton}>
-          <Ionicons name="refresh" size={24} color="#2e7d32" />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={onRefresh} style={styles.refreshButton}>
+            <Ionicons name="refresh" size={24} color="#2e7d32" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Ionicons name="log-out" size={24} color="#d32f2f" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <FlatList
