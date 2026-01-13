@@ -275,7 +275,13 @@ async def get_menu(courseId: Optional[str] = None):
     return items
 
 @app.post("/api/menu")
-async def create_menu_item(item: MenuItem, user: dict = Depends(get_admin_user)):
+async def create_menu_item(item: MenuItem, user: dict = Depends(get_admin_or_super_user)):
+    # Check if admin has access to this course (super users have access to all)
+    if user.get("role") == "admin":
+        user_courses = user.get("courseIds", [])
+        if item.courseId not in user_courses:
+            raise HTTPException(status_code=403, detail="You don't have access to this course")
+    
     item_dict = item.dict()
     item_dict["createdAt"] = datetime.utcnow()
     result = menuitems_collection.insert_one(item_dict)
@@ -284,7 +290,17 @@ async def create_menu_item(item: MenuItem, user: dict = Depends(get_admin_user))
     return item_dict
 
 @app.put("/api/menu/{item_id}")
-async def update_menu_item(item_id: str, item: MenuItemUpdate, user: dict = Depends(get_admin_user)):
+async def update_menu_item(item_id: str, item: MenuItemUpdate, user: dict = Depends(get_admin_or_super_user)):
+    # Check if admin has access to the menu item's course
+    existing_item = menuitems_collection.find_one({"_id": ObjectId(item_id)})
+    if not existing_item:
+        raise HTTPException(status_code=404, detail="Menu item not found")
+    
+    if user.get("role") == "admin":
+        user_courses = user.get("courseIds", [])
+        if existing_item.get("courseId") not in user_courses:
+            raise HTTPException(status_code=403, detail="You don't have access to this course")
+    
     update_data = {k: v for k, v in item.dict().items() if v is not None}
     if not update_data:
         raise HTTPException(status_code=400, detail="No data to update")
@@ -294,19 +310,24 @@ async def update_menu_item(item_id: str, item: MenuItemUpdate, user: dict = Depe
         {"$set": update_data}
     )
     
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Menu item not found")
-    
     updated_item = menuitems_collection.find_one({"_id": ObjectId(item_id)})
     updated_item["id"] = str(updated_item["_id"])
     del updated_item["_id"]
     return updated_item
 
 @app.delete("/api/menu/{item_id}")
-async def delete_menu_item(item_id: str, user: dict = Depends(get_admin_user)):
-    result = menuitems_collection.delete_one({"_id": ObjectId(item_id)})
-    if result.deleted_count == 0:
+async def delete_menu_item(item_id: str, user: dict = Depends(get_admin_or_super_user)):
+    # Check if admin has access to the menu item's course
+    existing_item = menuitems_collection.find_one({"_id": ObjectId(item_id)})
+    if not existing_item:
         raise HTTPException(status_code=404, detail="Menu item not found")
+    
+    if user.get("role") == "admin":
+        user_courses = user.get("courseIds", [])
+        if existing_item.get("courseId") not in user_courses:
+            raise HTTPException(status_code=403, detail="You don't have access to this course")
+    
+    result = menuitems_collection.delete_one({"_id": ObjectId(item_id)})
     return {"message": "Menu item deleted successfully"}
 
 # Order Endpoints
