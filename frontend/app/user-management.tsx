@@ -264,9 +264,14 @@ export default function UserManagementScreen() {
           <Text style={styles.headerTitle}>👤 User Management</Text>
           <Text style={styles.headerSubtitle}>Super Admin Panel</Text>
         </View>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <Ionicons name="log-out" size={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={openCreateModal} style={styles.addUserButton}>
+            <Ionicons name="person-add" size={24} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Ionicons name="log-out" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <FlatList
