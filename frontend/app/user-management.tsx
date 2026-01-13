@@ -220,6 +220,67 @@ export default function UserManagementScreen() {
     }
   };
 
+  const handleApproveUser = async (user: User) => {
+    const token = await AsyncStorage.getItem('token');
+    try {
+      const response = await fetch(`${API_URL}/api/users/${user.id}/approve`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        Alert.alert('Success', `${user.name}'s account has been approved. They will receive an email notification.`);
+        fetchUsers();
+      } else {
+        const data = await response.json();
+        Alert.alert('Error', data.detail || 'Failed to approve user');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to approve user');
+    }
+  };
+
+  const openRejectModal = (user: User) => {
+    setUserToReject(user);
+    setRejectionReason('');
+    setRejectModalVisible(true);
+  };
+
+  const handleRejectUser = async () => {
+    if (!userToReject) return;
+    
+    const token = await AsyncStorage.getItem('token');
+    try {
+      const response = await fetch(`${API_URL}/api/users/${userToReject.id}/reject`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ reason: rejectionReason || 'No reason provided' }),
+      });
+      
+      if (response.ok) {
+        Alert.alert('Done', `${userToReject.name}'s registration has been rejected. They will receive an email notification.`);
+        setRejectModalVisible(false);
+        setUserToReject(null);
+        fetchUsers();
+      } else {
+        const data = await response.json();
+        Alert.alert('Error', data.detail || 'Failed to reject user');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to reject user');
+    }
+  };
+
+  const pendingUsers = users.filter(u => u.status === 'pending');
+  const approvedUsers = users.filter(u => u.status !== 'pending' && u.status !== 'rejected');
+  const displayUsers = activeTab === 'pending' ? pendingUsers : approvedUsers;
+
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'superuser': return '#9c27b0';
