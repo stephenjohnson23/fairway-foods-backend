@@ -449,7 +449,7 @@ export default function AdminPanelScreen() {
           <View key={order.id} style={styles.tableRow}>
             <Text style={[styles.tableCell, { flex: 2 }]}>{order.customerName}</Text>
             <Text style={[styles.tableCell, { flex: 1 }]}>{order.teeOffTime}</Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>R{order.total.toFixed(2)}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>R{(order.total || 0).toFixed(2)}</Text>
             <View style={[styles.statusBadge, { backgroundColor: order.status === 'pending' ? '#fff3e0' : order.status === 'preparing' ? '#e3f2fd' : '#e8f5e9' }]}>
               <Text style={[styles.statusText, { color: order.status === 'pending' ? '#f57c00' : order.status === 'preparing' ? '#1976d2' : '#388e3c' }]}>
                 {order.status.toUpperCase()}
@@ -697,7 +697,7 @@ export default function AdminPanelScreen() {
             <Text style={[styles.tableCell, { flex: 2 }]} numberOfLines={1}>
               {order.items.map(i => `${i.quantity}x ${i.name}`).join(', ')}
             </Text>
-            <Text style={[styles.tableCell, { flex: 1 }]}>R{order.total.toFixed(2)}</Text>
+            <Text style={[styles.tableCell, { flex: 1 }]}>R{(order.total || 0).toFixed(2)}</Text>
             <View style={{ flex: 1 }}>
               <Text style={[styles.orderStatus, { 
                 backgroundColor: order.status === 'pending' ? '#fff3e0' : order.status === 'preparing' ? '#e3f2fd' : '#e8f5e9',
