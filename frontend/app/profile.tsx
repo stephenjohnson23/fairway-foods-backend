@@ -55,7 +55,6 @@ export default function ProfileScreen() {
         setProfile({
           displayName: data.displayName || '',
           phone: data.phone || '',
-          defaultTeeOffTime: data.defaultTeeOffTime || '',
           membershipNumber: data.membershipNumber || '',
         });
       }
