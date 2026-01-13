@@ -37,9 +37,16 @@ export default function UserManagementScreen() {
   const [courses, setCourses] = useState<GolfCourse[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+  const [createModalVisible, setCreateModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedRole, setSelectedRole] = useState('');
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
+  
+  // New user creation state
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserRole, setNewUserRole] = useState('user');
+  const [newUserCourses, setNewUserCourses] = useState<string[]>([]);
 
   useEffect(() => {
     checkSuperUser();
