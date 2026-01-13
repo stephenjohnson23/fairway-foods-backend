@@ -24,6 +24,21 @@ def create_admin():
     else:
         print("Admin user already exists")
 
+# Create kitchen user
+def create_kitchen():
+    users = db["users"]
+    if not users.find_one({"email": "kitchen@golf.com"}):
+        kitchen_user = {
+            "email": "kitchen@golf.com",
+            "password": bcrypt.hashpw("kitchen123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            "name": "Kitchen Staff",
+            "role": "kitchen"
+        }
+        users.insert_one(kitchen_user)
+        print("Kitchen user created: kitchen@golf.com / kitchen123")
+    else:
+        print("Kitchen user already exists")
+
 # Create sample menu items
 def create_menu_items():
     menuitems = db["menuitems"]
