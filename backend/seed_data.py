@@ -13,28 +13,70 @@ db = client["golf_meal_app"]
 def create_golf_courses():
     courses = db["golfcourses"]
     if courses.count_documents({}) == 0:
-        sample_courses = [
+        cape_town_courses = [
             {
-                "name": "Pebble Beach Golf Links",
-                "location": "Pebble Beach, CA",
-                "description": "World-renowned coastal golf course",
+                "name": "Royal Cape Golf Club",
+                "location": "Wynberg, Cape Town",
+                "description": "South Africa's oldest golf club, established 1885",
                 "active": True
             },
             {
-                "name": "Augusta National",
-                "location": "Augusta, GA",
-                "description": "Home of the Masters Tournament",
+                "name": "Steenberg Golf Club",
+                "location": "Tokai, Cape Town",
+                "description": "Championship course in the Constantia Valley",
                 "active": True
             },
             {
-                "name": "St Andrews Links",
-                "location": "St Andrews, Scotland",
-                "description": "The Home of Golf",
+                "name": "Westlake Golf Club",
+                "location": "Lakeside, Cape Town",
+                "description": "Scenic parkland course with mountain views",
+                "active": True
+            },
+            {
+                "name": "Clovelly Country Club",
+                "location": "Clovelly, Cape Town",
+                "description": "Clifftop course with ocean views",
+                "active": True
+            },
+            {
+                "name": "Milnerton Golf Club",
+                "location": "Milnerton, Cape Town",
+                "description": "Links-style course along Table Bay",
+                "active": True
+            },
+            {
+                "name": "Mowbray Golf Club",
+                "location": "Mowbray, Cape Town",
+                "description": "Tree-lined parkland course near the city",
+                "active": True
+            },
+            {
+                "name": "Metropolitan Golf Club",
+                "location": "Mouille Point, Cape Town",
+                "description": "Seaside links with Atlantic Ocean views",
+                "active": True
+            },
+            {
+                "name": "Rondebosch Golf Club",
+                "location": "Rondebosch, Cape Town",
+                "description": "Historic parkland course with mountain backdrop",
+                "active": True
+            },
+            {
+                "name": "Atlantic Beach Golf Club",
+                "location": "Melkbosstrand, Cape Town",
+                "description": "Links course along the Atlantic coastline",
+                "active": True
+            },
+            {
+                "name": "King David Mowbray Golf Club",
+                "location": "Mowbray, Cape Town",
+                "description": "Challenging course with panoramic mountain views",
                 "active": True
             }
         ]
-        result = courses.insert_many(sample_courses)
-        print(f"Created {len(sample_courses)} sample golf courses")
+        result = courses.insert_many(cape_town_courses)
+        print(f"Created {len(cape_town_courses)} Cape Town golf courses")
         return list(result.inserted_ids)
     else:
         print("Golf courses already exist")
