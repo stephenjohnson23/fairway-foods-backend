@@ -87,6 +87,10 @@ export default function LoginScreen() {
     router.replace('/menu');
   };
 
+  const handleChangeCourse = () => {
+    router.push('/select-course');
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
