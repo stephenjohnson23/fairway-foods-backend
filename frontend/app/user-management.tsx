@@ -24,6 +24,7 @@ interface User {
   name: string;
   role: string;
   courseIds: string[];
+  status?: string;
 }
 
 interface GolfCourse {
