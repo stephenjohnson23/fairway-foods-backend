@@ -361,6 +361,41 @@ async def get_all_users(user: dict = Depends(get_super_user)):
             u["courseIds"] = []
     return users
 
+@app.post("/api/users/create")
+async def create_user_by_super(user_data: dict, user: dict = Depends(get_super_user)):
+    email = user_data.get("email")
+    name = user_data.get("name")
+    role = user_data.get("role", "user")
+    course_ids = user_data.get("courseIds", [])
+    
+    # Check if user already exists
+    if users_collection.find_one({"email": email}):
+        raise HTTPException(status_code=400, detail="User with this email already exists")
+    
+    if role not in ["user", "admin", "kitchen", "cashier", "superuser"]:
+        raise HTTPException(status_code=400, detail="Invalid role")
+    
+    # Create default password (user should change it)
+    default_password = "change123"
+    
+    new_user = {
+        "email": email,
+        "password": hash_password(default_password),
+        "name": name,
+        "role": role,
+        "courseIds": course_ids,
+        "createdAt": datetime.utcnow(),
+        "passwordChanged": False
+    }
+    
+    result = users_collection.insert_one(new_user)
+    
+    return {
+        "message": "User created successfully",
+        "userId": str(result.inserted_id),
+        "defaultPassword": default_password
+    }
+
 @app.put("/api/users/{user_id}/role")
 async def update_user_role(user_id: str, role_data: dict, user: dict = Depends(get_super_user)):
     new_role = role_data.get("role")
