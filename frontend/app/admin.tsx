@@ -240,9 +240,14 @@ export default function AdminScreen() {
           <Ionicons name="arrow-back" size={24} color="#2e7d32" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Menu Management</Text>
-        <TouchableOpacity onPress={openAddModal} style={styles.addButton}>
-          <Ionicons name="add" size={24} color="#2e7d32" />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={openAddModal} style={styles.addButton}>
+            <Ionicons name="add" size={24} color="#2e7d32" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Ionicons name="log-out" size={24} color="#ff5252" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <FlatList
