@@ -26,7 +26,6 @@ export default function ProfileScreen() {
   const [profile, setProfile] = useState({
     displayName: '',
     phone: '',
-    defaultTeeOffTime: '',
     membershipNumber: '',
   });
 
