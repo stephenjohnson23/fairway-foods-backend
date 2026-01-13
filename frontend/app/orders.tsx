@@ -226,7 +226,9 @@ export default function OrdersScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#2e7d32" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Kitchen Orders</Text>
+        <Text style={styles.headerTitle}>
+          {user && user.role === 'user' ? 'My Orders' : 'Kitchen Orders'}
+        </Text>
         <View style={styles.headerActions}>
           <TouchableOpacity onPress={onRefresh} style={styles.refreshButton}>
             <Ionicons name="refresh" size={24} color="#2e7d32" />
