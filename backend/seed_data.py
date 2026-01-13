@@ -82,24 +82,8 @@ def create_golf_courses():
         print("Golf courses already exist")
         return [course["_id"] for course in courses.find()]
 
-# Create admin user
-def create_admin():
-    users = db["users"]
-    if not users.find_one({"email": "admin@golf.com"}):
-        admin_user = {
-            "email": "admin@golf.com",
-            "password": bcrypt.hashpw("admin123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
-            "name": "Admin User",
-            "role": "admin",
-            "courseIds": []  # Can manage all courses
-        }
-        users.insert_one(admin_user)
-        print("Admin user created: admin@golf.com / admin123")
-    else:
-        print("Admin user already exists")
-
-# Create super user
-def create_super_user():
+# Create super user with all courses
+def create_super_user(course_ids):
     users = db["users"]
     if not users.find_one({"email": "super@golf.com"}):
         super_user = {
@@ -107,12 +91,38 @@ def create_super_user():
             "password": bcrypt.hashpw("super123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             "name": "Super Admin",
             "role": "superuser",
-            "courseIds": []  # Has access to all courses
+            "courseIds": [str(cid) for cid in course_ids]  # All courses
         }
         users.insert_one(super_user)
-        print("Super user created: super@golf.com / super123")
+        print(f"Super user created with access to {len(course_ids)} courses: super@golf.com / super123")
     else:
-        print("Super user already exists")
+        # Update existing super user with all courses
+        users.update_one(
+            {"email": "super@golf.com"},
+            {"$set": {"courseIds": [str(cid) for cid in course_ids]}}
+        )
+        print(f"Super user updated with access to {len(course_ids)} courses")
+
+# Create admin user with all courses
+def create_admin(course_ids):
+    users = db["users"]
+    if not users.find_one({"email": "admin@golf.com"}):
+        admin_user = {
+            "email": "admin@golf.com",
+            "password": bcrypt.hashpw("admin123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            "name": "Admin User",
+            "role": "admin",
+            "courseIds": [str(cid) for cid in course_ids]  # All courses
+        }
+        users.insert_one(admin_user)
+        print(f"Admin user created with access to {len(course_ids)} courses: admin@golf.com / admin123")
+    else:
+        # Update existing admin with all courses
+        users.update_one(
+            {"email": "admin@golf.com"},
+            {"$set": {"courseIds": [str(cid) for cid in course_ids]}}
+        )
+        print(f"Admin user updated with access to {len(course_ids)} courses")
 
 # Create kitchen user
 def create_kitchen():
