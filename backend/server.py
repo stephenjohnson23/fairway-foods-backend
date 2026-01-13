@@ -210,7 +210,50 @@ async def login(user_data: UserLogin):
             "name": user["name"],
             "role": user.get("role", "user"),
             "defaultCourseId": user.get("defaultCourseId"),
-            "defaultCourse": default_course
+            "defaultCourse": default_course,
+            "profile": {
+                "displayName": user.get("displayName", user["name"]),
+                "phone": user.get("phone", ""),
+                "defaultTeeOffTime": user.get("defaultTeeOffTime", ""),
+                "membershipNumber": user.get("membershipNumber", "")
+            }
+        }
+    }
+
+# Profile Endpoints
+@app.get("/api/profile")
+async def get_profile(user: dict = Depends(get_current_user)):
+    """Get current user's profile"""
+    return {
+        "id": str(user["_id"]),
+        "email": user["email"],
+        "name": user["name"],
+        "displayName": user.get("displayName", user["name"]),
+        "phone": user.get("phone", ""),
+        "defaultTeeOffTime": user.get("defaultTeeOffTime", ""),
+        "membershipNumber": user.get("membershipNumber", ""),
+        "role": user.get("role", "user")
+    }
+
+@app.put("/api/profile")
+async def update_profile(profile: UserProfile, user: dict = Depends(get_current_user)):
+    """Update current user's profile"""
+    update_data = {k: v for k, v in profile.dict().items() if v is not None}
+    
+    if update_data:
+        users_collection.update_one(
+            {"_id": user["_id"]},
+            {"$set": update_data}
+        )
+    
+    updated_user = users_collection.find_one({"_id": user["_id"]})
+    return {
+        "message": "Profile updated successfully",
+        "profile": {
+            "displayName": updated_user.get("displayName", updated_user["name"]),
+            "phone": updated_user.get("phone", ""),
+            "defaultTeeOffTime": updated_user.get("defaultTeeOffTime", ""),
+            "membershipNumber": updated_user.get("membershipNumber", "")
         }
     }
 
