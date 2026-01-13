@@ -310,14 +310,6 @@ const styles = StyleSheet.create({
   logoutButton: {
     padding: 8,
   },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  logoutButton: {
-    padding: 8,
-  },
   listContent: {
     padding: 16,
   },
