@@ -171,6 +171,14 @@ async def login(user_data: UserLogin):
     if not user or not verify_password(user_data.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    # Check if account is pending approval
+    if user.get("status") == "pending":
+        raise HTTPException(status_code=403, detail="Your account is pending approval by the administrator")
+    
+    # Check if account is rejected
+    if user.get("status") == "rejected":
+        raise HTTPException(status_code=403, detail="Your account registration was not approved")
+    
     token = create_access_token({"user_id": str(user["_id"])})
     
     return {
