@@ -6,8 +6,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+DB_NAME = os.getenv("DB_NAME", "golf_meal_app")
 client = MongoClient(MONGO_URL)
-db = client["golf_meal_app"]
+db = client[DB_NAME]
 
 # Create sample golf courses
 def create_golf_courses():
