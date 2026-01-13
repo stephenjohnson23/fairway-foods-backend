@@ -82,7 +82,10 @@ export default function CashierDashboard() {
     let filtered = orders;
 
     // Filter by status
-    if (filterStatus !== 'all') {
+    // Exclude captured orders from the list
+    if (filterStatus === 'all') {
+      filtered = filtered.filter(order => order.status !== 'captured');
+    } else {
       filtered = filtered.filter(order => order.status === filterStatus);
     }
 
