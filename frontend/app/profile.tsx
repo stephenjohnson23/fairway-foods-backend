@@ -171,19 +171,7 @@ export default function ProfileScreen() {
             <Text style={styles.hint}>For order notifications</Text>
           </View>
 
-          <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Golf Preferences</Text>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Default Tee-Off Time</Text>
-            <TextInput
-              style={styles.input}
-              value={profile.defaultTeeOffTime}
-              onChangeText={(text) => setProfile({ ...profile, defaultTeeOffTime: text })}
-              placeholder="e.g., 08:30"
-              placeholderTextColor="#999"
-            />
-            <Text style={styles.hint}>Pre-fills when placing orders</Text>
-          </View>
+          <Text style={[styles.sectionTitle, { marginTop: 24 }]}>Membership</Text>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Membership Number</Text>
