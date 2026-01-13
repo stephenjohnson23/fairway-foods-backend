@@ -188,10 +188,57 @@ async def get_me(user: dict = Depends(get_current_user)):
         "role": user.get("role", "user")
     }
 
+# Golf Course Endpoints
+@app.get("/api/courses")
+async def get_courses():
+    courses = list(golfcourses_collection.find({"active": True}))
+    for course in courses:
+        course["id"] = str(course["_id"])
+        del course["_id"]
+    return courses
+
+@app.post("/api/courses")
+async def create_course(course: GolfCourse, user: dict = Depends(get_admin_user)):
+    course_dict = course.dict()
+    course_dict["createdAt"] = datetime.utcnow()
+    result = golfcourses_collection.insert_one(course_dict)
+    course_dict["id"] = str(result.inserted_id)
+    del course_dict["_id"]
+    return course_dict
+
+@app.put("/api/courses/{course_id}")
+async def update_course(course_id: str, course: GolfCourseUpdate, user: dict = Depends(get_admin_user)):
+    update_data = {k: v for k, v in course.dict().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No data to update")
+    
+    result = golfcourses_collection.update_one(
+        {"_id": ObjectId(course_id)},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Course not found")
+    
+    updated_course = golfcourses_collection.find_one({"_id": ObjectId(course_id)})
+    updated_course["id"] = str(updated_course["_id"])
+    del updated_course["_id"]
+    return updated_course
+
+@app.delete("/api/courses/{course_id}")
+async def delete_course(course_id: str, user: dict = Depends(get_admin_user)):
+    result = golfcourses_collection.delete_one({"_id": ObjectId(course_id)})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Course not found")
+    return {"message": "Course deleted successfully"}
+
 # Menu Endpoints
 @app.get("/api/menu")
-async def get_menu():
-    items = list(menuitems_collection.find())
+async def get_menu(courseId: Optional[str] = None):
+    query = {}
+    if courseId:
+        query["courseId"] = courseId
+    items = list(menuitems_collection.find(query))
     for item in items:
         item["id"] = str(item["_id"])
         del item["_id"]
