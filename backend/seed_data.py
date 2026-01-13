@@ -90,12 +90,29 @@ def create_admin():
             "email": "admin@golf.com",
             "password": bcrypt.hashpw("admin123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             "name": "Admin User",
-            "role": "admin"
+            "role": "admin",
+            "courseIds": []  # Can manage all courses
         }
         users.insert_one(admin_user)
         print("Admin user created: admin@golf.com / admin123")
     else:
         print("Admin user already exists")
+
+# Create super user
+def create_super_user():
+    users = db["users"]
+    if not users.find_one({"email": "super@golf.com"}):
+        super_user = {
+            "email": "super@golf.com",
+            "password": bcrypt.hashpw("super123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            "name": "Super Admin",
+            "role": "superuser",
+            "courseIds": []  # Has access to all courses
+        }
+        users.insert_one(super_user)
+        print("Super user created: super@golf.com / super123")
+    else:
+        print("Super user already exists")
 
 # Create kitchen user
 def create_kitchen():
