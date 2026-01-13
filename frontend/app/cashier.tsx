@@ -507,12 +507,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 8,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
   },
   preparingButton: {
     backgroundColor: '#2196f3',
   },
   readyButton: {
     backgroundColor: '#4caf50',
+  },
+  capturedButton: {
+    backgroundColor: '#9c27b0',
   },
   actionButtonText: {
     color: '#fff',
