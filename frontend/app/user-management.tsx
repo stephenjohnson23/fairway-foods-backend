@@ -520,6 +520,49 @@ export default function UserManagementScreen() {
                 </TouchableOpacity>
               ))}
 
+              {selectedCourses.length > 0 && selectedRole !== 'superuser' && (
+                <>
+                  <Text style={styles.sectionTitle}>Default Course (Auto-login)</Text>
+                  <Text style={styles.sectionSubtitle}>
+                    User will be logged into this course automatically
+                  </Text>
+                  <TouchableOpacity
+                    style={[
+                      styles.defaultCourseOption,
+                      !selectedDefaultCourse && styles.defaultCourseOptionSelected
+                    ]}
+                    onPress={() => setSelectedDefaultCourse('')}
+                  >
+                    <Text style={styles.defaultCourseText}>No default (user picks)</Text>
+                    {!selectedDefaultCourse && (
+                      <Ionicons name="checkmark-circle" size={20} color="#2e7d32" />
+                    )}
+                  </TouchableOpacity>
+                  {selectedCourses.map((courseId) => {
+                    const course = courses.find(c => c.id === courseId);
+                    if (!course) return null;
+                    return (
+                      <TouchableOpacity
+                        key={courseId}
+                        style={[
+                          styles.defaultCourseOption,
+                          selectedDefaultCourse === courseId && styles.defaultCourseOptionSelected
+                        ]}
+                        onPress={() => setSelectedDefaultCourse(courseId)}
+                      >
+                        <View style={styles.defaultCourseInfo}>
+                          <Ionicons name="golf" size={18} color="#2e7d32" />
+                          <Text style={styles.defaultCourseText}>{course.name}</Text>
+                        </View>
+                        {selectedDefaultCourse === courseId && (
+                          <Ionicons name="checkmark-circle" size={20} color="#2e7d32" />
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </>
+              )}
+
               <TouchableOpacity
                 style={styles.saveButton}
                 onPress={handleSaveChanges}
