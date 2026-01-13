@@ -35,14 +35,53 @@ export default function OrdersScreen() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    fetchOrders();
+    loadUser();
   }, []);
+
+  useEffect(() => {
+    if (user !== null) {
+      fetchOrders();
+    }
+  }, [user]);
+
+  const loadUser = async () => {
+    const userData = await AsyncStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    } else {
+      setUser(false); // Guest user
+    }
+  };
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/orders`);
+      const token = await AsyncStorage.getItem('token');
+      
+      // If user is a regular user, fetch only their orders
+      // If admin/kitchen/cashier, fetch all orders
+      // If guest, show empty state
+      let endpoint = '/api/orders';
+      let headers: any = {};
+      
+      if (user && user.role === 'user') {
+        // Regular user - fetch only their orders
+        endpoint = '/api/orders/my-orders';
+        headers = {
+          'Authorization': `Bearer ${token}`,
+        };
+      } else if (!user) {
+        // Guest user - no orders to show
+        setOrders([]);
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
+      // admin/kitchen/cashier get all orders (no special endpoint needed)
+
+      const response = await fetch(`${API_URL}${endpoint}`, { headers });
       if (response.ok) {
         const data = await response.json();
         setOrders(data);
