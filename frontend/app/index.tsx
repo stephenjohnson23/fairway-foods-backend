@@ -217,7 +217,15 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   scrollContent: {
     flexGrow: 1,
@@ -227,14 +235,18 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   title: {
-    fontSize: 32,
+    fontSize: 42,
     fontWeight: 'bold',
-    color: '#2e7d32',
+    color: '#fff',
     textAlign: 'center',
     marginBottom: 8,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 10,
+    letterSpacing: 2,
   },
   courseContainer: {
-    backgroundColor: '#e8f5e9',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 12,
     padding: 12,
     marginBottom: 16,
@@ -267,10 +279,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 18,
+    color: '#fff',
     textAlign: 'center',
     marginBottom: 32,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 5,
   },
   inputContainer: {
     marginBottom: 16,
