@@ -224,6 +224,18 @@ async def create_order(order: CreateOrder):
     order_dict = order.dict()
     order_dict["status"] = "pending"
     order_dict["createdAt"] = datetime.utcnow()
+    order_dict["userId"] = None  # For guest orders
+    result = orders_collection.insert_one(order_dict)
+    order_dict["id"] = str(result.inserted_id)
+    del order_dict["_id"]
+    return order_dict
+
+@app.post("/api/orders/user")
+async def create_user_order(order: CreateOrder, user: dict = Depends(get_current_user)):
+    order_dict = order.dict()
+    order_dict["status"] = "pending"
+    order_dict["createdAt"] = datetime.utcnow()
+    order_dict["userId"] = str(user["_id"])
     result = orders_collection.insert_one(order_dict)
     order_dict["id"] = str(result.inserted_id)
     del order_dict["_id"]
@@ -232,6 +244,16 @@ async def create_order(order: CreateOrder):
 @app.get("/api/orders")
 async def get_orders():
     orders = list(orders_collection.find().sort("createdAt", -1))
+    for order in orders:
+        order["id"] = str(order["_id"])
+        del order["_id"]
+        if "createdAt" in order:
+            order["createdAt"] = order["createdAt"].isoformat()
+    return orders
+
+@app.get("/api/orders/my-orders")
+async def get_my_orders(user: dict = Depends(get_current_user)):
+    orders = list(orders_collection.find({"userId": str(user["_id"])}).sort("createdAt", -1))
     for order in orders:
         order["id"] = str(order["_id"])
         del order["_id"]
