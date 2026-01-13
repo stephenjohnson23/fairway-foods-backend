@@ -111,16 +111,26 @@ export default function LoginScreen() {
         }
 
         // Navigate based on role
-        if (data.user.role === 'kitchen') {
-          router.replace('/kitchen');
-        } else if (data.user.role === 'cashier') {
-          router.replace('/cashier');
-        } else if (data.user.role === 'superuser') {
+        // If user has a default course, go directly to their screen
+        // Otherwise, go to course selection first
+        const hasDefaultCourse = !!data.user.defaultCourse;
+        
+        if (data.user.role === 'superuser') {
           router.replace('/user-management');
         } else if (data.user.role === 'admin') {
           router.replace('/admin');
+        } else if (hasDefaultCourse) {
+          // Has default course - go directly to role-specific screen
+          if (data.user.role === 'kitchen') {
+            router.replace('/kitchen');
+          } else if (data.user.role === 'cashier') {
+            router.replace('/cashier');
+          } else {
+            router.replace('/menu');
+          }
         } else {
-          router.replace('/menu');
+          // No default course - go to course selection
+          router.replace('/select-course');
         }
       } else {
         // Registration successful - pending approval
