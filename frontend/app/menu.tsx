@@ -246,15 +246,34 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
+  headerLeft: {
+    flex: 1,
+  },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#2e7d32',
   },
+  courseSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e8f5e9',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginTop: 4,
+    marginBottom: 4,
+    alignSelf: 'flex-start',
+    gap: 4,
+  },
+  courseName: {
+    fontSize: 12,
+    color: '#2e7d32',
+    fontWeight: '600',
+  },
   headerSubtitle: {
     fontSize: 14,
     color: '#666',
-    marginTop: 4,
   },
   headerActions: {
     flexDirection: 'row',
