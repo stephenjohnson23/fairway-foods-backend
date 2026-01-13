@@ -205,7 +205,7 @@ export default function CashierDashboard() {
           <View style={styles.actionButtons}>
             <TouchableOpacity
               style={[styles.actionButton, styles.capturedButton]}
-              onPress={() => updateOrderStatus(item.id, 'captured')}
+              onPress={() => updateOrderStatus(item.id, 'preparing')}
             >
               <Ionicons name="checkmark-circle" size={20} color="#fff" />
               <Text style={styles.actionButtonText}>Captured</Text>
