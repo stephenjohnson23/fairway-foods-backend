@@ -140,5 +140,7 @@ if __name__ == "__main__":
     print("Seeding database...")
     create_admin()
     create_kitchen()
+    create_cashier()
+    create_regular_user()
     create_menu_items()
     print("Database seeding complete!")
