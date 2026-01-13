@@ -620,7 +620,6 @@ export default function UserManagementScreen() {
         </View>
       </Modal>
 
-      {/* Rejection Reason Modal */}
       <Modal
         visible={rejectModalVisible}
         animationType="fade"
