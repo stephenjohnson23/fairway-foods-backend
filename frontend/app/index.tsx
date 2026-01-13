@@ -73,6 +73,12 @@ export default function LoginScreen() {
         await AsyncStorage.setItem('token', data.token);
         await AsyncStorage.setItem('user', JSON.stringify(data.user));
 
+        // Set default course if user has one
+        if (data.user.defaultCourse) {
+          await AsyncStorage.setItem('selectedCourseId', data.user.defaultCourse.id);
+          await AsyncStorage.setItem('selectedCourseName', data.user.defaultCourse.name);
+        }
+
         // Navigate based on role
         if (data.user.role === 'kitchen') {
           router.replace('/kitchen');
@@ -80,6 +86,8 @@ export default function LoginScreen() {
           router.replace('/cashier');
         } else if (data.user.role === 'superuser') {
           router.replace('/user-management');
+        } else if (data.user.role === 'admin') {
+          router.replace('/admin');
         } else {
           router.replace('/menu');
         }
