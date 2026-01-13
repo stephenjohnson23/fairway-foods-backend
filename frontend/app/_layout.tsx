@@ -7,6 +7,7 @@ export default function RootLayout() {
         headerShown: false,
       }}
     >
+      <Stack.Screen name="select-course" />
       <Stack.Screen name="index" />
       <Stack.Screen name="menu" />
       <Stack.Screen name="cart" />
