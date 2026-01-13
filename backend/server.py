@@ -349,6 +349,48 @@ async def update_order_status(order_id: str, status_update: UpdateOrderStatus):
 async def health_check():
     return {"status": "healthy"}
 
+# User Management Endpoints (Super User only)
+@app.get("/api/users")
+async def get_all_users(user: dict = Depends(get_super_user)):
+    users = list(users_collection.find())
+    for u in users:
+        u["id"] = str(u["_id"])
+        del u["_id"]
+        del u["password"]  # Don't send passwords
+        if "courseIds" not in u:
+            u["courseIds"] = []
+    return users
+
+@app.put("/api/users/{user_id}/role")
+async def update_user_role(user_id: str, role_data: dict, user: dict = Depends(get_super_user)):
+    new_role = role_data.get("role")
+    if new_role not in ["user", "admin", "kitchen", "cashier", "superuser"]:
+        raise HTTPException(status_code=400, detail="Invalid role")
+    
+    result = users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"role": new_role}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"message": "Role updated successfully"}
+
+@app.put("/api/users/{user_id}/courses")
+async def update_user_courses(user_id: str, courses_data: dict, user: dict = Depends(get_super_user)):
+    course_ids = courses_data.get("courseIds", [])
+    
+    result = users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"courseIds": course_ids}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"message": "Course assignments updated successfully"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
