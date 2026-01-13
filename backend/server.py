@@ -444,7 +444,41 @@ async def get_all_users(user: dict = Depends(get_super_user)):
         del u["password"]  # Don't send passwords
         if "courseIds" not in u:
             u["courseIds"] = []
+        # Include default course info
+        if u.get("defaultCourseId"):
+            course = golfcourses_collection.find_one({"_id": ObjectId(u["defaultCourseId"])})
+            if course:
+                u["defaultCourseName"] = course["name"]
     return users
+
+@app.put("/api/users/{user_id}/default-course")
+async def set_default_course(user_id: str, data: dict, user: dict = Depends(get_super_user)):
+    """Set or clear the default course for a user"""
+    default_course_id = data.get("defaultCourseId")
+    
+    # Validate the course exists and user has access to it
+    if default_course_id:
+        # Check if course exists
+        course = golfcourses_collection.find_one({"_id": ObjectId(default_course_id)})
+        if not course:
+            raise HTTPException(status_code=400, detail="Course not found")
+        
+        # Check if user is assigned to this course
+        target_user = users_collection.find_one({"_id": ObjectId(user_id)})
+        if not target_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        user_courses = target_user.get("courseIds", [])
+        if default_course_id not in user_courses:
+            raise HTTPException(status_code=400, detail="User is not assigned to this course")
+    
+    # Update the user's default course
+    users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"defaultCourseId": default_course_id}}
+    )
+    
+    return {"message": "Default course updated successfully"}
 
 @app.post("/api/users/create")
 async def create_user_by_super(user_data: dict, user: dict = Depends(get_super_user)):
