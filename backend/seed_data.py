@@ -9,6 +9,37 @@ MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
 client = MongoClient(MONGO_URL)
 db = client["golf_meal_app"]
 
+# Create sample golf courses
+def create_golf_courses():
+    courses = db["golfcourses"]
+    if courses.count_documents({}) == 0:
+        sample_courses = [
+            {
+                "name": "Pebble Beach Golf Links",
+                "location": "Pebble Beach, CA",
+                "description": "World-renowned coastal golf course",
+                "active": True
+            },
+            {
+                "name": "Augusta National",
+                "location": "Augusta, GA",
+                "description": "Home of the Masters Tournament",
+                "active": True
+            },
+            {
+                "name": "St Andrews Links",
+                "location": "St Andrews, Scotland",
+                "description": "The Home of Golf",
+                "active": True
+            }
+        ]
+        result = courses.insert_many(sample_courses)
+        print(f"Created {len(sample_courses)} sample golf courses")
+        return list(result.inserted_ids)
+    else:
+        print("Golf courses already exist")
+        return [course["_id"] for course in courses.find()]
+
 # Create admin user
 def create_admin():
     users = db["users"]
