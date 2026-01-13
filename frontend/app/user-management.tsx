@@ -281,6 +281,15 @@ export default function UserManagementScreen() {
   const approvedUsers = users.filter(u => u.status !== 'pending' && u.status !== 'rejected');
   const displayUsers = activeTab === 'pending' ? pendingUsers : approvedUsers;
 
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case 'pending': return '#ff9800';
+      case 'approved': return '#4caf50';
+      case 'rejected': return '#f44336';
+      default: return '#4caf50'; // Default to approved for old users
+    }
+  };
+
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'superuser': return '#9c27b0';
