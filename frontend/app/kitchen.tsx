@@ -228,6 +228,9 @@ export default function KitchenDashboard() {
           </Text>
         </View>
         <View style={styles.headerActions}>
+          <TouchableOpacity onPress={() => router.push('/profile')} style={styles.profileButton}>
+            <Ionicons name="person-circle" size={24} color="#fff" />
+          </TouchableOpacity>
           <TouchableOpacity onPress={onRefresh} style={styles.refreshButton}>
             <Ionicons name="refresh" size={24} color="#fff" />
           </TouchableOpacity>
