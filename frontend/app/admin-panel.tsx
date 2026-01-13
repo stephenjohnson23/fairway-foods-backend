@@ -348,8 +348,11 @@ export default function AdminPanelScreen() {
   const totalOrders = orders.length;
   const pendingOrders = orders.filter(o => o.status === 'pending').length;
   const todayRevenue = orders
-    .filter(o => new Date(o.createdAt).toDateString() === new Date().toDateString())
-    .reduce((sum, o) => sum + o.total, 0);
+    .filter(o => {
+      if (!o.createdAt) return false;
+      return new Date(o.createdAt).toDateString() === new Date().toDateString();
+    })
+    .reduce((sum, o) => sum + (o.total || 0), 0);
 
   const renderSidebar = () => (
     <View style={styles.sidebar}>
