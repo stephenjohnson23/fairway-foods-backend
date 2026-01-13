@@ -432,6 +432,41 @@ async def update_user_courses(user_id: str, courses_data: dict, user: dict = Dep
     
     return {"message": "Course assignments updated successfully"}
 
+@app.post("/api/users/{user_id}/approve")
+async def approve_user(user_id: str, user: dict = Depends(get_super_user)):
+    target_user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    result = users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"status": "approved", "approvedAt": datetime.utcnow()}}
+    )
+    
+    # TODO: Send approval email to user
+    # For now, log the approval
+    print(f"User {target_user['email']} approved by super user")
+    
+    return {"message": "User approved successfully", "email": target_user["email"]}
+
+@app.post("/api/users/{user_id}/reject")
+async def reject_user(user_id: str, rejection_data: dict, user: dict = Depends(get_super_user)):
+    reason = rejection_data.get("reason", "No reason provided")
+    target_user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    result = users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {"status": "rejected", "rejectedAt": datetime.utcnow(), "rejectionReason": reason}}
+    )
+    
+    # TODO: Send rejection email to user
+    # For now, log the rejection
+    print(f"User {target_user['email']} rejected: {reason}")
+    
+    return {"message": "User rejected", "email": target_user["email"]}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
