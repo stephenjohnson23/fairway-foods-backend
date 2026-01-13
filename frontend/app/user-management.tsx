@@ -620,6 +620,56 @@ export default function UserManagementScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Rejection Reason Modal */}
+      <Modal
+        visible={rejectModalVisible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setRejectModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.rejectModalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Reject Registration</Text>
+              <TouchableOpacity onPress={() => setRejectModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalBody}>
+              <Text style={styles.rejectUserInfo}>
+                Rejecting: {userToReject?.name} ({userToReject?.email})
+              </Text>
+              
+              <Text style={styles.label}>Reason for rejection (optional)</Text>
+              <TextInput
+                style={[styles.input, styles.textArea]}
+                value={rejectionReason}
+                onChangeText={setRejectionReason}
+                placeholder="Enter reason for rejection..."
+                multiline
+                numberOfLines={4}
+              />
+
+              <View style={styles.rejectModalActions}>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() => setRejectModalVisible(false)}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.confirmRejectButton}
+                  onPress={handleRejectUser}
+                >
+                  <Text style={styles.confirmRejectButtonText}>Reject User</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
