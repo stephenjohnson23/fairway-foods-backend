@@ -383,7 +383,6 @@ export default function UserManagementScreen() {
         </View>
       </View>
 
-      {/* Tabs */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'pending' && styles.tabActive]}
