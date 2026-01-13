@@ -84,9 +84,18 @@ export default function CartScreen() {
         totalAmount: getTotal(),
       };
 
-      const response = await fetch(`${API_URL}/api/orders`, {
+      // Check if user is logged in
+      const token = await AsyncStorage.getItem('token');
+      const endpoint = token ? '/api/orders/user' : '/api/orders';
+      const headers: any = { 'Content-Type': 'application/json' };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(orderData),
       });
 
