@@ -383,12 +383,52 @@ export default function UserManagementScreen() {
         </View>
       </View>
 
-      <FlatList
-        data={users}
-        renderItem={renderUser}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-      />
+      {/* Tabs */}
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'pending' && styles.tabActive]}
+          onPress={() => setActiveTab('pending')}
+        >
+          <Text style={[styles.tabText, activeTab === 'pending' && styles.tabTextActive]}>
+            Pending Approvals
+          </Text>
+          {pendingUsers.length > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{pendingUsers.length}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'all' && styles.tabActive]}
+          onPress={() => setActiveTab('all')}
+        >
+          <Text style={[styles.tabText, activeTab === 'all' && styles.tabTextActive]}>
+            All Users
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {displayUsers.length === 0 ? (
+        <View style={styles.emptyState}>
+          <Ionicons 
+            name={activeTab === 'pending' ? "checkmark-done-circle" : "people"} 
+            size={64} 
+            color="#ccc" 
+          />
+          <Text style={styles.emptyStateText}>
+            {activeTab === 'pending' 
+              ? "No pending approvals" 
+              : "No users found"}
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={displayUsers}
+          renderItem={renderUser}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+        />
+      )}
 
       <Modal
         visible={modalVisible}
