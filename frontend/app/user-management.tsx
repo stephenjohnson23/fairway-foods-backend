@@ -364,6 +364,113 @@ export default function UserManagementScreen() {
           </View>
         </View>
       </Modal>
+
+      <Modal
+        visible={createModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setCreateModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Create New User</Text>
+              <TouchableOpacity onPress={() => setCreateModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalBody}>
+              <Text style={styles.label}>Email Address *</Text>
+              <TextInput
+                style={styles.input}
+                value={newUserEmail}
+                onChangeText={setNewUserEmail}
+                placeholder="user@example.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+
+              <Text style={styles.label}>Full Name *</Text>
+              <TextInput
+                style={styles.input}
+                value={newUserName}
+                onChangeText={setNewUserName}
+                placeholder="John Doe"
+                autoCapitalize="words"
+              />
+
+              <Text style={styles.sectionTitle}>Assign Role</Text>
+              <View style={styles.roleButtons}>
+                {['user', 'admin', 'kitchen', 'cashier', 'superuser'].map((role) => (
+                  <TouchableOpacity
+                    key={role}
+                    style={[
+                      styles.roleButton,
+                      newUserRole === role && styles.roleButtonActive,
+                      { borderColor: getRoleColor(role) }
+                    ]}
+                    onPress={() => setNewUserRole(role)}
+                  >
+                    <Text
+                      style={[
+                        styles.roleButtonText,
+                        newUserRole === role && { color: getRoleColor(role) }
+                      ]}
+                    >
+                      {role}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <Text style={styles.sectionTitle}>Assign Golf Courses</Text>
+              <Text style={styles.sectionSubtitle}>
+                Select courses this user can access
+              </Text>
+              {courses.map((course) => (
+                <TouchableOpacity
+                  key={course.id}
+                  style={styles.courseItem}
+                  onPress={() => toggleNewUserCourse(course.id)}
+                >
+                  <View style={styles.courseItemInfo}>
+                    <Ionicons name="golf" size={20} color="#2e7d32" />
+                    <View style={styles.courseItemText}>
+                      <Text style={styles.courseName}>{course.name}</Text>
+                      <Text style={styles.courseLocation}>{course.location}</Text>
+                    </View>
+                  </View>
+                  <View
+                    style={[
+                      styles.checkbox,
+                      newUserCourses.includes(course.id) && styles.checkboxChecked
+                    ]}
+                  >
+                    {newUserCourses.includes(course.id) && (
+                      <Ionicons name="checkmark" size={16} color="#fff" />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              ))}
+
+              <View style={styles.noteBox}>
+                <Ionicons name="information-circle" size={20} color="#2196f3" />
+                <Text style={styles.noteText}>
+                  Default password "change123" will be generated. Share credentials with the user.
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleCreateUser}
+              >
+                <Text style={styles.saveButtonText}>Create User</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
