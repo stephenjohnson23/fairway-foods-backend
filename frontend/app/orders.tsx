@@ -417,4 +417,16 @@ const styles = StyleSheet.create({
     color: '#999',
     marginTop: 16,
   },
+  loginButton: {
+    marginTop: 24,
+    backgroundColor: '#2e7d32',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
