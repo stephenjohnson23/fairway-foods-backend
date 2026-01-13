@@ -76,6 +76,8 @@ export default function LoginScreen() {
         router.replace('/kitchen');
       } else if (data.user.role === 'cashier') {
         router.replace('/cashier');
+      } else if (data.user.role === 'superuser') {
+        router.replace('/user-management');
       } else {
         router.replace('/menu');
       }
