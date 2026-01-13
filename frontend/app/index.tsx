@@ -110,26 +110,29 @@ export default function LoginScreen() {
         }
 
         // Navigate based on role
-        // If user has a default course, go directly to their screen
-        // Otherwise, go to course selection first
         const hasDefaultCourse = !!data.user.defaultCourse;
         
+        let targetRoute = '/select-course';
+        
         if (data.user.role === 'superuser') {
-          router.replace('/user-management');
+          targetRoute = '/user-management';
         } else if (data.user.role === 'admin') {
-          router.replace('/admin');
+          targetRoute = '/admin';
         } else if (hasDefaultCourse) {
-          // Has default course - go directly to role-specific screen
           if (data.user.role === 'kitchen') {
-            router.replace('/kitchen');
+            targetRoute = '/kitchen';
           } else if (data.user.role === 'cashier') {
-            router.replace('/cashier');
+            targetRoute = '/cashier';
           } else {
-            router.replace('/menu');
+            targetRoute = '/menu';
           }
+        }
+        
+        // Use window.location for web to ensure navigation works
+        if (Platform.OS === 'web') {
+          window.location.href = targetRoute;
         } else {
-          // No default course - go to course selection
-          router.replace('/select-course');
+          router.replace(targetRoute);
         }
       } else {
         // Registration successful - pending approval
