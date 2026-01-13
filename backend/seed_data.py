@@ -109,5 +109,6 @@ def create_menu_items():
 if __name__ == "__main__":
     print("Seeding database...")
     create_admin()
+    create_kitchen()
     create_menu_items()
     print("Database seeding complete!")
