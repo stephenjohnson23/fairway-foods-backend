@@ -157,8 +157,11 @@ async def register(user_data: UserRegister):
     }
     result = users_collection.insert_one(user)
     
-    # TODO: Send email to super user for approval
-    # For now, return success message
+    # Send email notification to super user
+    try:
+        await send_registration_notification_to_admin(user_data.name, user_data.email)
+    except Exception as e:
+        print(f"Failed to send notification email: {str(e)}")
     
     return {
         "message": "Registration submitted. Your account is pending approval by the administrator.",
