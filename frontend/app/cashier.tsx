@@ -197,6 +197,18 @@ export default function CashierDashboard() {
             )}
           </View>
         )}
+        
+        {item.status === 'ready' && (
+          <View style={styles.actionButtons}>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.capturedButton]}
+              onPress={() => updateOrderStatus(item.id, 'captured')}
+            >
+              <Ionicons name="checkmark-circle" size={20} color="#fff" />
+              <Text style={styles.actionButtonText}>Captured</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   };
