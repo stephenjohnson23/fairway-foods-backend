@@ -144,27 +144,25 @@ async def register(user_data: UserRegister):
     if users_collection.find_one({"email": user_data.email}):
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    # Create user
+    # Create user with pending status
     user = {
         "email": user_data.email,
         "password": hash_password(user_data.password),
         "name": user_data.name,
         "role": "user",
+        "status": "pending",  # New field for approval status
+        "courseIds": [],
         "createdAt": datetime.utcnow()
     }
     result = users_collection.insert_one(user)
     
-    # Create token
-    token = create_access_token({"user_id": str(result.inserted_id)})
+    # TODO: Send email to super user for approval
+    # For now, return success message
     
     return {
-        "token": token,
-        "user": {
-            "id": str(result.inserted_id),
-            "email": user_data.email,
-            "name": user_data.name,
-            "role": "user"
-        }
+        "message": "Registration submitted. Your account is pending approval by the administrator.",
+        "userId": str(result.inserted_id),
+        "status": "pending"
     }
 
 @app.post("/api/auth/login")
