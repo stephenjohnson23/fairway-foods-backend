@@ -161,7 +161,10 @@ export default function LoginScreen() {
     // Clear any existing auth data
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('user');
-    router.replace('/menu');
+    await AsyncStorage.removeItem('selectedCourseId');
+    await AsyncStorage.removeItem('selectedCourseName');
+    // Guest goes to course selection first
+    router.replace('/select-course');
   };
 
   const handleChangeCourse = () => {
