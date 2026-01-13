@@ -1,0 +1,390 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
+
+const API_URL = Constants.expoConfig?.extra?.EXPO_BACKEND_URL || 'http://localhost:8001';
+
+interface CartItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+}
+
+export default function CartScreen() {
+  const router = useRouter();
+  const params = useLocalSearchParams();
+  const cartData = params.cartData ? JSON.parse(params.cartData as string) : [];
+  
+  const [cart, setCart] = useState<CartItem[]>(cartData);
+  const [customerName, setCustomerName] = useState('');
+  const [teeOffTime, setTeeOffTime] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const updateQuantity = (id: string, delta: number) => {
+    setCart((prevCart) =>
+      prevCart
+        .map((item) =>
+          item.id === id
+            ? { ...item, quantity: Math.max(0, item.quantity + delta) }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  };
+
+  const removeItem = (id: string) => {
+    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+  };
+
+  const getTotal = () => {
+    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!customerName.trim()) {
+      Alert.alert('Error', 'Please enter your name');
+      return;
+    }
+    if (!teeOffTime.trim()) {
+      Alert.alert('Error', 'Please enter your tee-off time');
+      return;
+    }
+    if (cart.length === 0) {
+      Alert.alert('Error', 'Your cart is empty');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const orderData = {
+        items: cart.map((item) => ({
+          menuItemId: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+        customerName,
+        teeOffTime,
+        totalAmount: getTotal(),
+      };
+
+      const response = await fetch(`${API_URL}/api/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to place order');
+      }
+
+      Alert.alert(
+        'Success',
+        'Your order has been placed successfully!',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/menu'),
+          },
+        ]
+      );
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to place order');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderCartItem = ({ item }: { item: CartItem }) => (
+    <View style={styles.cartItem}>
+      <View style={styles.itemInfo}>
+        <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+      </View>
+      <View style={styles.quantityControl}>
+        <TouchableOpacity
+          style={styles.quantityButton}
+          onPress={() => updateQuantity(item.id, -1)}
+        >
+          <Ionicons name="remove" size={20} color="#2e7d32" />
+        </TouchableOpacity>
+        <Text style={styles.quantityText}>{item.quantity}</Text>
+        <TouchableOpacity
+          style={styles.quantityButton}
+          onPress={() => updateQuantity(item.id, 1)}
+        >
+          <Ionicons name="add" size={20} color="#2e7d32" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => removeItem(item.id)}
+        >
+          <Ionicons name="trash" size={20} color="#ff5252" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#2e7d32" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Your Cart</Text>
+        <View style={styles.placeholder} />
+      </View>
+
+      <ScrollView style={styles.content}>
+        {cart.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="cart-outline" size={64} color="#ccc" />
+            <Text style={styles.emptyText}>Your cart is empty</Text>
+            <TouchableOpacity
+              style={styles.backToMenuButton}
+              onPress={() => router.back()}
+            >
+              <Text style={styles.backToMenuText}>Back to Menu</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <>
+            <FlatList
+              data={cart}
+              renderItem={renderCartItem}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+              contentContainerStyle={styles.listContent}
+            />
+
+            <View style={styles.formSection}>
+              <Text style={styles.sectionTitle}>Order Details</Text>
+              
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Your Name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={customerName}
+                  onChangeText={setCustomerName}
+                  placeholder="Enter your name"
+                  autoCapitalize="words"
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Tee-Off Time</Text>
+                <TextInput
+                  style={styles.input}
+                  value={teeOffTime}
+                  onChangeText={setTeeOffTime}
+                  placeholder="e.g., 10:30 AM or 2:00 PM"
+                />
+              </View>
+            </View>
+
+            <View style={styles.totalSection}>
+              <Text style={styles.totalLabel}>Total Amount</Text>
+              <Text style={styles.totalAmount}>${getTotal().toFixed(2)}</Text>
+            </View>
+
+            <TouchableOpacity
+              style={[styles.placeOrderButton, loading && styles.disabledButton]}
+              onPress={handlePlaceOrder}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.placeOrderText}>Place Order</Text>
+              )}
+            </TouchableOpacity>
+          </>
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    backgroundColor: '#fff',
+    padding: 16,
+    paddingTop: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2e7d32',
+  },
+  placeholder: {
+    width: 40,
+  },
+  content: {
+    flex: 1,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+    marginTop: 100,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#999',
+    marginTop: 16,
+    marginBottom: 24,
+  },
+  backToMenuButton: {
+    backgroundColor: '#2e7d32',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  backToMenuText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  listContent: {
+    padding: 16,
+  },
+  cartItem: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+  },
+  itemInfo: {
+    marginBottom: 12,
+  },
+  itemName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  itemPrice: {
+    fontSize: 14,
+    color: '#2e7d32',
+  },
+  quantityControl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  quantityButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#e8f5e9',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantityText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    minWidth: 30,
+    textAlign: 'center',
+  },
+  deleteButton: {
+    marginLeft: 'auto',
+    padding: 8,
+  },
+  formSection: {
+    backgroundColor: '#fff',
+    padding: 16,
+    marginHorizontal: 16,
+    marginTop: 8,
+    borderRadius: 12,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 16,
+  },
+  inputContainer: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  input: {
+    backgroundColor: '#f5f5f5',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+  },
+  totalSection: {
+    backgroundColor: '#fff',
+    padding: 16,
+    margin: 16,
+    borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  totalLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  totalAmount: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2e7d32',
+  },
+  placeOrderButton: {
+    backgroundColor: '#2e7d32',
+    margin: 16,
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  disabledButton: {
+    opacity: 0.6,
+  },
+  placeOrderText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
