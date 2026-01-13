@@ -117,6 +117,10 @@ export default function MenuScreen() {
     );
   };
 
+  const handleSwitchCourse = () => {
+    router.push('/select-course');
+  };
+
   const renderMenuItem = ({ item }: { item: MenuItem }) => (
     <View style={styles.menuItem}>
       {item.image ? (
