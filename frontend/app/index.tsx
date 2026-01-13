@@ -166,10 +166,6 @@ export default function LoginScreen() {
     router.replace('/select-course');
   };
 
-  const handleChangeCourse = () => {
-    router.push('/select-course');
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
