@@ -140,7 +140,17 @@ export default function UserManagementScreen() {
         body: JSON.stringify({ courseIds: selectedCourses }),
       });
 
-      if (roleResponse.ok && coursesResponse.ok) {
+      // Update default course
+      const defaultCourseResponse = await fetch(`${API_URL}/api/users/${selectedUser.id}/default-course`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ defaultCourseId: selectedDefaultCourse || null }),
+      });
+
+      if (roleResponse.ok && coursesResponse.ok && defaultCourseResponse.ok) {
         Alert.alert('Success', 'User permissions updated');
         setModalVisible(false);
         fetchUsers();
