@@ -473,6 +473,83 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
   },
+  timePickerButton: {
+    backgroundColor: '#f5f5f5',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  timePickerText: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+  },
+  timePickerContainer: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    marginTop: 8,
+    padding: 12,
+  },
+  timePickerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  timeColumn: {
+    alignItems: 'center',
+    width: 80,
+  },
+  timeColumnLabel: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 8,
+    fontWeight: '600',
+  },
+  timeScroll: {
+    maxHeight: 150,
+  },
+  timeOption: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginVertical: 2,
+  },
+  timeOptionSelected: {
+    backgroundColor: '#2e7d32',
+  },
+  timeOptionText: {
+    fontSize: 18,
+    color: '#333',
+    textAlign: 'center',
+  },
+  timeOptionTextSelected: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  timeSeparator: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginHorizontal: 8,
+  },
+  confirmTimeButton: {
+    backgroundColor: '#2e7d32',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  confirmTimeText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   totalSection: {
     backgroundColor: '#fff',
     padding: 16,
