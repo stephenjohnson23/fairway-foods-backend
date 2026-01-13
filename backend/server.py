@@ -447,9 +447,11 @@ async def approve_user(user_id: str, user: dict = Depends(get_super_user)):
         {"$set": {"status": "approved", "approvedAt": datetime.utcnow()}}
     )
     
-    # TODO: Send approval email to user
-    # For now, log the approval
-    print(f"User {target_user['email']} approved by super user")
+    # Send approval email to user
+    try:
+        await send_approval_email(target_user["email"], target_user["name"])
+    except Exception as e:
+        print(f"Failed to send approval email: {str(e)}")
     
     return {"message": "User approved successfully", "email": target_user["email"]}
 
@@ -465,9 +467,11 @@ async def reject_user(user_id: str, rejection_data: dict, user: dict = Depends(g
         {"$set": {"status": "rejected", "rejectedAt": datetime.utcnow(), "rejectionReason": reason}}
     )
     
-    # TODO: Send rejection email to user
-    # For now, log the rejection
-    print(f"User {target_user['email']} rejected: {reason}")
+    # Send rejection email to user
+    try:
+        await send_rejection_email(target_user["email"], target_user["name"], reason)
+    except Exception as e:
+        print(f"Failed to send rejection email: {str(e)}")
     
     return {"message": "User rejected", "email": target_user["email"]}
 
