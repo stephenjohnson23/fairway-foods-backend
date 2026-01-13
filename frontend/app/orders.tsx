@@ -300,7 +300,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#2e7d32',
   },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
   refreshButton: {
+    padding: 8,
+  },
+  logoutButton: {
     padding: 8,
   },
   headerActions: {
