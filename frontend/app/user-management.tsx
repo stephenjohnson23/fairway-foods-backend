@@ -342,6 +342,11 @@ export default function UserManagementScreen() {
               ) : (
                 <Text style={styles.noCourses}>No courses assigned</Text>
               )}
+              {item.defaultCourseName && (
+                <Text style={styles.defaultCourseDisplay}>
+                  ⭐ Default: {item.defaultCourseName}
+                </Text>
+              )}
             </View>
           )}
         </View>
