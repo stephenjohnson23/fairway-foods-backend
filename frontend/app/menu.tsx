@@ -169,14 +169,21 @@ export default function MenuScreen() {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Text style={styles.headerTitle}>Menu</Text>
-          <TouchableOpacity
-            style={styles.courseSelector}
-            onPress={handleSwitchCourse}
-          >
-            <Ionicons name="golf" size={14} color="#2e7d32" />
-            <Text style={styles.courseName}>{selectedCourseName || 'Select Course'}</Text>
-            <Ionicons name="chevron-down" size={14} color="#2e7d32" />
-          </TouchableOpacity>
+          {canSwitchCourse() ? (
+            <TouchableOpacity
+              style={styles.courseSelector}
+              onPress={handleSwitchCourse}
+            >
+              <Ionicons name="golf" size={14} color="#2e7d32" />
+              <Text style={styles.courseName}>{selectedCourseName || 'Select Course'}</Text>
+              <Ionicons name="chevron-down" size={14} color="#2e7d32" />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.courseDisplay}>
+              <Ionicons name="golf" size={14} color="#2e7d32" />
+              <Text style={styles.courseName}>{selectedCourseName}</Text>
+            </View>
+          )}
           <Text style={styles.headerSubtitle}>
             {user ? `Welcome, ${user.name}` : 'Guest User'}
           </Text>
