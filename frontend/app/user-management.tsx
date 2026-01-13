@@ -49,6 +49,10 @@ export default function UserManagementScreen() {
   const [newUserName, setNewUserName] = useState('');
   const [newUserRole, setNewUserRole] = useState('user');
   const [newUserCourses, setNewUserCourses] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<'all' | 'pending'>('all');
+  const [rejectModalVisible, setRejectModalVisible] = useState(false);
+  const [userToReject, setUserToReject] = useState<User | null>(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
     checkSuperUser();
