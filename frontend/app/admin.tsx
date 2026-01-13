@@ -178,23 +178,31 @@ export default function AdminScreen() {
         : `${API_URL}/api/menu`;
       const method = editingItem ? 'PUT' : 'POST';
 
+      const itemData: any = {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        category: formData.category,
+        available: formData.available,
+      };
+      
+      // Add courseId for new items
+      if (!editingItem) {
+        itemData.courseId = selectedCourseId;
+      }
+
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          price: parseFloat(formData.price),
-          category: formData.category,
-          available: formData.available,
-        }),
+        body: JSON.stringify(itemData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save menu item');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to save menu item');
       }
 
       Alert.alert('Success', `Menu item ${editingItem ? 'updated' : 'created'} successfully`);
