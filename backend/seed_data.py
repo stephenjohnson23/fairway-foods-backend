@@ -39,6 +39,36 @@ def create_kitchen():
     else:
         print("Kitchen user already exists")
 
+# Create cashier user
+def create_cashier():
+    users = db["users"]
+    if not users.find_one({"email": "cashier@golf.com"}):
+        cashier_user = {
+            "email": "cashier@golf.com",
+            "password": bcrypt.hashpw("cashier123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            "name": "Cashier",
+            "role": "cashier"
+        }
+        users.insert_one(cashier_user)
+        print("Cashier user created: cashier@golf.com / cashier123")
+    else:
+        print("Cashier user already exists")
+
+# Create regular user
+def create_regular_user():
+    users = db["users"]
+    if not users.find_one({"email": "user@golf.com"}):
+        regular_user = {
+            "email": "user@golf.com",
+            "password": bcrypt.hashpw("user123".encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            "name": "John Golfer",
+            "role": "user"
+        }
+        users.insert_one(regular_user)
+        print("Regular user created: user@golf.com / user123")
+    else:
+        print("Regular user already exists")
+
 # Create sample menu items
 def create_menu_items():
     menuitems = db["menuitems"]
