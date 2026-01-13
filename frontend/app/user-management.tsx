@@ -712,6 +712,11 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 8,
   },
+  coursesButton: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    padding: 8,
+    borderRadius: 8,
+  },
   logoutButton: {
     backgroundColor: 'rgba(255,255,255,0.2)',
     padding: 8,
