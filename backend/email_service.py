@@ -95,8 +95,9 @@ Please log in to review and approve or reject this registration.
     # Get super user email
     from pymongo import MongoClient
     MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+    DB_NAME = os.getenv("DB_NAME", "golf_meal_app")
     client = MongoClient(MONGO_URL)
-    db = client["golf_meal_app"]
+    db = client[DB_NAME]
     super_user = db["users"].find_one({"role": "superuser"})
     
     if super_user:
