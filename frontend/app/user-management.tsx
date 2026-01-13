@@ -302,27 +302,60 @@ export default function UserManagementScreen() {
   };
 
   const renderUser = ({ item }: { item: User }) => (
-    <TouchableOpacity
-      style={styles.userCard}
-      onPress={() => openEditModal(item)}
-    >
-      <View style={styles.userInfo}>
-        <Text style={styles.userName}>{item.name}</Text>
-        <Text style={styles.userEmail}>{item.email}</Text>
-        <View style={styles.courseChips}>
-          {item.courseIds && item.courseIds.length > 0 ? (
-            <Text style={styles.courseCount}>
-              📍 {item.courseIds.length} course(s) assigned
-            </Text>
-          ) : (
-            <Text style={styles.noCourses}>No courses assigned</Text>
+    <View style={styles.userCard}>
+      <TouchableOpacity
+        style={styles.userCardContent}
+        onPress={() => item.status !== 'pending' ? openEditModal(item) : null}
+        disabled={item.status === 'pending'}
+      >
+        <View style={styles.userInfo}>
+          <View style={styles.userNameRow}>
+            <Text style={styles.userName}>{item.name}</Text>
+            {item.status === 'pending' && (
+              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+                <Text style={styles.statusText}>PENDING</Text>
+              </View>
+            )}
+          </View>
+          <Text style={styles.userEmail}>{item.email}</Text>
+          {item.status !== 'pending' && (
+            <View style={styles.courseChips}>
+              {item.courseIds && item.courseIds.length > 0 ? (
+                <Text style={styles.courseCount}>
+                  📍 {item.courseIds.length} course(s) assigned
+                </Text>
+              ) : (
+                <Text style={styles.noCourses}>No courses assigned</Text>
+              )}
+            </View>
           )}
         </View>
-      </View>
-      <View style={[styles.roleBadge, { backgroundColor: getRoleColor(item.role) }]}>
-        <Text style={styles.roleText}>{item.role.toUpperCase()}</Text>
-      </View>
-    </TouchableOpacity>
+        {item.status !== 'pending' && (
+          <View style={[styles.roleBadge, { backgroundColor: getRoleColor(item.role) }]}>
+            <Text style={styles.roleText}>{item.role.toUpperCase()}</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+      
+      {item.status === 'pending' && (
+        <View style={styles.approvalActions}>
+          <TouchableOpacity
+            style={styles.approveButton}
+            onPress={() => handleApproveUser(item)}
+          >
+            <Ionicons name="checkmark-circle" size={20} color="#fff" />
+            <Text style={styles.actionButtonText}>Approve</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.rejectButton}
+            onPress={() => openRejectModal(item)}
+          >
+            <Ionicons name="close-circle" size={20} color="#fff" />
+            <Text style={styles.actionButtonText}>Reject</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
   );
 
   if (loading) {
