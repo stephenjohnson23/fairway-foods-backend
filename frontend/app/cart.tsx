@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = Constants.expoConfig?.extra?.EXPO_BACKEND_URL || 'http://localhost:8001';
 
@@ -35,6 +36,34 @@ export default function CartScreen() {
   const [customerName, setCustomerName] = useState('');
   const [teeOffTime, setTeeOffTime] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadProfileData();
+  }, []);
+
+  const loadProfileData = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        // Pre-fill from profile data
+        if (user.profile) {
+          if (user.profile.displayName) {
+            setCustomerName(user.profile.displayName);
+          } else if (user.name) {
+            setCustomerName(user.name);
+          }
+          if (user.profile.defaultTeeOffTime) {
+            setTeeOffTime(user.profile.defaultTeeOffTime);
+          }
+        } else if (user.name) {
+          setCustomerName(user.name);
+        }
+      }
+    } catch (error) {
+      console.log('Error loading profile data:', error);
+    }
+  };
 
   const updateQuantity = (id: string, delta: number) => {
     setCart((prevCart) =>
