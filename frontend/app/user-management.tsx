@@ -156,6 +156,64 @@ export default function UserManagementScreen() {
     router.replace('/');
   };
 
+  const openCreateModal = () => {
+    setNewUserEmail('');
+    setNewUserName('');
+    setNewUserRole('user');
+    setNewUserCourses([]);
+    setCreateModalVisible(true);
+  };
+
+  const handleCreateUser = async () => {
+    if (!newUserEmail || !newUserName) {
+      Alert.alert('Error', 'Please enter email and name');
+      return;
+    }
+
+    const token = await AsyncStorage.getItem('token');
+
+    try {
+      const response = await fetch(`${API_URL}/api/users/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email: newUserEmail,
+          name: newUserName,
+          role: newUserRole,
+          courseIds: newUserCourses,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Failed to create user');
+      }
+
+      Alert.alert(
+        'User Created!',
+        `Email: ${newUserEmail}\nDefault Password: ${data.defaultPassword}\n\nPlease share these credentials with the user.`,
+        [{ text: 'OK' }]
+      );
+      
+      setCreateModalVisible(false);
+      fetchUsers();
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  const toggleNewUserCourse = (courseId: string) => {
+    if (newUserCourses.includes(courseId)) {
+      setNewUserCourses(newUserCourses.filter(id => id !== courseId));
+    } else {
+      setNewUserCourses([...newUserCourses, courseId]);
+    }
+  };
+
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'superuser': return '#9c27b0';
