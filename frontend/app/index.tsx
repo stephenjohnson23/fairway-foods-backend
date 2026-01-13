@@ -57,6 +57,8 @@ export default function LoginScreen() {
       // Navigate based on role
       if (data.user.role === 'kitchen') {
         router.replace('/kitchen');
+      } else if (data.user.role === 'cashier') {
+        router.replace('/cashier');
       } else {
         router.replace('/menu');
       }
