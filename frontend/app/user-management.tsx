@@ -504,6 +504,15 @@ const styles = StyleSheet.create({
     color: '#f3e5f5',
     marginTop: 4,
   },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  addUserButton: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    padding: 8,
+    borderRadius: 8,
+  },
   logoutButton: {
     backgroundColor: 'rgba(255,255,255,0.2)',
     padding: 8,
