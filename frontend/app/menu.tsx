@@ -189,6 +189,14 @@ export default function MenuScreen() {
           </Text>
         </View>
         <View style={styles.headerActions}>
+          {user && (
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => router.push('/profile')}
+            >
+              <Ionicons name="person-circle" size={24} color="#2e7d32" />
+            </TouchableOpacity>
+          )}
           {user?.role === 'admin' && (
             <TouchableOpacity
               style={styles.iconButton}
