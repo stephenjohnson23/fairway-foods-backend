@@ -101,15 +101,19 @@ def create_regular_user():
         print("Regular user already exists")
 
 # Create sample menu items
-def create_menu_items():
+def create_menu_items(course_ids):
     menuitems = db["menuitems"]
     if menuitems.count_documents({}) == 0:
+        # Get first course ID as default
+        default_course_id = str(course_ids[0])
+        
         sample_items = [
             {
                 "name": "Club Sandwich",
                 "description": "Triple-decker with turkey, bacon, lettuce, and tomato",
                 "price": 12.99,
                 "category": "Sandwiches",
+                "courseId": default_course_id,
                 "available": True
             },
             {
@@ -117,6 +121,7 @@ def create_menu_items():
                 "description": "Crisp romaine with parmesan and garlic croutons",
                 "price": 9.99,
                 "category": "Salads",
+                "courseId": default_course_id,
                 "available": True
             },
             {
@@ -124,6 +129,7 @@ def create_menu_items():
                 "description": "Grilled chicken with fresh vegetables in a tortilla wrap",
                 "price": 11.99,
                 "category": "Sandwiches",
+                "courseId": default_course_id,
                 "available": True
             },
             {
@@ -131,6 +137,7 @@ def create_menu_items():
                 "description": "Crispy golden fries with sea salt",
                 "price": 5.99,
                 "category": "Sides",
+                "courseId": default_course_id,
                 "available": True
             },
             {
@@ -138,6 +145,7 @@ def create_menu_items():
                 "description": "Freshly brewed iced tea",
                 "price": 3.99,
                 "category": "Beverages",
+                "courseId": default_course_id,
                 "available": True
             },
             {
@@ -145,6 +153,7 @@ def create_menu_items():
                 "description": "Fresh squeezed lemonade",
                 "price": 3.99,
                 "category": "Beverages",
+                "courseId": default_course_id,
                 "available": True
             },
             {
@@ -152,6 +161,7 @@ def create_menu_items():
                 "description": "Juicy beef burger with cheese, lettuce, tomato, and special sauce",
                 "price": 14.99,
                 "category": "Burgers",
+                "courseId": default_course_id,
                 "available": True
             },
             {
@@ -159,11 +169,12 @@ def create_menu_items():
                 "description": "Beer-battered cod with crispy fries",
                 "price": 15.99,
                 "category": "Main Course",
+                "courseId": default_course_id,
                 "available": True
             }
         ]
         menuitems.insert_many(sample_items)
-        print(f"Created {len(sample_items)} sample menu items")
+        print(f"Created {len(sample_items)} sample menu items for first course")
     else:
         print("Menu items already exist")
 
