@@ -96,6 +96,12 @@ class CreateOrder(BaseModel):
 class UpdateOrderStatus(BaseModel):
     status: str
 
+class UserProfile(BaseModel):
+    displayName: Optional[str] = None
+    phone: Optional[str] = None
+    defaultTeeOffTime: Optional[str] = None
+    membershipNumber: Optional[str] = None
+
 # Helper Functions
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
