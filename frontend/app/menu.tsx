@@ -172,6 +172,14 @@ export default function MenuScreen() {
           >
             <Ionicons name="receipt" size={24} color="#2e7d32" />
           </TouchableOpacity>
+          {user && (
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={handleLogout}
+            >
+              <Ionicons name="log-out" size={24} color="#ff5252" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
