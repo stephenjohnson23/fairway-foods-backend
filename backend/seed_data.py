@@ -249,11 +249,11 @@ def create_menu_items(course_ids):
 
 if __name__ == "__main__":
     print("Seeding database...")
-    create_admin()
-    create_super_user()
+    course_ids = create_golf_courses()
+    create_admin(course_ids)
+    create_super_user(course_ids)
     create_kitchen()
     create_cashier()
     create_regular_user()
-    course_ids = create_golf_courses()
     create_menu_items(course_ids)
     print("Database seeding complete!")
