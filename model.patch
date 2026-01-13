@@ -266,5 +266,5 @@ index 5f36604..e69de29 100644
 --+
 --+agent_communication:
 --+  - agent: "testing"
---+    message: "Comprehensive backend testing completed successfully. All 12 backend endpoints are working correctly including authentication, menu management, and order processing. Used external URL https://fairway-food.preview.emergentagent.com/api for testing. Admin credentials (admin@golf.com/admin123) are working. Database seeding appears to be working with 8 menu items available. All CRUD operations tested and functional."
+--+    message: "Comprehensive backend testing completed successfully. All 12 backend endpoints are working correctly including authentication, menu management, and order processing. Used external URL https://fairwayfoods.preview.emergentagent.com/api for testing. Admin credentials (admin@golf.com/admin123) are working. Database seeding appears to be working with 8 menu items available. All CRUD operations tested and functional."
 --\ No newline at end of file
