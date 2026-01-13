@@ -31,6 +31,7 @@ db = client["golf_meal_app"]
 users_collection = db["users"]
 menuitems_collection = db["menuitems"]
 orders_collection = db["orders"]
+golfcourses_collection = db["golfcourses"]
 
 # JWT Configuration
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
