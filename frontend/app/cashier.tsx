@@ -334,6 +334,15 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 8,
   },
+  profileButton: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    padding: 8,
+    borderRadius: 8,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
   statsContainer: {
     flexDirection: 'row',
     padding: 16,
