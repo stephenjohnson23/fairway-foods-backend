@@ -26,7 +26,6 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedCourseName, setSelectedCourseName] = useState('');
 
   useEffect(() => {
     // Check if user is already logged in
