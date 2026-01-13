@@ -87,7 +87,26 @@ export default function CourseSelectionScreen() {
     try {
       await AsyncStorage.setItem('selectedCourseId', course.id);
       await AsyncStorage.setItem('selectedCourseName', course.name);
-      router.replace('/');
+      
+      // Check if user is logged in and navigate accordingly
+      const userData = await AsyncStorage.getItem('user');
+      
+      if (userData) {
+        const user = JSON.parse(userData);
+        // Navigate based on role
+        if (user.role === 'kitchen') {
+          router.replace('/kitchen');
+        } else if (user.role === 'cashier') {
+          router.replace('/cashier');
+        } else if (user.role === 'admin') {
+          router.replace('/admin');
+        } else {
+          router.replace('/menu');
+        }
+      } else {
+        // Guest - go to menu
+        router.replace('/menu');
+      }
     } catch (error) {
       Alert.alert('Error', 'Failed to save course selection');
     }
