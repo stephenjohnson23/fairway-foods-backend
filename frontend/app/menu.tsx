@@ -36,22 +36,28 @@ export default function MenuScreen() {
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [user, setUser] = useState<any>(null);
+  const [selectedCourseName, setSelectedCourseName] = useState('');
 
   useEffect(() => {
-    loadUser();
+    loadUserAndCourse();
     fetchMenu();
   }, []);
 
-  const loadUser = async () => {
+  const loadUserAndCourse = async () => {
     const userData = await AsyncStorage.getItem('user');
     if (userData) {
       setUser(JSON.parse(userData));
+    }
+    const courseName = await AsyncStorage.getItem('selectedCourseName');
+    if (courseName) {
+      setSelectedCourseName(courseName);
     }
   };
 
   const fetchMenu = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/menu`);
+      const courseId = await AsyncStorage.getItem('selectedCourseId');
+      const response = await fetch(`${API_URL}/api/menu?courseId=${courseId}`);
       if (response.ok) {
         const data = await response.json();
         setMenuItems(data.filter((item: MenuItem) => item.available));
