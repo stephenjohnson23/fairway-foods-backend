@@ -160,7 +160,7 @@ export default function CashierDashboard() {
             <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
               <Text style={styles.statusText}>{item.status.toUpperCase()}</Text>
             </View>
-            <Text style={styles.orderTotal}>${item.totalAmount.toFixed(2)}</Text>
+            <Text style={styles.orderTotal}>R{item.totalAmount.toFixed(2)}</Text>
           </View>
         </View>
 
@@ -171,7 +171,7 @@ export default function CashierDashboard() {
                 {orderItem.quantity}x {orderItem.name}
               </Text>
               <Text style={styles.orderItemPrice}>
-                ${(orderItem.price * orderItem.quantity).toFixed(2)}
+                R{(orderItem.price * orderItem.quantity).toFixed(2)}
               </Text>
             </View>
           ))}
@@ -237,7 +237,7 @@ export default function CashierDashboard() {
           <Text style={styles.statLabel}>Ready</Text>
         </View>
         <View style={[styles.statBox, styles.revenueBox]}>
-          <Text style={styles.revenueValue}>${getTotalRevenue().toFixed(2)}</Text>
+          <Text style={styles.revenueValue}>R{getTotalRevenue().toFixed(2)}</Text>
           <Text style={styles.statLabel}>Revenue</Text>
         </View>
       </View>

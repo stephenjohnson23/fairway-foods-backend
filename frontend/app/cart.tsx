@@ -131,7 +131,7 @@ export default function CartScreen() {
     <View style={styles.cartItem}>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
-        <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+        <Text style={styles.itemPrice}>R{item.price.toFixed(2)}</Text>
       </View>
       <View style={styles.quantityControl}>
         <TouchableOpacity
@@ -219,7 +219,7 @@ export default function CartScreen() {
 
             <View style={styles.totalSection}>
               <Text style={styles.totalLabel}>Total Amount</Text>
-              <Text style={styles.totalAmount}>${getTotal().toFixed(2)}</Text>
+              <Text style={styles.totalAmount}>R{getTotal().toFixed(2)}</Text>
             </View>
 
             <TouchableOpacity

@@ -203,7 +203,7 @@ export default function AdminScreen() {
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemCategory}>{item.category}</Text>
-        <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+        <Text style={styles.itemPrice}>R{item.price.toFixed(2)}</Text>
         <Text style={[styles.availabilityText, !item.available && styles.unavailable]}>
           {item.available ? 'Available' : 'Unavailable'}
         </Text>

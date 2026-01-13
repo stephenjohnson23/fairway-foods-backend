@@ -139,7 +139,7 @@ export default function MenuScreen() {
         <Text style={styles.itemDescription} numberOfLines={2}>
           {item.description}
         </Text>
-        <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+        <Text style={styles.itemPrice}>R{item.price.toFixed(2)}</Text>
       </View>
       <TouchableOpacity
         style={styles.addButton}
@@ -218,7 +218,7 @@ export default function MenuScreen() {
           </View>
           <Ionicons name="cart" size={24} color="#fff" />
           <Text style={styles.cartButtonText}>
-            View Cart - ${getCartTotal().toFixed(2)}
+            View Cart - R{getCartTotal().toFixed(2)}
           </Text>
         </TouchableOpacity>
       )}

@@ -177,14 +177,14 @@ export default function KitchenDashboard() {
               <Text style={styles.orderItemQuantity}>{orderItem.quantity}x</Text>
               <Text style={styles.orderItemText}>{orderItem.name}</Text>
               <Text style={styles.orderItemPrice}>
-                ${(orderItem.price * orderItem.quantity).toFixed(2)}
+                R{(orderItem.price * orderItem.quantity).toFixed(2)}
               </Text>
             </View>
           ))}
         </View>
 
         <View style={styles.orderFooter}>
-          <Text style={styles.totalText}>Total: ${item.totalAmount.toFixed(2)}</Text>
+          <Text style={styles.totalText}>Total: R{item.totalAmount.toFixed(2)}</Text>
           <View style={styles.actionButtons}>
             {item.status === 'pending' && (
               <TouchableOpacity
