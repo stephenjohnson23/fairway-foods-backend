@@ -213,7 +213,6 @@ async def login(user_data: UserLogin):
             "profile": {
                 "displayName": user.get("displayName", user["name"]),
                 "phone": user.get("phone", ""),
-                "defaultTeeOffTime": user.get("defaultTeeOffTime", ""),
                 "membershipNumber": user.get("membershipNumber", "")
             }
         }
