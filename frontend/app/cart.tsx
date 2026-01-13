@@ -34,8 +34,23 @@ export default function CartScreen() {
   
   const [cart, setCart] = useState<CartItem[]>(cartData);
   const [customerName, setCustomerName] = useState('');
-  const [teeOffTime, setTeeOffTime] = useState('');
+  const [selectedHour, setSelectedHour] = useState('08');
+  const [selectedMinute, setSelectedMinute] = useState('00');
   const [loading, setLoading] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  // Generate hours (6am to 6pm for golf)
+  const hours = Array.from({ length: 13 }, (_, i) => {
+    const hour = i + 6;
+    return hour.toString().padStart(2, '0');
+  });
+  
+  // Generate minutes in 5-minute intervals
+  const minutes = Array.from({ length: 12 }, (_, i) => {
+    return (i * 5).toString().padStart(2, '0');
+  });
+
+  const teeOffTime = `${selectedHour}:${selectedMinute}`;
 
   useEffect(() => {
     loadProfileData();
