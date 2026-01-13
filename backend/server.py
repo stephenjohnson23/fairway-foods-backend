@@ -228,7 +228,6 @@ async def get_profile(user: dict = Depends(get_current_user)):
         "name": user["name"],
         "displayName": user.get("displayName", user["name"]),
         "phone": user.get("phone", ""),
-        "defaultTeeOffTime": user.get("defaultTeeOffTime", ""),
         "membershipNumber": user.get("membershipNumber", ""),
         "role": user.get("role", "user")
     }
@@ -250,7 +249,6 @@ async def update_profile(profile: UserProfile, user: dict = Depends(get_current_
         "profile": {
             "displayName": updated_user.get("displayName", updated_user["name"]),
             "phone": updated_user.get("phone", ""),
-            "defaultTeeOffTime": updated_user.get("defaultTeeOffTime", ""),
             "membershipNumber": updated_user.get("membershipNumber", "")
         }
     }
