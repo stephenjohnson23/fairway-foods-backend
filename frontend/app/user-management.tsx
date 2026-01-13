@@ -826,6 +826,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999',
   },
+  defaultCourseDisplay: {
+    fontSize: 11,
+    color: '#ff9800',
+    marginTop: 2,
+    fontWeight: '500',
+  },
   roleBadge: {
     paddingHorizontal: 12,
     paddingVertical: 6,
