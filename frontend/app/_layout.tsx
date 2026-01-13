@@ -13,6 +13,7 @@ export default function RootLayout() {
       <Stack.Screen name="orders" />
       <Stack.Screen name="admin" />
       <Stack.Screen name="kitchen" />
+      <Stack.Screen name="cashier" />
     </Stack>
   );
 }
