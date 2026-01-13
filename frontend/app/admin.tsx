@@ -29,12 +29,21 @@ interface MenuItem {
   available: boolean;
 }
 
+interface GolfCourse {
+  id: string;
+  name: string;
+  location: string;
+}
+
 export default function AdminScreen() {
   const router = useRouter();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
+  const [courses, setCourses] = useState<GolfCourse[]>([]);
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('');
+  const [userRole, setUserRole] = useState<string>('');
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -44,27 +53,73 @@ export default function AdminScreen() {
   });
 
   useEffect(() => {
-    checkAdminAccess();
-    fetchMenu();
+    checkAccess();
   }, []);
 
-  const checkAdminAccess = async () => {
+  useEffect(() => {
+    if (selectedCourseId) {
+      fetchMenu();
+    }
+  }, [selectedCourseId]);
+
+  const checkAccess = async () => {
     const userData = await AsyncStorage.getItem('user');
-    if (!userData) {
-      Alert.alert('Error', 'Please login to access admin panel');
+    const token = await AsyncStorage.getItem('token');
+    
+    if (!userData || !token) {
+      Alert.alert('Error', 'Please login to access menu management');
       router.replace('/');
       return;
     }
+    
     const user = JSON.parse(userData);
-    if (user.role !== 'admin') {
-      Alert.alert('Error', 'Admin access required');
+    setUserRole(user.role);
+    
+    if (user.role !== 'admin' && user.role !== 'superuser') {
+      Alert.alert('Error', 'Admin or Super User access required');
       router.back();
+      return;
+    }
+    
+    // Fetch courses the user can manage
+    try {
+      const response = await fetch(`${API_URL}/api/courses/my-courses`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      
+      if (response.ok) {
+        const coursesData = await response.json();
+        setCourses(coursesData);
+        
+        if (coursesData.length > 0) {
+          // Check if there's a previously selected course
+          const savedCourseId = await AsyncStorage.getItem('adminSelectedCourseId');
+          const validCourse = coursesData.find((c: GolfCourse) => c.id === savedCourseId);
+          
+          if (validCourse) {
+            setSelectedCourseId(savedCourseId as string);
+          } else {
+            setSelectedCourseId(coursesData[0].id);
+          }
+        } else {
+          Alert.alert(
+            'No Courses Assigned',
+            'You have not been assigned to any golf courses. Please contact your administrator.',
+            [{ text: 'OK', onPress: () => router.back() }]
+          );
+        }
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to load courses');
     }
   };
 
   const fetchMenu = async () => {
+    if (!selectedCourseId) return;
+    
+    setLoading(true);
     try {
-      const response = await fetch(`${API_URL}/api/menu`);
+      const response = await fetch(`${API_URL}/api/menu?courseId=${selectedCourseId}`);
       if (response.ok) {
         const data = await response.json();
         setMenuItems(data);
@@ -74,6 +129,11 @@ export default function AdminScreen() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCourseChange = async (courseId: string) => {
+    setSelectedCourseId(courseId);
+    await AsyncStorage.setItem('adminSelectedCourseId', courseId);
   };
 
   const openAddModal = () => {
