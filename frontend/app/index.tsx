@@ -25,6 +25,17 @@ export default function LoginScreen() {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    checkCourseSelection();
+  }, []);
+
+  const checkCourseSelection = async () => {
+    const courseId = await AsyncStorage.getItem('selectedCourseId');
+    if (!courseId) {
+      router.replace('/select-course');
+    }
+  };
+
   const handleAuth = async () => {
     if (!email || !password || (!isLogin && !name)) {
       Alert.alert('Error', 'Please fill in all fields');
