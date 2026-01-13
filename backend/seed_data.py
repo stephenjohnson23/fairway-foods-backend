@@ -184,5 +184,6 @@ if __name__ == "__main__":
     create_kitchen()
     create_cashier()
     create_regular_user()
-    create_menu_items()
+    course_ids = create_golf_courses()
+    create_menu_items(course_ids)
     print("Database seeding complete!")
