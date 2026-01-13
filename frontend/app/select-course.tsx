@@ -27,6 +27,7 @@ export default function CourseSelectionScreen() {
   const router = useRouter();
   const [courses, setCourses] = useState<GolfCourse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
     fetchCourses();
@@ -34,12 +35,46 @@ export default function CourseSelectionScreen() {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/courses`);
+      const token = await AsyncStorage.getItem('token');
+      const userData = await AsyncStorage.getItem('user');
+      
+      let response;
+      
+      if (token && userData) {
+        // Logged-in user - fetch their assigned courses
+        const user = JSON.parse(userData);
+        setIsGuest(false);
+        
+        response = await fetch(`${API_URL}/api/courses/my-courses`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+      } else {
+        // Guest - show all courses
+        setIsGuest(true);
+        response = await fetch(`${API_URL}/api/courses`);
+      }
+      
       if (response.ok) {
         const data = await response.json();
         setCourses(data);
+        
+        // If user has no assigned courses, show message
+        if (data.length === 0 && !isGuest) {
+          Alert.alert(
+            'No Courses Assigned',
+            'You have not been assigned to any golf courses. Please contact your administrator.',
+            [{ text: 'OK', onPress: () => router.replace('/') }]
+          );
+        }
       } else {
-        Alert.alert('Error', 'Failed to load golf courses');
+        // If the my-courses endpoint fails (e.g., token expired), fall back to public
+        const publicResponse = await fetch(`${API_URL}/api/courses`);
+        if (publicResponse.ok) {
+          const data = await publicResponse.json();
+          setCourses(data);
+        } else {
+          Alert.alert('Error', 'Failed to load golf courses');
+        }
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to connect to server');
