@@ -132,6 +132,11 @@ def get_admin_user(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=403, detail="Admin access required")
     return user
 
+def get_super_user(user: dict = Depends(get_current_user)):
+    if user.get("role") != "superuser":
+        raise HTTPException(status_code=403, detail="Super user access required")
+    return user
+
 # Auth Endpoints
 @app.post("/api/auth/register")
 async def register(user_data: UserRegister):
