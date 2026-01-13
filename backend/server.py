@@ -99,7 +99,6 @@ class UpdateOrderStatus(BaseModel):
 class UserProfile(BaseModel):
     displayName: Optional[str] = None
     phone: Optional[str] = None
-    defaultTeeOffTime: Optional[str] = None
     membershipNumber: Optional[str] = None
 
 # Helper Functions
