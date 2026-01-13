@@ -72,6 +72,12 @@ export default function CartScreen() {
 
     setLoading(true);
     try {
+      const courseId = await AsyncStorage.getItem('selectedCourseId');
+      if (!courseId) {
+        Alert.alert('Error', 'No golf course selected');
+        return;
+      }
+
       const orderData = {
         items: cart.map((item) => ({
           menuItemId: item.id,
@@ -82,6 +88,7 @@ export default function CartScreen() {
         customerName,
         teeOffTime,
         totalAmount: getTotal(),
+        courseId,
       };
 
       // Check if user is logged in
