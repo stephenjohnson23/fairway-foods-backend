@@ -45,9 +45,9 @@ export default function CartScreen() {
     return hour.toString().padStart(2, '0');
   });
   
-  // Generate minutes in 5-minute intervals
-  const minutes = Array.from({ length: 12 }, (_, i) => {
-    return (i * 5).toString().padStart(2, '0');
+  // Generate minutes (all 60 minutes)
+  const minutes = Array.from({ length: 60 }, (_, i) => {
+    return i.toString().padStart(2, '0');
   });
 
   const teeOffTime = `${selectedHour}:${selectedMinute}`;
