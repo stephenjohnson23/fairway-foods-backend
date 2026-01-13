@@ -68,19 +68,38 @@ export default function LoginScreen() {
         throw new Error(data.detail || 'Authentication failed');
       }
 
-      // Save token and user data
-      await AsyncStorage.setItem('token', data.token);
-      await AsyncStorage.setItem('user', JSON.stringify(data.user));
+      if (isLogin) {
+        // Login successful
+        await AsyncStorage.setItem('token', data.token);
+        await AsyncStorage.setItem('user', JSON.stringify(data.user));
 
-      // Navigate based on role
-      if (data.user.role === 'kitchen') {
-        router.replace('/kitchen');
-      } else if (data.user.role === 'cashier') {
-        router.replace('/cashier');
-      } else if (data.user.role === 'superuser') {
-        router.replace('/user-management');
+        // Navigate based on role
+        if (data.user.role === 'kitchen') {
+          router.replace('/kitchen');
+        } else if (data.user.role === 'cashier') {
+          router.replace('/cashier');
+        } else if (data.user.role === 'superuser') {
+          router.replace('/user-management');
+        } else {
+          router.replace('/menu');
+        }
       } else {
-        router.replace('/menu');
+        // Registration successful - pending approval
+        Alert.alert(
+          'Registration Submitted',
+          data.message || 'Your account is pending approval. You will be notified once approved.',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                setIsLogin(true);
+                setEmail('');
+                setPassword('');
+                setName('');
+              },
+            },
+          ]
+        );
       }
     } catch (error: any) {
       Alert.alert('Error', error.message);
