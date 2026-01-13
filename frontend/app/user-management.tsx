@@ -374,6 +374,9 @@ export default function UserManagementScreen() {
           <Text style={styles.headerSubtitle}>Super Admin Panel</Text>
         </View>
         <View style={styles.headerActions}>
+          <TouchableOpacity onPress={() => router.push('/course-management')} style={styles.coursesButton}>
+            <Ionicons name="golf" size={24} color="#fff" />
+          </TouchableOpacity>
           <TouchableOpacity onPress={openCreateModal} style={styles.addUserButton}>
             <Ionicons name="person-add" size={24} color="#fff" />
           </TouchableOpacity>
