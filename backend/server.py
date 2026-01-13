@@ -10,6 +10,7 @@ import bcrypt
 import jwt
 import os
 from dotenv import load_dotenv
+from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email
 
 load_dotenv()
 
