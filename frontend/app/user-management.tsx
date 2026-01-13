@@ -111,6 +111,7 @@ export default function UserManagementScreen() {
     setSelectedUser(user);
     setSelectedRole(user.role);
     setSelectedCourses(user.courseIds || []);
+    setSelectedDefaultCourse(user.defaultCourseId || '');
     setModalVisible(true);
   };
 
