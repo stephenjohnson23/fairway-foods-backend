@@ -218,9 +218,14 @@ export default function CashierDashboard() {
             Total Orders: {filteredOrders.length}
           </Text>
         </View>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <Ionicons name="log-out" size={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity onPress={() => router.push('/profile')} style={styles.profileButton}>
+            <Ionicons name="person-circle" size={24} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Ionicons name="log-out" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.statsContainer}>
