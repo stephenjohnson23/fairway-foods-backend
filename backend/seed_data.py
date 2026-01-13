@@ -240,6 +240,7 @@ def create_menu_items(course_ids):
 if __name__ == "__main__":
     print("Seeding database...")
     create_admin()
+    create_super_user()
     create_kitchen()
     create_cashier()
     create_regular_user()
