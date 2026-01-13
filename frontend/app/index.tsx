@@ -104,28 +104,34 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.content}>
-          <Text style={styles.title}>Golf Meal Ordering</Text>
-          
-          {selectedCourseName && (
-            <View style={styles.courseContainer}>
-              <View style={styles.courseInfo}>
-                <Ionicons name="golf" size={16} color="#2e7d32" />
-                <Text style={styles.courseText}>{selectedCourseName}</Text>
+      <ImageBackground
+        source={{ uri: 'https://images.unsplash.com/photo-1606443192517-919653213206?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3MjQyMTd8MHwxfHNlYXJjaHwyfHxnb2xmJTIwY291cnNlJTIwcmVzdGF1cmFudHxlbnwwfHx8Z3JlZW58MTc2ODI5MDMwOHww&ixlib=rb-4.1.0&q=85' }}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        <View style={styles.overlay} />
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.content}>
+            <Text style={styles.title}>Fairway Foods</Text>
+            
+            {selectedCourseName && (
+              <View style={styles.courseContainer}>
+                <View style={styles.courseInfo}>
+                  <Ionicons name="golf" size={16} color="#fff" />
+                  <Text style={styles.courseText}>{selectedCourseName}</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.changeCourseButton}
+                  onPress={handleChangeCourse}
+                >
+                  <Text style={styles.changeCourseText}>Change Course</Text>
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                style={styles.changeCourseButton}
-                onPress={handleChangeCourse}
-              >
-                <Text style={styles.changeCourseText}>Change Course</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          
-          <Text style={styles.subtitle}>
-            {isLogin ? 'Login to your account' : 'Create new account'}
-          </Text>
+            )}
+            
+            <Text style={styles.subtitle}>
+              {isLogin ? 'Login to your account' : 'Create new account'}
+            </Text>
 
           {!isLogin && (
             <View style={styles.inputContainer}>
