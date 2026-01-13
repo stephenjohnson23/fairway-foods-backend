@@ -249,12 +249,75 @@ export default function CartScreen() {
 
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>Tee-Off Time</Text>
-                <TextInput
-                  style={styles.input}
-                  value={teeOffTime}
-                  onChangeText={setTeeOffTime}
-                  placeholder="e.g., 10:30 AM or 2:00 PM"
-                />
+                <TouchableOpacity
+                  style={styles.timePickerButton}
+                  onPress={() => setShowTimePicker(!showTimePicker)}
+                >
+                  <Ionicons name="time-outline" size={20} color="#2e7d32" />
+                  <Text style={styles.timePickerText}>{teeOffTime}</Text>
+                  <Ionicons name={showTimePicker ? "chevron-up" : "chevron-down"} size={20} color="#666" />
+                </TouchableOpacity>
+                
+                {showTimePicker && (
+                  <View style={styles.timePickerContainer}>
+                    <View style={styles.timePickerRow}>
+                      <View style={styles.timeColumn}>
+                        <Text style={styles.timeColumnLabel}>Hour</Text>
+                        <ScrollView style={styles.timeScroll} showsVerticalScrollIndicator={false}>
+                          {hours.map((hour) => (
+                            <TouchableOpacity
+                              key={hour}
+                              style={[
+                                styles.timeOption,
+                                selectedHour === hour && styles.timeOptionSelected
+                              ]}
+                              onPress={() => setSelectedHour(hour)}
+                            >
+                              <Text style={[
+                                styles.timeOptionText,
+                                selectedHour === hour && styles.timeOptionTextSelected
+                              ]}>
+                                {hour}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </ScrollView>
+                      </View>
+                      
+                      <Text style={styles.timeSeparator}>:</Text>
+                      
+                      <View style={styles.timeColumn}>
+                        <Text style={styles.timeColumnLabel}>Min</Text>
+                        <ScrollView style={styles.timeScroll} showsVerticalScrollIndicator={false}>
+                          {minutes.map((minute) => (
+                            <TouchableOpacity
+                              key={minute}
+                              style={[
+                                styles.timeOption,
+                                selectedMinute === minute && styles.timeOptionSelected
+                              ]}
+                              onPress={() => setSelectedMinute(minute)}
+                            >
+                              <Text style={[
+                                styles.timeOptionText,
+                                selectedMinute === minute && styles.timeOptionTextSelected
+                              ]}>
+                                {minute}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </ScrollView>
+                      </View>
+                    </View>
+                    
+                    <TouchableOpacity
+                      style={styles.confirmTimeButton}
+                      onPress={() => setShowTimePicker(false)}
+                    >
+                      <Text style={styles.confirmTimeText}>Confirm Time</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             </View>
 
