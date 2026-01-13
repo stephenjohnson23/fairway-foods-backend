@@ -212,7 +212,34 @@ def get_admin_or_super_user(user: dict = Depends(get_current_user)):
 # Golf Course Endpoints
 @app.get("/api/courses")
 async def get_courses():
+    """Get all active courses (for guests/public)"""
     courses = list(golfcourses_collection.find({"active": True}))
+    for course in courses:
+        course["id"] = str(course["_id"])
+        del course["_id"]
+    return courses
+
+@app.get("/api/courses/my-courses")
+async def get_my_courses(user: dict = Depends(get_current_user)):
+    """Get courses assigned to the current user"""
+    role = user.get("role", "user")
+    
+    # Super users can see all courses
+    if role == "superuser":
+        courses = list(golfcourses_collection.find({"active": True}))
+    else:
+        # Other users only see their assigned courses
+        user_course_ids = user.get("courseIds", [])
+        if not user_course_ids:
+            return []
+        
+        # Convert string IDs to ObjectIds for query
+        object_ids = [ObjectId(cid) for cid in user_course_ids if ObjectId.is_valid(cid)]
+        courses = list(golfcourses_collection.find({
+            "_id": {"$in": object_ids},
+            "active": True
+        }))
+    
     for course in courses:
         course["id"] = str(course["_id"])
         del course["_id"]
