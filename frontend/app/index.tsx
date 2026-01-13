@@ -297,12 +297,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: 'rgba(255, 255, 255, 0.3)',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    color: '#333',
   },
   primaryButton: {
     backgroundColor: '#2e7d32',
@@ -310,6 +311,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   buttonText: {
     color: '#fff',
