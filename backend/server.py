@@ -185,13 +185,26 @@ async def login(user_data: UserLogin):
     
     token = create_access_token({"user_id": str(user["_id"])})
     
+    # Get default course info if set
+    default_course = None
+    default_course_id = user.get("defaultCourseId")
+    if default_course_id:
+        course = golfcourses_collection.find_one({"_id": ObjectId(default_course_id), "active": True})
+        if course:
+            default_course = {
+                "id": str(course["_id"]),
+                "name": course["name"]
+            }
+    
     return {
         "token": token,
         "user": {
             "id": str(user["_id"]),
             "email": user["email"],
             "name": user["name"],
-            "role": user.get("role", "user")
+            "role": user.get("role", "user"),
+            "defaultCourseId": user.get("defaultCourseId"),
+            "defaultCourse": default_course
         }
     }
 
