@@ -15,6 +15,7 @@ export default function RootLayout() {
       <Stack.Screen name="admin" />
       <Stack.Screen name="kitchen" />
       <Stack.Screen name="cashier" />
+      <Stack.Screen name="user-management" />
     </Stack>
   );
 }
