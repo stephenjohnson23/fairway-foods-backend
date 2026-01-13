@@ -45,12 +45,14 @@ export default function UserManagementScreen() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedRole, setSelectedRole] = useState('');
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
+  const [selectedDefaultCourse, setSelectedDefaultCourse] = useState<string>('');
   
   // New user creation state
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserName, setNewUserName] = useState('');
   const [newUserRole, setNewUserRole] = useState('user');
   const [newUserCourses, setNewUserCourses] = useState<string[]>([]);
+  const [newUserDefaultCourse, setNewUserDefaultCourse] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'all' | 'pending'>('all');
   const [rejectModalVisible, setRejectModalVisible] = useState(false);
   const [userToReject, setUserToReject] = useState<User | null>(null);
