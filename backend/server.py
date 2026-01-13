@@ -204,6 +204,11 @@ async def get_me(user: dict = Depends(get_current_user)):
         "role": user.get("role", "user")
     }
 
+def get_admin_or_super_user(user: dict = Depends(get_current_user)):
+    if user.get("role") not in ["admin", "superuser"]:
+        raise HTTPException(status_code=403, detail="Admin or Super user access required")
+    return user
+
 # Golf Course Endpoints
 @app.get("/api/courses")
 async def get_courses():
@@ -213,8 +218,17 @@ async def get_courses():
         del course["_id"]
     return courses
 
+@app.get("/api/courses/all")
+async def get_all_courses(user: dict = Depends(get_super_user)):
+    """Get all courses including inactive ones (Super User only)"""
+    courses = list(golfcourses_collection.find())
+    for course in courses:
+        course["id"] = str(course["_id"])
+        del course["_id"]
+    return courses
+
 @app.post("/api/courses")
-async def create_course(course: GolfCourse, user: dict = Depends(get_admin_user)):
+async def create_course(course: GolfCourse, user: dict = Depends(get_admin_or_super_user)):
     course_dict = course.dict()
     course_dict["createdAt"] = datetime.utcnow()
     result = golfcourses_collection.insert_one(course_dict)
@@ -223,7 +237,7 @@ async def create_course(course: GolfCourse, user: dict = Depends(get_admin_user)
     return course_dict
 
 @app.put("/api/courses/{course_id}")
-async def update_course(course_id: str, course: GolfCourseUpdate, user: dict = Depends(get_admin_user)):
+async def update_course(course_id: str, course: GolfCourseUpdate, user: dict = Depends(get_admin_or_super_user)):
     update_data = {k: v for k, v in course.dict().items() if v is not None}
     if not update_data:
         raise HTTPException(status_code=400, detail="No data to update")
@@ -242,7 +256,7 @@ async def update_course(course_id: str, course: GolfCourseUpdate, user: dict = D
     return updated_course
 
 @app.delete("/api/courses/{course_id}")
-async def delete_course(course_id: str, user: dict = Depends(get_admin_user)):
+async def delete_course(course_id: str, user: dict = Depends(get_admin_or_super_user)):
     result = golfcourses_collection.delete_one({"_id": ObjectId(course_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Course not found")
