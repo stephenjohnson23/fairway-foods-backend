@@ -50,11 +50,24 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+class GolfCourse(BaseModel):
+    name: str
+    location: str
+    description: Optional[str] = None
+    active: bool = True
+
+class GolfCourseUpdate(BaseModel):
+    name: Optional[str] = None
+    location: Optional[str] = None
+    description: Optional[str] = None
+    active: Optional[bool] = None
+
 class MenuItem(BaseModel):
     name: str
     description: str
     price: float
     category: str
+    courseId: str
     image: Optional[str] = None
     available: bool = True
 
