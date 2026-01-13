@@ -605,7 +605,7 @@ export default function UserManagementScreen() {
               <View style={styles.noteBox}>
                 <Ionicons name="information-circle" size={20} color="#2196f3" />
                 <Text style={styles.noteText}>
-                  Default password "change123" will be generated. Share credentials with the user.
+                  Default password &quot;change123&quot; will be generated. Share credentials with the user.
                 </Text>
               </View>
 
