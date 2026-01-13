@@ -942,6 +942,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#2e7d32',
     borderColor: '#2e7d32',
   },
+  defaultCourseOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    marginBottom: 8,
+    backgroundColor: '#fff',
+  },
+  defaultCourseOptionSelected: {
+    borderColor: '#2e7d32',
+    backgroundColor: '#e8f5e9',
+  },
+  defaultCourseInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  defaultCourseText: {
+    fontSize: 14,
+    color: '#333',
+  },
   saveButton: {
     backgroundColor: '#9c27b0',
     padding: 16,
