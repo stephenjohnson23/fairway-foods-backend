@@ -108,6 +108,56 @@ export default function ProfileScreen() {
     }
   };
 
+  const handleChangePassword = async () => {
+    // Validation
+    if (!passwordForm.currentPassword) {
+      Alert.alert('Error', 'Please enter your current password');
+      return;
+    }
+    if (!passwordForm.newPassword) {
+      Alert.alert('Error', 'Please enter a new password');
+      return;
+    }
+    if (passwordForm.newPassword.length < 6) {
+      Alert.alert('Error', 'New password must be at least 6 characters');
+      return;
+    }
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      Alert.alert('Error', 'New passwords do not match');
+      return;
+    }
+
+    setSavingPassword(true);
+    try {
+      const token = await AsyncStorage.getItem('token');
+      
+      const response = await fetch(`${API_URL}/api/profile/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword,
+        }),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'Password changed successfully');
+        setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        setShowPasswordSection(false);
+      } else {
+        const error = await response.json();
+        Alert.alert('Error', error.detail || 'Failed to change password');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to change password');
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
   const getRoleDisplay = (role: string) => {
     switch (role) {
       case 'superuser': return 'Super User';
