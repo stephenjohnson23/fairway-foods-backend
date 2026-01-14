@@ -251,30 +251,53 @@ export default function AdminPanelScreen() {
   const handleSaveUser = async () => {
     const token = await AsyncStorage.getItem('token');
     const baseUrl = getBaseUrl();
+    
+    // Validation
+    if (!userForm.email.trim()) {
+      Alert.alert('Error', 'Please enter an email address');
+      return;
+    }
+    if (!userForm.name.trim()) {
+      Alert.alert('Error', 'Please enter a name');
+      return;
+    }
+    
     try {
       if (editingItem) {
-        // Update existing user
-        await fetch(`${baseUrl}/api/users/${editingItem.id}/role`, {
+        // Update existing user - use the comprehensive update endpoint
+        const response = await fetch(`${baseUrl}/api/users/${editingItem.id}`, {
           method: 'PUT',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ role: userForm.role }),
+          body: JSON.stringify({
+            email: userForm.email,
+            name: userForm.name,
+            role: userForm.role,
+            courseIds: userForm.courseIds,
+          }),
         });
-        await fetch(`${baseUrl}/api/users/${editingItem.id}/courses`, {
-          method: 'PUT',
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ courseIds: userForm.courseIds }),
-        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          Alert.alert('Error', error.detail || 'Failed to update user');
+          return;
+        }
       } else {
         // Create new user
-        await fetch(`${baseUrl}/api/users/create`, {
+        const response = await fetch(`${baseUrl}/api/users/create`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify(userForm),
         });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          Alert.alert('Error', error.detail || 'Failed to create user');
+          return;
+        }
       }
       setUserModalVisible(false);
       loadAllData();
-      Alert.alert('Success', 'User saved');
+      Alert.alert('Success', editingItem ? 'User updated' : 'User created');
     } catch (error) {
       Alert.alert('Error', 'Failed to save user');
     }
