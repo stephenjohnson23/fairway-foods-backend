@@ -1902,4 +1902,45 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#ddd',
   },
+  menuItemsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 8,
+    maxHeight: 200,
+  },
+  menuItemCard: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    padding: 10,
+    width: 140,
+    alignItems: 'center',
+  },
+  menuItemName: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#333',
+    textAlign: 'center',
+  },
+  menuItemPrice: {
+    fontSize: 12,
+    color: '#2e7d32',
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  menuItemAddBtn: {
+    marginTop: 6,
+  },
+  cartItemRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  cartItemActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
 });
