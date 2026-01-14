@@ -262,19 +262,30 @@ export default function AdminPanelScreen() {
       Alert.alert('Error', 'Please enter a name');
       return;
     }
+    // Password required for new users
+    if (!editingItem && !userForm.password.trim()) {
+      Alert.alert('Error', 'Please enter a password');
+      return;
+    }
     
     try {
       if (editingItem) {
         // Update existing user - use the comprehensive update endpoint
+        const updateData: any = {
+          email: userForm.email,
+          name: userForm.name,
+          role: userForm.role,
+          courseIds: userForm.courseIds,
+        };
+        // Only include password if user entered one
+        if (userForm.password.trim()) {
+          updateData.password = userForm.password;
+        }
+        
         const response = await fetch(`${baseUrl}/api/users/${editingItem.id}`, {
           method: 'PUT',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: userForm.email,
-            name: userForm.name,
-            role: userForm.role,
-            courseIds: userForm.courseIds,
-          }),
+          body: JSON.stringify(updateData),
         });
         
         if (!response.ok) {
