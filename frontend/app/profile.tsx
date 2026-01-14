@@ -22,12 +22,19 @@ export default function ProfileScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState({
     displayName: '',
     phone: '',
     membershipNumber: '',
   });
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [showPasswordSection, setShowPasswordSection] = useState(false);
 
   useEffect(() => {
     loadProfile();
