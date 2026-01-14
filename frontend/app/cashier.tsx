@@ -209,6 +209,18 @@ export default function CashierDashboard() {
             </TouchableOpacity>
           </View>
         )}
+        
+        {item.status === 'ready' && (
+          <View style={styles.actionButtons}>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.undoButton]}
+              onPress={() => updateOrderStatus(item.id, 'preparing')}
+            >
+              <Ionicons name="arrow-undo" size={18} color="#fff" />
+              <Text style={styles.actionButtonText}>Undo</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   };
