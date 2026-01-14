@@ -220,3 +220,62 @@ The Fairway Foods Team
     """
     
     await send_email(user_email, subject, html_content, text_content)
+
+
+async def send_password_reset_email(user_email: str, user_name: str, reset_code: str):
+    """Send password reset code to user"""
+    
+    subject = "Reset Your Fairway Foods Password"
+    
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #2e7d32;">Password Reset Request</h2>
+                <p>Hi {user_name},</p>
+                
+                <p>We received a request to reset your Fairway Foods password.</p>
+                
+                <div style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                    <p style="margin: 0; font-size: 14px; color: #666;">Your reset code is:</p>
+                    <p style="margin: 10px 0; font-size: 32px; font-weight: bold; color: #1976d2; letter-spacing: 4px;">{reset_code}</p>
+                    <p style="margin: 0; font-size: 12px; color: #999;">This code expires in 15 minutes</p>
+                </div>
+                
+                <p>Enter this code in the app to reset your password.</p>
+                
+                <p style="color: #f57c00;"><strong>If you didn't request this reset, please ignore this email.</strong></p>
+                
+                <p style="margin-top: 30px;">
+                    Best regards,<br>
+                    <strong>The Fairway Foods Team</strong>
+                </p>
+                
+                <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px;">
+                    This is an automated message from Fairway Foods.
+                </p>
+            </div>
+        </body>
+    </html>
+    """
+    
+    text_content = f"""
+Password Reset Request
+
+Hi {user_name},
+
+We received a request to reset your Fairway Foods password.
+
+Your reset code is: {reset_code}
+
+This code expires in 15 minutes.
+
+Enter this code in the app to reset your password.
+
+If you didn't request this reset, please ignore this email.
+
+Best regards,
+The Fairway Foods Team
+    """
+    
+    return await send_email(user_email, subject, html_content, text_content)
