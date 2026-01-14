@@ -393,6 +393,18 @@ const styles = StyleSheet.create({
     color: '#2e7d32',
     fontSize: 14,
   },
+  forgotPasswordButton: {
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  forgotPasswordText: {
+    color: '#fff',
+    fontSize: 14,
+    textDecorationLine: 'underline',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
