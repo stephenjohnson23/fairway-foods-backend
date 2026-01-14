@@ -108,7 +108,9 @@ export default function AdminPanelScreen() {
   const [userForm, setUserForm] = useState({ email: '', name: '', role: 'user', courseIds: [] as string[] });
   const [courseForm, setCourseForm] = useState({ name: '', location: '', description: '', active: true });
   const [menuForm, setMenuForm] = useState({ name: '', description: '', price: '', category: '', available: true });
-  const [orderForm, setOrderForm] = useState({ customerName: '', teeOffTime: '', status: 'pending' });
+  const [orderForm, setOrderForm] = useState({ customerName: '', teeOffTime: '', status: 'pending', courseId: '' });
+  const [orderCartItems, setOrderCartItems] = useState<any[]>([]);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
 
   useEffect(() => {
     checkAccess();
