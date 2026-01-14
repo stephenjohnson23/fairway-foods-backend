@@ -180,28 +180,7 @@ export default function CashierDashboard() {
           ))}
         </View>
 
-        {item.status !== 'ready' && (
-          <View style={styles.actionButtons}>
-            {item.status === 'pending' && (
-              <TouchableOpacity
-                style={[styles.actionButton, styles.preparingButton]}
-                onPress={() => updateOrderStatus(item.id, 'preparing')}
-              >
-                <Text style={styles.actionButtonText}>Start Preparing</Text>
-              </TouchableOpacity>
-            )}
-            {item.status === 'preparing' && (
-              <TouchableOpacity
-                style={[styles.actionButton, styles.readyButton]}
-                onPress={() => updateOrderStatus(item.id, 'ready')}
-              >
-                <Text style={styles.actionButtonText}>Mark as Ready</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
-        
-        {item.status === 'ready' && (
+        {item.status === 'pending' && (
           <View style={styles.actionButtons}>
             <TouchableOpacity
               style={[styles.actionButton, styles.capturedButton]}
@@ -209,6 +188,17 @@ export default function CashierDashboard() {
             >
               <Ionicons name="checkmark-circle" size={20} color="#fff" />
               <Text style={styles.actionButtonText}>Captured</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        
+        {item.status === 'preparing' && (
+          <View style={styles.actionButtons}>
+            <TouchableOpacity
+              style={[styles.actionButton, styles.readyButton]}
+              onPress={() => updateOrderStatus(item.id, 'ready')}
+            >
+              <Text style={styles.actionButtonText}>Mark as Ready</Text>
             </TouchableOpacity>
           </View>
         )}
