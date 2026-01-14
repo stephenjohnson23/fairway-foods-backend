@@ -9,8 +9,10 @@ from bson import ObjectId
 import bcrypt
 import jwt
 import os
+import random
+import string
 from dotenv import load_dotenv
-from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email
+from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email, send_password_reset_email
 
 load_dotenv()
 
