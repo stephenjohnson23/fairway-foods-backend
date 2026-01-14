@@ -913,9 +913,27 @@ export default function AdminPanelScreen() {
     <View style={styles.contentSection}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Orders</Text>
-        <TouchableOpacity style={styles.refreshBtn} onPress={loadAllData}>
-          <Ionicons name="refresh" size={20} color="#666" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: 12 }}>
+          <TouchableOpacity style={styles.refreshBtn} onPress={loadAllData}>
+            <Ionicons name="refresh" size={20} color="#666" />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.addButton}
+            onPress={() => {
+              setIsCreatingOrder(true);
+              setEditingItem(null);
+              setOrderForm({ customerName: '', teeOffTime: '', status: 'pending', courseId: courses[0]?.id || '' });
+              setOrderCartItems([]);
+              if (courses[0]?.id) {
+                loadMenuForCourse(courses[0].id);
+              }
+              setOrderModalVisible(true);
+            }}
+          >
+            <Ionicons name="add" size={20} color="#fff" />
+            <Text style={styles.addButtonText}>Create Order</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       
       <View style={styles.tableContainer}>
