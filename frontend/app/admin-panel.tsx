@@ -176,8 +176,12 @@ export default function AdminPanelScreen() {
   };
 
   const loadMenuItems = async () => {
+    if (!selectedCourseId) return;
+    
+    const baseUrl = API_URL || window.location.origin;
+    
     try {
-      const response = await fetch(`${API_URL}/api/menu?courseId=${selectedCourseId}`);
+      const response = await fetch(`${baseUrl}/api/menu?courseId=${selectedCourseId}`);
       if (response.ok) {
         setMenuItems(await response.json());
       }
