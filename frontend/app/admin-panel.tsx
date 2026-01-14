@@ -192,8 +192,9 @@ export default function AdminPanelScreen() {
   // User Management Functions
   const handleApproveUser = async (userId: string) => {
     const token = await AsyncStorage.getItem('token');
+    const baseUrl = getBaseUrl();
     try {
-      const response = await fetch(`${API_URL}/api/users/${userId}/approve`, {
+      const response = await fetch(`${baseUrl}/api/users/${userId}/approve`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
       });
@@ -208,8 +209,9 @@ export default function AdminPanelScreen() {
 
   const handleRejectUser = async (userId: string) => {
     const token = await AsyncStorage.getItem('token');
+    const baseUrl = getBaseUrl();
     try {
-      const response = await fetch(`${API_URL}/api/users/${userId}/reject`, {
+      const response = await fetch(`${baseUrl}/api/users/${userId}/reject`, {
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -228,22 +230,23 @@ export default function AdminPanelScreen() {
 
   const handleSaveUser = async () => {
     const token = await AsyncStorage.getItem('token');
+    const baseUrl = getBaseUrl();
     try {
       if (editingItem) {
         // Update existing user
-        await fetch(`${API_URL}/api/users/${editingItem.id}/role`, {
+        await fetch(`${baseUrl}/api/users/${editingItem.id}/role`, {
           method: 'PUT',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ role: userForm.role }),
         });
-        await fetch(`${API_URL}/api/users/${editingItem.id}/courses`, {
+        await fetch(`${baseUrl}/api/users/${editingItem.id}/courses`, {
           method: 'PUT',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ courseIds: userForm.courseIds }),
         });
       } else {
         // Create new user
-        await fetch(`${API_URL}/api/users/create`, {
+        await fetch(`${baseUrl}/api/users/create`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
           body: JSON.stringify(userForm),
@@ -260,8 +263,9 @@ export default function AdminPanelScreen() {
   // Course Management Functions
   const handleSaveCourse = async () => {
     const token = await AsyncStorage.getItem('token');
+    const baseUrl = getBaseUrl();
     try {
-      const url = editingItem ? `${API_URL}/api/courses/${editingItem.id}` : `${API_URL}/api/courses`;
+      const url = editingItem ? `${baseUrl}/api/courses/${editingItem.id}` : `${baseUrl}/api/courses`;
       const method = editingItem ? 'PUT' : 'POST';
       
       const response = await fetch(url, {
@@ -288,7 +292,8 @@ export default function AdminPanelScreen() {
         style: 'destructive',
         onPress: async () => {
           const token = await AsyncStorage.getItem('token');
-          await fetch(`${API_URL}/api/courses/${courseId}`, {
+          const baseUrl = getBaseUrl();
+          await fetch(`${baseUrl}/api/courses/${courseId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` },
           });
@@ -301,8 +306,9 @@ export default function AdminPanelScreen() {
   // Menu Management Functions
   const handleSaveMenuItem = async () => {
     const token = await AsyncStorage.getItem('token');
+    const baseUrl = getBaseUrl();
     try {
-      const url = editingItem ? `${API_URL}/api/menu/${editingItem.id}` : `${API_URL}/api/menu`;
+      const url = editingItem ? `${baseUrl}/api/menu/${editingItem.id}` : `${baseUrl}/api/menu`;
       const method = editingItem ? 'PUT' : 'POST';
       
       const data = {
@@ -335,7 +341,8 @@ export default function AdminPanelScreen() {
         style: 'destructive',
         onPress: async () => {
           const token = await AsyncStorage.getItem('token');
-          await fetch(`${API_URL}/api/menu/${itemId}`, {
+          const baseUrl = getBaseUrl();
+          await fetch(`${baseUrl}/api/menu/${itemId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` },
           });
@@ -348,8 +355,9 @@ export default function AdminPanelScreen() {
   // Order Management
   const handleUpdateOrderStatus = async (orderId: string, status: string) => {
     const token = await AsyncStorage.getItem('token');
+    const baseUrl = getBaseUrl();
     try {
-      await fetch(`${API_URL}/api/orders/${orderId}/status`, {
+      await fetch(`${baseUrl}/api/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
