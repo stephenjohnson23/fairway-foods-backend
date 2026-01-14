@@ -22,7 +22,23 @@ const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || Constants.expoConfig?.ext
 
 const getBaseUrl = () => {
   if (Platform.OS === 'web') {
-    return window.location.origin;
+    // On web, use the same origin which should proxy /api/* requests
+    // But if we're on localhost development, we need to handle it differently
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    
+    // If running on the preview URL, use that origin (it has proper proxy)
+    if (origin.includes('preview.emergentagent.com') || origin.includes('.ngrok')) {
+      return origin;
+    }
+    
+    // On localhost, the expo dev server doesn't proxy, so use the backend URL directly
+    // The EXPO_PUBLIC_BACKEND_URL should have the proxy URL
+    if (API_URL && API_URL.includes('preview.emergentagent.com')) {
+      return API_URL;
+    }
+    
+    // Fallback to origin
+    return origin;
   }
   return API_URL || 'http://localhost:8001';
 };
