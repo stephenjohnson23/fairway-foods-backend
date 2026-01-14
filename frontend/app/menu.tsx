@@ -99,22 +99,34 @@ export default function MenuScreen() {
   };
 
   const handleLogout = async () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            await AsyncStorage.removeItem('token');
-            await AsyncStorage.removeItem('user');
-            router.replace('/');
+    if (Platform.OS === 'web') {
+      // Use window.confirm for web
+      const confirmed = window.confirm('Are you sure you want to logout?');
+      if (confirmed) {
+        await AsyncStorage.removeItem('token');
+        await AsyncStorage.removeItem('user');
+        await AsyncStorage.removeItem('selectedCourseId');
+        router.replace('/');
+      }
+    } else {
+      Alert.alert(
+        'Logout',
+        'Are you sure you want to logout?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Logout',
+            style: 'destructive',
+            onPress: async () => {
+              await AsyncStorage.removeItem('token');
+              await AsyncStorage.removeItem('user');
+              await AsyncStorage.removeItem('selectedCourseId');
+              router.replace('/');
+            },
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   const handleSwitchCourse = () => {
