@@ -1970,4 +1970,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: '#e3f2fd',
+    borderRadius: 4,
+  },
+  actionBtnText: {
+    fontSize: 12,
+    color: '#1976d2',
+    fontWeight: '500',
+  },
+  deleteBtn: {
+    backgroundColor: '#ffebee',
+    paddingHorizontal: 6,
+  },
 });
