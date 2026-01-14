@@ -1,12 +1,17 @@
 import os
 import resend
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()
+# Explicitly load .env from the backend directory
+env_path = Path(__file__).parent / '.env'
+load_dotenv(env_path)
 
 # Configure Resend
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 FROM_EMAIL = os.getenv("FROM_EMAIL", "onboarding@resend.dev")
+
+print(f"Email service initialized - API Key present: {bool(RESEND_API_KEY)}")
 
 # Initialize Resend
 if RESEND_API_KEY:
