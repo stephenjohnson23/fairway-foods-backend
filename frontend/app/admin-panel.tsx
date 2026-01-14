@@ -838,7 +838,7 @@ export default function AdminPanelScreen() {
                 {order.status.toUpperCase()}
               </Text>
             </View>
-            <View style={[styles.tableCell, { flex: 2, flexDirection: 'row', gap: 4 }]}>
+            <View style={[styles.tableCell, { flex: 2, flexDirection: 'row', gap: 4, alignItems: 'center' }]}>
               {order.status === 'pending' && (
                 <TouchableOpacity 
                   style={[styles.statusBtn, { backgroundColor: '#1976d2' }]}
@@ -855,6 +855,22 @@ export default function AdminPanelScreen() {
                   <Text style={styles.statusBtnText}>Ready</Text>
                 </TouchableOpacity>
               )}
+              <TouchableOpacity 
+                onPress={() => {
+                  setEditingItem(order);
+                  setOrderForm({ 
+                    customerName: order.customerName, 
+                    teeOffTime: order.teeOffTime, 
+                    status: order.status 
+                  });
+                  setOrderModalVisible(true);
+                }}
+              >
+                <Ionicons name="create" size={18} color="#1976d2" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleDeleteOrder(order.id)}>
+                <Ionicons name="trash" size={18} color="#f44336" />
+              </TouchableOpacity>
             </View>
           </View>
         ))}
