@@ -39,7 +39,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "EXPO_BACKEND_URL": "https://fairwayfoods.preview.emergentagent.com"
+      "EXPO_BACKEND_URL": "https://golf-order-system.preview.emergentagent.com"
     }
   }
 }
