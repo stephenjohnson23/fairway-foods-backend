@@ -1053,63 +1053,65 @@ export default function AdminPanelScreen() {
       {/* User Modal */}
       <Modal visible={userModalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { maxHeight: '80%' }]}>
             <Text style={styles.modalTitle}>{editingItem ? 'Edit User' : 'Add User'}</Text>
             
-            <Text style={styles.inputLabel}>Email</Text>
-            <TextInput
-              style={styles.modalInput}
-              value={userForm.email}
-              onChangeText={(t) => setUserForm({...userForm, email: t})}
-              placeholder="email@example.com"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            <Text style={styles.inputLabel}>Name</Text>
-            <TextInput
-              style={styles.modalInput}
-              value={userForm.name}
-              onChangeText={(t) => setUserForm({...userForm, name: t})}
-              placeholder="Full Name"
-            />
+            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true}>
+              <Text style={styles.inputLabel}>Email</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={userForm.email}
+                onChangeText={(t) => setUserForm({...userForm, email: t})}
+                placeholder="email@example.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+              <Text style={styles.inputLabel}>Name</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={userForm.name}
+                onChangeText={(t) => setUserForm({...userForm, name: t})}
+                placeholder="Full Name"
+              />
+              
+              <Text style={styles.inputLabel}>Role</Text>
+              <View style={styles.roleSelector}>
+                {['user', 'admin', 'kitchen', 'cashier'].map((r) => (
+                  <TouchableOpacity
+                    key={r}
+                    style={[styles.rolePill, userForm.role === r && styles.rolePillActive]}
+                    onPress={() => setUserForm({...userForm, role: r})}
+                  >
+                    <Text style={[styles.rolePillText, userForm.role === r && styles.rolePillTextActive]}>
+                      {r.toUpperCase()}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              
+              <Text style={styles.inputLabel}>Assigned Courses</Text>
+              <View style={styles.coursesCheckboxes}>
+                {courses.map((c) => (
+                  <TouchableOpacity
+                    key={c.id}
+                    style={styles.checkboxRow}
+                    onPress={() => {
+                      const ids = userForm.courseIds.includes(c.id)
+                        ? userForm.courseIds.filter(id => id !== c.id)
+                        : [...userForm.courseIds, c.id];
+                      setUserForm({...userForm, courseIds: ids});
+                    }}
+                  >
+                    <View style={[styles.checkbox, userForm.courseIds.includes(c.id) && styles.checkboxChecked]}>
+                      {userForm.courseIds.includes(c.id) && <Ionicons name="checkmark" size={14} color="#fff" />}
+                    </View>
+                    <Text style={styles.checkboxLabel}>{c.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
             
-            <Text style={styles.inputLabel}>Role</Text>
-            <View style={styles.roleSelector}>
-              {['user', 'admin', 'kitchen', 'cashier'].map((r) => (
-                <TouchableOpacity
-                  key={r}
-                  style={[styles.rolePill, userForm.role === r && styles.rolePillActive]}
-                  onPress={() => setUserForm({...userForm, role: r})}
-                >
-                  <Text style={[styles.rolePillText, userForm.role === r && styles.rolePillTextActive]}>
-                    {r.toUpperCase()}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            
-            <Text style={styles.inputLabel}>Assigned Courses</Text>
-            <View style={styles.coursesCheckboxes}>
-              {courses.map((c) => (
-                <TouchableOpacity
-                  key={c.id}
-                  style={styles.checkboxRow}
-                  onPress={() => {
-                    const ids = userForm.courseIds.includes(c.id)
-                      ? userForm.courseIds.filter(id => id !== c.id)
-                      : [...userForm.courseIds, c.id];
-                    setUserForm({...userForm, courseIds: ids});
-                  }}
-                >
-                  <View style={[styles.checkbox, userForm.courseIds.includes(c.id) && styles.checkboxChecked]}>
-                    {userForm.courseIds.includes(c.id) && <Ionicons name="checkmark" size={14} color="#fff" />}
-                  </View>
-                  <Text style={styles.checkboxLabel}>{c.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            
-            <View style={styles.modalActions}>
+            <View style={[styles.modalActions, { marginTop: 16, borderTopWidth: 1, borderTopColor: '#eee', paddingTop: 16 }]}>
               <TouchableOpacity style={styles.cancelBtn} onPress={() => setUserModalVisible(false)}>
                 <Text style={styles.cancelBtnText}>Cancel</Text>
               </TouchableOpacity>
