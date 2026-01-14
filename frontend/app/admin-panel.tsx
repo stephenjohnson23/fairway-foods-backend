@@ -1213,67 +1213,153 @@ export default function AdminPanelScreen() {
         </View>
       </Modal>
 
-      {/* Order Edit Modal */}
+      {/* Order Edit/Create Modal */}
       <Modal visible={orderModalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Edit Order</Text>
-            
-            <Text style={styles.inputLabel}>Customer Name</Text>
-            <TextInput
-              style={styles.modalInput}
-              value={orderForm.customerName}
-              onChangeText={(t) => setOrderForm({...orderForm, customerName: t})}
-              placeholder="Customer name"
-            />
-            
-            <Text style={styles.inputLabel}>Tee-Off Time</Text>
-            <TextInput
-              style={styles.modalInput}
-              value={orderForm.teeOffTime}
-              onChangeText={(t) => setOrderForm({...orderForm, teeOffTime: t})}
-              placeholder="e.g., 08:30"
-            />
-            
-            <Text style={styles.inputLabel}>Status</Text>
-            <View style={styles.roleSelector}>
-              {['pending', 'preparing', 'ready'].map((s) => (
-                <TouchableOpacity
-                  key={s}
-                  style={[styles.rolePill, orderForm.status === s && styles.rolePillActive]}
-                  onPress={() => setOrderForm({...orderForm, status: s})}
-                >
-                  <Text style={[styles.rolePillText, orderForm.status === s && styles.rolePillTextActive]}>
-                    {s.toUpperCase()}
+          <View style={[styles.modalContent, isCreatingOrder && { width: 700, maxHeight: '90%' }]}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={styles.modalTitle}>{isCreatingOrder ? 'Create Order' : 'Edit Order'}</Text>
+              
+              {isCreatingOrder && (
+                <>
+                  <Text style={styles.inputLabel}>Select Course</Text>
+                  <View style={styles.courseSelector}>
+                    {courses.map((c) => (
+                      <TouchableOpacity
+                        key={c.id}
+                        style={[styles.coursePill, orderForm.courseId === c.id && styles.coursePillActive]}
+                        onPress={() => {
+                          setOrderForm({...orderForm, courseId: c.id});
+                          loadMenuForCourse(c.id);
+                          setOrderCartItems([]);
+                        }}
+                      >
+                        <Text style={[styles.coursePillText, orderForm.courseId === c.id && styles.coursePillTextActive]}>
+                          {c.name}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </>
+              )}
+              
+              <Text style={styles.inputLabel}>Customer Name</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={orderForm.customerName}
+                onChangeText={(t) => setOrderForm({...orderForm, customerName: t})}
+                placeholder="Customer name"
+              />
+              
+              <Text style={styles.inputLabel}>Tee-Off Time</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={orderForm.teeOffTime}
+                onChangeText={(t) => setOrderForm({...orderForm, teeOffTime: t})}
+                placeholder="e.g., 08:30"
+              />
+              
+              {!isCreatingOrder && (
+                <>
+                  <Text style={styles.inputLabel}>Status</Text>
+                  <View style={styles.roleSelector}>
+                    {['pending', 'preparing', 'ready'].map((s) => (
+                      <TouchableOpacity
+                        key={s}
+                        style={[styles.rolePill, orderForm.status === s && styles.rolePillActive]}
+                        onPress={() => setOrderForm({...orderForm, status: s})}
+                      >
+                        <Text style={[styles.rolePillText, orderForm.status === s && styles.rolePillTextActive]}>
+                          {s.toUpperCase()}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </>
+              )}
+              
+              {isCreatingOrder && orderForm.courseId && (
+                <>
+                  <Text style={[styles.inputLabel, { marginTop: 16 }]}>Add Menu Items</Text>
+                  <View style={styles.menuItemsGrid}>
+                    {menuItems.filter(item => item.available).map((item) => (
+                      <TouchableOpacity
+                        key={item.id}
+                        style={styles.menuItemCard}
+                        onPress={() => addItemToCart(item)}
+                      >
+                        <Text style={styles.menuItemName} numberOfLines={1}>{item.name}</Text>
+                        <Text style={styles.menuItemPrice}>R{item.price.toFixed(2)}</Text>
+                        <View style={styles.menuItemAddBtn}>
+                          <Ionicons name="add-circle" size={24} color="#2e7d32" />
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  
+                  {orderCartItems.length > 0 && (
+                    <View style={styles.orderItemsPreview}>
+                      <Text style={styles.inputLabel}>Order Cart</Text>
+                      <View style={styles.orderItemsList}>
+                        {orderCartItems.map((item: any) => (
+                          <View key={item.id} style={styles.cartItemRow}>
+                            <Text style={styles.orderItemText}>
+                              {item.quantity}x {item.name} - R{(item.price * item.quantity).toFixed(2)}
+                            </Text>
+                            <View style={styles.cartItemActions}>
+                              <TouchableOpacity onPress={() => removeItemFromCart(item.id)}>
+                                <Ionicons name="remove-circle" size={22} color="#f44336" />
+                              </TouchableOpacity>
+                              <TouchableOpacity onPress={() => addItemToCart(item)}>
+                                <Ionicons name="add-circle" size={22} color="#2e7d32" />
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                        ))}
+                      </View>
+                      <Text style={styles.orderTotalText}>
+                        Total: R{getOrderTotal().toFixed(2)}
+                      </Text>
+                    </View>
+                  )}
+                </>
+              )}
+              
+              {!isCreatingOrder && editingItem && (
+                <View style={styles.orderItemsPreview}>
+                  <Text style={styles.inputLabel}>Order Items</Text>
+                  <View style={styles.orderItemsList}>
+                    {editingItem.items?.map((item: any, index: number) => (
+                      <Text key={index} style={styles.orderItemText}>
+                        {item.quantity}x {item.name} - R{(item.price * item.quantity).toFixed(2)}
+                      </Text>
+                    ))}
+                  </View>
+                  <Text style={styles.orderTotalText}>
+                    Total: R{(editingItem.total || 0).toFixed(2)}
                   </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            
-            {editingItem && (
-              <View style={styles.orderItemsPreview}>
-                <Text style={styles.inputLabel}>Order Items</Text>
-                <View style={styles.orderItemsList}>
-                  {editingItem.items?.map((item: any, index: number) => (
-                    <Text key={index} style={styles.orderItemText}>
-                      {item.quantity}x {item.name} - R{(item.price * item.quantity).toFixed(2)}
-                    </Text>
-                  ))}
                 </View>
-                <Text style={styles.orderTotalText}>
-                  Total: R{(editingItem.total || 0).toFixed(2)}
-                </Text>
+              )}
+              
+              <View style={styles.modalActions}>
+                <TouchableOpacity 
+                  style={styles.cancelBtn} 
+                  onPress={() => {
+                    setOrderModalVisible(false);
+                    setIsCreatingOrder(false);
+                    setOrderCartItems([]);
+                  }}
+                >
+                  <Text style={styles.cancelBtnText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.saveBtn} 
+                  onPress={isCreatingOrder ? handleCreateOrder : handleSaveOrder}
+                >
+                  <Text style={styles.saveBtnText}>{isCreatingOrder ? 'Create Order' : 'Save'}</Text>
+                </TouchableOpacity>
               </View>
-            )}
-            
-            <View style={styles.modalActions}>
-              <TouchableOpacity style={styles.cancelBtn} onPress={() => setOrderModalVisible(false)}>
-                <Text style={styles.cancelBtnText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn} onPress={handleSaveOrder}>
-                <Text style={styles.saveBtnText}>Save</Text>
-              </TouchableOpacity>
-            </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
