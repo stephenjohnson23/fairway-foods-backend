@@ -724,7 +724,7 @@ export default function AdminPanelScreen() {
           style={styles.addButton}
           onPress={() => {
             setEditingItem(null);
-            setUserForm({ email: '', name: '', role: 'user', courseIds: [] });
+            setUserForm({ email: '', name: '', role: 'user', courseIds: [], password: '' });
             setUserModalVisible(true);
           }}
         >
