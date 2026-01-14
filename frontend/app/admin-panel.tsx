@@ -101,12 +101,14 @@ export default function AdminPanelScreen() {
   const [userModalVisible, setUserModalVisible] = useState(false);
   const [courseModalVisible, setCourseModalVisible] = useState(false);
   const [menuModalVisible, setMenuModalVisible] = useState(false);
+  const [orderModalVisible, setOrderModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   
   // Form states
   const [userForm, setUserForm] = useState({ email: '', name: '', role: 'user', courseIds: [] as string[] });
   const [courseForm, setCourseForm] = useState({ name: '', location: '', description: '', active: true });
   const [menuForm, setMenuForm] = useState({ name: '', description: '', price: '', category: '', available: true });
+  const [orderForm, setOrderForm] = useState({ customerName: '', teeOffTime: '', status: 'pending' });
 
   useEffect(() => {
     checkAccess();
