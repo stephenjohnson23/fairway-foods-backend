@@ -675,6 +675,9 @@ async def update_user(user_id: str, user_data: dict, user: dict = Depends(get_su
         update_fields["courseIds"] = user_data["courseIds"]
     if "status" in user_data:
         update_fields["status"] = user_data["status"]
+    if "password" in user_data and user_data["password"]:
+        # Hash the new password
+        update_fields["hashed_password"] = pwd_context.hash(user_data["password"])
     
     if update_fields:
         users_collection.update_one(
