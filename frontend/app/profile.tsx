@@ -257,6 +257,75 @@ export default function ProfileScreen() {
             )}
           </TouchableOpacity>
 
+          {/* Password Change Section */}
+          <Text style={[styles.sectionTitle, { marginTop: 32 }]}>Security</Text>
+          
+          <TouchableOpacity 
+            style={styles.passwordToggle}
+            onPress={() => setShowPasswordSection(!showPasswordSection)}
+          >
+            <View style={styles.passwordToggleLeft}>
+              <Ionicons name="lock-closed" size={20} color="#666" />
+              <Text style={styles.passwordToggleText}>Change Password</Text>
+            </View>
+            <Ionicons name={showPasswordSection ? "chevron-up" : "chevron-down"} size={20} color="#666" />
+          </TouchableOpacity>
+
+          {showPasswordSection && (
+            <View style={styles.passwordSection}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Current Password</Text>
+                <TextInput
+                  style={styles.input}
+                  value={passwordForm.currentPassword}
+                  onChangeText={(text) => setPasswordForm({ ...passwordForm, currentPassword: text })}
+                  placeholder="Enter current password"
+                  placeholderTextColor="#999"
+                  secureTextEntry
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>New Password</Text>
+                <TextInput
+                  style={styles.input}
+                  value={passwordForm.newPassword}
+                  onChangeText={(text) => setPasswordForm({ ...passwordForm, newPassword: text })}
+                  placeholder="Enter new password (min 6 characters)"
+                  placeholderTextColor="#999"
+                  secureTextEntry
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Confirm New Password</Text>
+                <TextInput
+                  style={styles.input}
+                  value={passwordForm.confirmPassword}
+                  onChangeText={(text) => setPasswordForm({ ...passwordForm, confirmPassword: text })}
+                  placeholder="Confirm new password"
+                  placeholderTextColor="#999"
+                  secureTextEntry
+                />
+              </View>
+
+              <TouchableOpacity
+                style={[styles.changePasswordButton, savingPassword && styles.saveButtonDisabled]}
+                onPress={handleChangePassword}
+                disabled={savingPassword}
+              >
+                {savingPassword ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <>
+                    <Ionicons name="key" size={20} color="#fff" />
+                    <Text style={styles.saveButtonText}>Change Password</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
+
           <View style={styles.infoBox}>
             <Ionicons name="information-circle" size={20} color="#1976d2" />
             <Text style={styles.infoText}>
