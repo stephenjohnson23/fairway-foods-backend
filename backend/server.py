@@ -630,6 +630,111 @@ async def reject_user(user_id: str, rejection_data: dict, user: dict = Depends(g
     
     return {"message": "User rejected", "email": target_user["email"]}
 
+@app.delete("/api/users/{user_id}")
+async def delete_user(user_id: str, user: dict = Depends(get_super_user)):
+    """Delete a user (superuser only)"""
+    target_user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Prevent deleting self
+    if str(target_user["_id"]) == user["_id"]:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    
+    # Prevent deleting other superusers
+    if target_user.get("role") == "superuser":
+        raise HTTPException(status_code=400, detail="Cannot delete superuser accounts")
+    
+    result = users_collection.delete_one({"_id": ObjectId(user_id)})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"message": "User deleted successfully"}
+
+@app.put("/api/users/{user_id}")
+async def update_user(user_id: str, user_data: dict, user: dict = Depends(get_super_user)):
+    """Update user details (superuser only)"""
+    target_user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    update_fields = {}
+    
+    if "name" in user_data:
+        update_fields["name"] = user_data["name"]
+    if "email" in user_data:
+        # Check if email is already taken by another user
+        existing = users_collection.find_one({"email": user_data["email"], "_id": {"$ne": ObjectId(user_id)}})
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already in use")
+        update_fields["email"] = user_data["email"]
+    if "role" in user_data:
+        update_fields["role"] = user_data["role"]
+    if "courseIds" in user_data:
+        update_fields["courseIds"] = user_data["courseIds"]
+    if "status" in user_data:
+        update_fields["status"] = user_data["status"]
+    
+    if update_fields:
+        users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": update_fields}
+        )
+    
+    return {"message": "User updated successfully"}
+
+# Order Management Endpoints (Super User only)
+@app.put("/api/orders/{order_id}")
+async def update_order(order_id: str, order_data: dict, user: dict = Depends(get_super_user)):
+    """Update order details (superuser only)"""
+    existing_order = orders_collection.find_one({"_id": ObjectId(order_id)})
+    if not existing_order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    update_fields = {}
+    
+    if "customerName" in order_data:
+        update_fields["customerName"] = order_data["customerName"]
+    if "teeOffTime" in order_data:
+        update_fields["teeOffTime"] = order_data["teeOffTime"]
+    if "status" in order_data:
+        update_fields["status"] = order_data["status"]
+    if "items" in order_data:
+        update_fields["items"] = order_data["items"]
+        # Recalculate total if items changed
+        update_fields["total"] = sum(item.get("price", 0) * item.get("quantity", 1) for item in order_data["items"])
+    if "total" in order_data and "items" not in order_data:
+        update_fields["total"] = order_data["total"]
+    
+    if update_fields:
+        orders_collection.update_one(
+            {"_id": ObjectId(order_id)},
+            {"$set": update_fields}
+        )
+    
+    updated_order = orders_collection.find_one({"_id": ObjectId(order_id)})
+    updated_order["id"] = str(updated_order["_id"])
+    del updated_order["_id"]
+    if "createdAt" in updated_order:
+        updated_order["createdAt"] = updated_order["createdAt"].isoformat()
+    
+    return updated_order
+
+@app.delete("/api/orders/{order_id}")
+async def delete_order(order_id: str, user: dict = Depends(get_super_user)):
+    """Delete an order (superuser only)"""
+    existing_order = orders_collection.find_one({"_id": ObjectId(order_id)})
+    if not existing_order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    result = orders_collection.delete_one({"_id": ObjectId(order_id)})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    return {"message": "Order deleted successfully"}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
