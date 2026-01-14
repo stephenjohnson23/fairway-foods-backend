@@ -1089,6 +1089,71 @@ export default function AdminPanelScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Order Edit Modal */}
+      <Modal visible={orderModalVisible} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Edit Order</Text>
+            
+            <Text style={styles.inputLabel}>Customer Name</Text>
+            <TextInput
+              style={styles.modalInput}
+              value={orderForm.customerName}
+              onChangeText={(t) => setOrderForm({...orderForm, customerName: t})}
+              placeholder="Customer name"
+            />
+            
+            <Text style={styles.inputLabel}>Tee-Off Time</Text>
+            <TextInput
+              style={styles.modalInput}
+              value={orderForm.teeOffTime}
+              onChangeText={(t) => setOrderForm({...orderForm, teeOffTime: t})}
+              placeholder="e.g., 08:30"
+            />
+            
+            <Text style={styles.inputLabel}>Status</Text>
+            <View style={styles.roleSelector}>
+              {['pending', 'preparing', 'ready'].map((s) => (
+                <TouchableOpacity
+                  key={s}
+                  style={[styles.rolePill, orderForm.status === s && styles.rolePillActive]}
+                  onPress={() => setOrderForm({...orderForm, status: s})}
+                >
+                  <Text style={[styles.rolePillText, orderForm.status === s && styles.rolePillTextActive]}>
+                    {s.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            
+            {editingItem && (
+              <View style={styles.orderItemsPreview}>
+                <Text style={styles.inputLabel}>Order Items</Text>
+                <View style={styles.orderItemsList}>
+                  {editingItem.items?.map((item: any, index: number) => (
+                    <Text key={index} style={styles.orderItemText}>
+                      {item.quantity}x {item.name} - R{(item.price * item.quantity).toFixed(2)}
+                    </Text>
+                  ))}
+                </View>
+                <Text style={styles.orderTotalText}>
+                  Total: R{(editingItem.total || 0).toFixed(2)}
+                </Text>
+              </View>
+            )}
+            
+            <View style={styles.modalActions}>
+              <TouchableOpacity style={styles.cancelBtn} onPress={() => setOrderModalVisible(false)}>
+                <Text style={styles.cancelBtnText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.saveBtn} onPress={handleSaveOrder}>
+                <Text style={styles.saveBtnText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
