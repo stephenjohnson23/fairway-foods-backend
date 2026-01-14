@@ -1074,6 +1074,15 @@ export default function AdminPanelScreen() {
                 placeholder="Full Name"
               />
               
+              <Text style={styles.inputLabel}>{editingItem ? 'New Password (leave blank to keep current)' : 'Password'}</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={userForm.password}
+                onChangeText={(t) => setUserForm({...userForm, password: t})}
+                placeholder={editingItem ? 'Enter new password to change' : 'Password'}
+                secureTextEntry={true}
+              />
+              
               <Text style={styles.inputLabel}>Role</Text>
               <View style={styles.roleSelector}>
                 {['user', 'admin', 'kitchen', 'cashier'].map((r) => (
