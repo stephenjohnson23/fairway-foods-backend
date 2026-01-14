@@ -195,6 +195,13 @@ export default function CashierDashboard() {
         {item.status === 'preparing' && (
           <View style={styles.actionButtons}>
             <TouchableOpacity
+              style={[styles.actionButton, styles.undoButton]}
+              onPress={() => updateOrderStatus(item.id, 'pending')}
+            >
+              <Ionicons name="arrow-undo" size={18} color="#fff" />
+              <Text style={styles.actionButtonText}>Undo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={[styles.actionButton, styles.readyButton]}
               onPress={() => updateOrderStatus(item.id, 'ready')}
             >
