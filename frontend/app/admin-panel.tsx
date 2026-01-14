@@ -124,32 +124,51 @@ export default function AdminPanelScreen() {
   const loadAllData = async () => {
     const token = await AsyncStorage.getItem('token');
     
+    // For web, we need to construct the API URL properly
+    const baseUrl = API_URL || window.location.origin;
+    
     try {
       // Load users (super user only)
       if (user?.role === 'superuser') {
-        const usersRes = await fetch(`${API_URL}/api/users`, {
+        const usersRes = await fetch(`${baseUrl}/api/users`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
-        if (usersRes.ok) setUsers(await usersRes.json());
-      }
-      
-      // Load courses
-      const coursesRes = await fetch(`${API_URL}/api/courses/all`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-      if (coursesRes.ok) {
-        const coursesData = await coursesRes.json();
-        setCourses(coursesData);
-        if (coursesData.length > 0 && !selectedCourseId) {
-          setSelectedCourseId(coursesData[0].id);
+        if (usersRes.ok) {
+          const usersData = await usersRes.json();
+          setUsers(usersData);
         }
       }
       
+      // Load courses - try /all first, fall back to public
+      let coursesData = [];
+      try {
+        const coursesRes = await fetch(`${baseUrl}/api/courses/all`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (coursesRes.ok) {
+          coursesData = await coursesRes.json();
+        }
+      } catch (e) {
+        // Fallback to public courses
+        const publicRes = await fetch(`${baseUrl}/api/courses`);
+        if (publicRes.ok) {
+          coursesData = await publicRes.json();
+        }
+      }
+      
+      setCourses(coursesData);
+      if (coursesData.length > 0 && !selectedCourseId) {
+        setSelectedCourseId(coursesData[0].id);
+      }
+      
       // Load orders
-      const ordersRes = await fetch(`${API_URL}/api/orders`, {
+      const ordersRes = await fetch(`${baseUrl}/api/orders`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
-      if (ordersRes.ok) setOrders(await ordersRes.json());
+      if (ordersRes.ok) {
+        const ordersData = await ordersRes.json();
+        setOrders(ordersData);
+      }
       
     } catch (error) {
       console.error('Error loading data:', error);
