@@ -221,6 +221,119 @@ async def login(user_data: UserLogin):
         }
     }
 
+# Password Reset Endpoints
+def generate_reset_code():
+    """Generate a 6-digit reset code"""
+    return ''.join(random.choices(string.digits, k=6))
+
+@app.post("/api/auth/forgot-password")
+async def forgot_password(data: dict):
+    """Request a password reset code"""
+    email = data.get("email", "").lower().strip()
+    
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
+    
+    user = users_collection.find_one({"email": email})
+    
+    # For security, always return success even if user doesn't exist
+    if not user:
+        return {"message": "If an account with this email exists, a reset code has been sent"}
+    
+    # Generate reset code
+    reset_code = generate_reset_code()
+    reset_expires = datetime.utcnow() + timedelta(minutes=15)
+    
+    # Store reset code in database
+    users_collection.update_one(
+        {"_id": user["_id"]},
+        {"$set": {
+            "resetCode": reset_code,
+            "resetCodeExpires": reset_expires
+        }}
+    )
+    
+    # Send email with reset code
+    email_sent = await send_password_reset_email(
+        user_email=user["email"],
+        user_name=user.get("name", "User"),
+        reset_code=reset_code
+    )
+    
+    if email_sent:
+        return {"message": "Reset code sent to your email", "email_sent": True}
+    else:
+        # Email not configured - return the code for testing purposes
+        return {
+            "message": "Email service not configured. Use this code to reset your password.",
+            "email_sent": False,
+            "reset_code": reset_code  # Only for testing - remove in production
+        }
+
+@app.post("/api/auth/verify-reset-code")
+async def verify_reset_code(data: dict):
+    """Verify a password reset code"""
+    email = data.get("email", "").lower().strip()
+    code = data.get("code", "").strip()
+    
+    if not email or not code:
+        raise HTTPException(status_code=400, detail="Email and code are required")
+    
+    user = users_collection.find_one({"email": email})
+    
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid email or code")
+    
+    stored_code = user.get("resetCode")
+    expires = user.get("resetCodeExpires")
+    
+    if not stored_code or stored_code != code:
+        raise HTTPException(status_code=400, detail="Invalid reset code")
+    
+    if not expires or datetime.utcnow() > expires:
+        raise HTTPException(status_code=400, detail="Reset code has expired")
+    
+    return {"message": "Code verified successfully", "verified": True}
+
+@app.post("/api/auth/reset-password")
+async def reset_password(data: dict):
+    """Reset password using verified code"""
+    email = data.get("email", "").lower().strip()
+    code = data.get("code", "").strip()
+    new_password = data.get("newPassword", "")
+    
+    if not email or not code or not new_password:
+        raise HTTPException(status_code=400, detail="Email, code, and new password are required")
+    
+    if len(new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+    
+    user = users_collection.find_one({"email": email})
+    
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid request")
+    
+    stored_code = user.get("resetCode")
+    expires = user.get("resetCodeExpires")
+    
+    if not stored_code or stored_code != code:
+        raise HTTPException(status_code=400, detail="Invalid reset code")
+    
+    if not expires or datetime.utcnow() > expires:
+        raise HTTPException(status_code=400, detail="Reset code has expired")
+    
+    # Hash new password and clear reset code
+    hashed_password = pwd_context.hash(new_password)
+    users_collection.update_one(
+        {"_id": user["_id"]},
+        {
+            "$set": {"hashed_password": hashed_password, "password": hashed_password},
+            "$unset": {"resetCode": "", "resetCodeExpires": ""}
+        }
+    )
+    
+    return {"message": "Password reset successfully"}
+
 # Profile Endpoints
 @app.get("/api/profile")
 async def get_profile(user: dict = Depends(get_current_user)):
