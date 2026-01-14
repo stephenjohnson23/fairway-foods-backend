@@ -131,9 +131,7 @@ export default function AdminPanelScreen() {
 
   const loadAllData = async () => {
     const token = await AsyncStorage.getItem('token');
-    
-    // For web, we need to construct the API URL properly
-    const baseUrl = API_URL || window.location.origin;
+    const baseUrl = getBaseUrl();
     
     try {
       // Load users (super user only)
@@ -147,26 +145,14 @@ export default function AdminPanelScreen() {
         }
       }
       
-      // Load courses - try /all first, fall back to public
-      let coursesData = [];
-      try {
-        const coursesRes = await fetch(`${baseUrl}/api/courses/all`, {
-          headers: { 'Authorization': `Bearer ${token}` },
-        });
-        if (coursesRes.ok) {
-          coursesData = await coursesRes.json();
+      // Load courses - use public endpoint for reliability
+      const coursesRes = await fetch(`${baseUrl}/api/courses`);
+      if (coursesRes.ok) {
+        const coursesData = await coursesRes.json();
+        setCourses(coursesData);
+        if (coursesData.length > 0 && !selectedCourseId) {
+          setSelectedCourseId(coursesData[0].id);
         }
-      } catch (e) {
-        // Fallback to public courses
-        const publicRes = await fetch(`${baseUrl}/api/courses`);
-        if (publicRes.ok) {
-          coursesData = await publicRes.json();
-        }
-      }
-      
-      setCourses(coursesData);
-      if (coursesData.length > 0 && !selectedCourseId) {
-        setSelectedCourseId(coursesData[0].id);
       }
       
       // Load orders
