@@ -517,6 +517,9 @@ const styles = StyleSheet.create({
   capturedButton: {
     backgroundColor: '#9c27b0',
   },
+  undoButton: {
+    backgroundColor: '#ff9800',
+  },
   actionButtonText: {
     color: '#fff',
     fontWeight: 'bold',
