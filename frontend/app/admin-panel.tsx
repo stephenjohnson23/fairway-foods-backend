@@ -777,24 +777,25 @@ export default function AdminPanelScreen() {
               <Text style={styles.roleText}>{u.role.toUpperCase()}</Text>
             </View>
             <Text style={[styles.tableCell, { flex: 1 }]}>{u.courseIds?.length || 0}</Text>
-            <View style={[styles.tableCell, { flex: 1, flexDirection: 'row', gap: 8 }]}>
-              <Pressable 
-                style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1, padding: 4 }]}
+            <View style={[styles.tableCell, { flex: 1.5, flexDirection: 'row', gap: 8 }]}>
+              <TouchableOpacity 
+                style={styles.actionBtn}
                 onPress={() => {
                   setEditingItem(u);
                   setUserForm({ email: u.email, name: u.name, role: u.role, courseIds: u.courseIds || [] });
                   setUserModalVisible(true);
                 }}
               >
-                <Ionicons name="create" size={20} color="#1976d2" />
-              </Pressable>
+                <Ionicons name="create" size={16} color="#1976d2" />
+                <Text style={styles.actionBtnText}>Edit</Text>
+              </TouchableOpacity>
               {u.role !== 'superuser' && (
-                <Pressable 
-                  style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1, padding: 4 }]}
+                <TouchableOpacity 
+                  style={[styles.actionBtn, styles.deleteBtn]}
                   onPress={() => handleDeleteUser(u.id)}
                 >
-                  <Ionicons name="trash" size={20} color="#f44336" />
-                </Pressable>
+                  <Ionicons name="trash" size={16} color="#f44336" />
+                </TouchableOpacity>
               )}
             </View>
           </View>
