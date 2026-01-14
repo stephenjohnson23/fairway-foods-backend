@@ -648,16 +648,22 @@ export default function AdminPanelScreen() {
               <Text style={styles.roleText}>{u.role.toUpperCase()}</Text>
             </View>
             <Text style={[styles.tableCell, { flex: 1 }]}>{u.courseIds?.length || 0}</Text>
-            <TouchableOpacity 
-              style={[styles.tableCell, { flex: 1 }]}
-              onPress={() => {
-                setEditingItem(u);
-                setUserForm({ email: u.email, name: u.name, role: u.role, courseIds: u.courseIds || [] });
-                setUserModalVisible(true);
-              }}
-            >
-              <Ionicons name="create" size={20} color="#1976d2" />
-            </TouchableOpacity>
+            <View style={[styles.tableCell, { flex: 1, flexDirection: 'row', gap: 8 }]}>
+              <TouchableOpacity 
+                onPress={() => {
+                  setEditingItem(u);
+                  setUserForm({ email: u.email, name: u.name, role: u.role, courseIds: u.courseIds || [] });
+                  setUserModalVisible(true);
+                }}
+              >
+                <Ionicons name="create" size={20} color="#1976d2" />
+              </TouchableOpacity>
+              {u.role !== 'superuser' && (
+                <TouchableOpacity onPress={() => handleDeleteUser(u.id)}>
+                  <Ionicons name="trash" size={20} color="#f44336" />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         ))}
       </View>
