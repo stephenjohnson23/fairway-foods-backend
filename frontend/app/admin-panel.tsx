@@ -468,6 +468,109 @@ export default function AdminPanelScreen() {
     ]);
   };
 
+  const handleCreateOrder = async () => {
+    if (!orderForm.customerName.trim()) {
+      Alert.alert('Error', 'Please enter customer name');
+      return;
+    }
+    if (!orderForm.teeOffTime.trim()) {
+      Alert.alert('Error', 'Please enter tee-off time');
+      return;
+    }
+    if (!orderForm.courseId) {
+      Alert.alert('Error', 'Please select a course');
+      return;
+    }
+    if (orderCartItems.length === 0) {
+      Alert.alert('Error', 'Please add at least one item to the order');
+      return;
+    }
+
+    const token = await AsyncStorage.getItem('token');
+    const baseUrl = getBaseUrl();
+    
+    const orderData = {
+      customerName: orderForm.customerName,
+      teeOffTime: orderForm.teeOffTime,
+      courseId: orderForm.courseId,
+      items: orderCartItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+      total: orderCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+    };
+
+    try {
+      const response = await fetch(`${baseUrl}/api/orders`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(orderData),
+      });
+      
+      if (response.ok) {
+        setOrderModalVisible(false);
+        setIsCreatingOrder(false);
+        setOrderCartItems([]);
+        setOrderForm({ customerName: '', teeOffTime: '', status: 'pending', courseId: '' });
+        loadAllData();
+        Alert.alert('Success', 'Order created successfully');
+      } else {
+        const error = await response.json();
+        Alert.alert('Error', error.detail || 'Failed to create order');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to create order');
+    }
+  };
+
+  const addItemToCart = (menuItem: MenuItem) => {
+    const existingItem = orderCartItems.find(item => item.id === menuItem.id);
+    if (existingItem) {
+      setOrderCartItems(orderCartItems.map(item => 
+        item.id === menuItem.id 
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
+    } else {
+      setOrderCartItems([...orderCartItems, { ...menuItem, quantity: 1 }]);
+    }
+  };
+
+  const removeItemFromCart = (itemId: string) => {
+    const existingItem = orderCartItems.find(item => item.id === itemId);
+    if (existingItem && existingItem.quantity > 1) {
+      setOrderCartItems(orderCartItems.map(item => 
+        item.id === itemId 
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      ));
+    } else {
+      setOrderCartItems(orderCartItems.filter(item => item.id !== itemId));
+    }
+  };
+
+  const getOrderTotal = () => {
+    return orderCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  };
+
+  const loadMenuForCourse = async (courseId: string) => {
+    const baseUrl = getBaseUrl();
+    try {
+      const response = await fetch(`${baseUrl}/api/menu?courseId=${courseId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setMenuItems(data);
+      }
+    } catch (error) {
+      console.error('Error loading menu:', error);
+    }
+  };
+
   // Stats
   const pendingUsers = users.filter(u => u.status === 'pending').length;
   const totalOrders = orders.length;
