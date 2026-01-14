@@ -1027,24 +1027,22 @@ export default function AdminPanelScreen() {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>{editingItem ? 'Edit User' : 'Add User'}</Text>
             
-            {!editingItem && (
-              <>
-                <Text style={styles.inputLabel}>Email</Text>
-                <TextInput
-                  style={styles.modalInput}
-                  value={userForm.email}
-                  onChangeText={(t) => setUserForm({...userForm, email: t})}
-                  placeholder="email@example.com"
-                />
-                <Text style={styles.inputLabel}>Name</Text>
-                <TextInput
-                  style={styles.modalInput}
-                  value={userForm.name}
-                  onChangeText={(t) => setUserForm({...userForm, name: t})}
-                  placeholder="Full Name"
-                />
-              </>
-            )}
+            <Text style={styles.inputLabel}>Email</Text>
+            <TextInput
+              style={styles.modalInput}
+              value={userForm.email}
+              onChangeText={(t) => setUserForm({...userForm, email: t})}
+              placeholder="email@example.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            <Text style={styles.inputLabel}>Name</Text>
+            <TextInput
+              style={styles.modalInput}
+              value={userForm.name}
+              onChangeText={(t) => setUserForm({...userForm, name: t})}
+              placeholder="Full Name"
+            />
             
             <Text style={styles.inputLabel}>Role</Text>
             <View style={styles.roleSelector}>
