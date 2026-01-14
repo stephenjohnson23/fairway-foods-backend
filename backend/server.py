@@ -254,6 +254,31 @@ async def update_profile(profile: UserProfile, user: dict = Depends(get_current_
         }
     }
 
+@app.put("/api/profile/password")
+async def change_password(password_data: dict, user: dict = Depends(get_current_user)):
+    """Change current user's password"""
+    current_password = password_data.get("currentPassword", "")
+    new_password = password_data.get("newPassword", "")
+    
+    if not current_password or not new_password:
+        raise HTTPException(status_code=400, detail="Current password and new password are required")
+    
+    if len(new_password) < 6:
+        raise HTTPException(status_code=400, detail="New password must be at least 6 characters")
+    
+    # Verify current password
+    if not pwd_context.verify(current_password, user.get("hashed_password", "")):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    
+    # Hash and save new password
+    hashed_password = pwd_context.hash(new_password)
+    users_collection.update_one(
+        {"_id": user["_id"]},
+        {"$set": {"hashed_password": hashed_password}}
+    )
+    
+    return {"message": "Password changed successfully"}
+
 @app.get("/api/auth/me")
 async def get_me(user: dict = Depends(get_current_user)):
     return {
