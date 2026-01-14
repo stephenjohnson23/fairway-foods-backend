@@ -777,7 +777,8 @@ export default function AdminPanelScreen() {
             </View>
             <Text style={[styles.tableCell, { flex: 1 }]}>{u.courseIds?.length || 0}</Text>
             <View style={[styles.tableCell, { flex: 1, flexDirection: 'row', gap: 8 }]}>
-              <TouchableOpacity 
+              <Pressable 
+                style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1, padding: 4 }]}
                 onPress={() => {
                   setEditingItem(u);
                   setUserForm({ email: u.email, name: u.name, role: u.role, courseIds: u.courseIds || [] });
@@ -785,11 +786,14 @@ export default function AdminPanelScreen() {
                 }}
               >
                 <Ionicons name="create" size={20} color="#1976d2" />
-              </TouchableOpacity>
+              </Pressable>
               {u.role !== 'superuser' && (
-                <TouchableOpacity onPress={() => handleDeleteUser(u.id)}>
+                <Pressable 
+                  style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1, padding: 4 }]}
+                  onPress={() => handleDeleteUser(u.id)}
+                >
                   <Ionicons name="trash" size={20} color="#f44336" />
-                </TouchableOpacity>
+                </Pressable>
               )}
             </View>
           </View>
