@@ -386,6 +386,86 @@ export default function AdminPanelScreen() {
     }
   };
 
+  const handleSaveOrder = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const baseUrl = getBaseUrl();
+    try {
+      const response = await fetch(`${baseUrl}/api/orders/${editingItem.id}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderForm),
+      });
+      
+      if (response.ok) {
+        setOrderModalVisible(false);
+        loadAllData();
+        Alert.alert('Success', 'Order updated');
+      } else {
+        const error = await response.json();
+        Alert.alert('Error', error.detail || 'Failed to update order');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update order');
+    }
+  };
+
+  const handleDeleteOrder = async (orderId: string) => {
+    Alert.alert('Delete Order', 'Are you sure you want to delete this order?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          const token = await AsyncStorage.getItem('token');
+          const baseUrl = getBaseUrl();
+          try {
+            const response = await fetch(`${baseUrl}/api/orders/${orderId}`, {
+              method: 'DELETE',
+              headers: { 'Authorization': `Bearer ${token}` },
+            });
+            if (response.ok) {
+              loadAllData();
+              Alert.alert('Success', 'Order deleted');
+            } else {
+              Alert.alert('Error', 'Failed to delete order');
+            }
+          } catch (error) {
+            Alert.alert('Error', 'Failed to delete order');
+          }
+        },
+      },
+    ]);
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    Alert.alert('Delete User', 'Are you sure you want to delete this user? This action cannot be undone.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          const token = await AsyncStorage.getItem('token');
+          const baseUrl = getBaseUrl();
+          try {
+            const response = await fetch(`${baseUrl}/api/users/${userId}`, {
+              method: 'DELETE',
+              headers: { 'Authorization': `Bearer ${token}` },
+            });
+            if (response.ok) {
+              loadAllData();
+              Alert.alert('Success', 'User deleted');
+            } else {
+              const error = await response.json();
+              Alert.alert('Error', error.detail || 'Failed to delete user');
+            }
+          } catch (error) {
+            Alert.alert('Error', 'Failed to delete user');
+          }
+        },
+      },
+    ]);
+  };
+
   // Stats
   const pendingUsers = users.filter(u => u.status === 'pending').length;
   const totalOrders = orders.length;
