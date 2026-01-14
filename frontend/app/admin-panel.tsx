@@ -1670,4 +1670,27 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
   },
+  orderItemsPreview: {
+    marginTop: 16,
+    padding: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+  },
+  orderItemsList: {
+    marginTop: 8,
+  },
+  orderItemText: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 4,
+  },
+  orderTotalText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2e7d32',
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+  },
 });
