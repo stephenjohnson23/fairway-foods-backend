@@ -6,6 +6,7 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 from pymongo import MongoClient
 from bson import ObjectId
+from passlib.context import CryptContext
 import bcrypt
 import jwt
 import os
@@ -15,6 +16,9 @@ from dotenv import load_dotenv
 from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email, send_password_reset_email
 
 load_dotenv()
+
+# Password hashing
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 app = FastAPI()
 
