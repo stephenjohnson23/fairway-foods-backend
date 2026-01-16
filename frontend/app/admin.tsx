@@ -248,23 +248,21 @@ export default function AdminScreen() {
     );
   };
 
-  const handleLogout = async () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            await AsyncStorage.removeItem('token');
-            await AsyncStorage.removeItem('user');
-            router.replace('/');
-          },
-        },
-      ]
-    );
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('selectedCourseId');
+      setShowLogoutModal(false);
+      router.replace('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      router.replace('/');
+    }
   };
 
   const renderMenuItem = ({ item }: { item: MenuItem }) => (
