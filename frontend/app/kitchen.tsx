@@ -142,10 +142,21 @@ export default function KitchenDashboard() {
     }
   };
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('token');
-    await AsyncStorage.removeItem('user');
-    router.replace('/');
+  const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('selectedCourseId');
+      setShowLogoutModal(false);
+      router.replace('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      router.replace('/');
+    }
   };
 
   const renderOrder = ({ item, index }: { item: Order; index: number }) => {
