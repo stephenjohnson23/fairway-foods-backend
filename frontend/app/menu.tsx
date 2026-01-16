@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
+  Modal,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -38,6 +39,7 @@ export default function MenuScreen() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [user, setUser] = useState<any>(null);
   const [selectedCourseName, setSelectedCourseName] = useState('');
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     loadUserAndCourse();
