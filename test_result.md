@@ -277,4 +277,4 @@ test_plan:
 
 agent_communication:
   - agent: "testing"
-    message: "Comprehensive backend testing completed successfully. All 12 backend endpoints are working correctly including authentication, menu management, and order processing. Used external URL https://golf-order-system.preview.emergentagent.com/api for testing. Admin credentials (admin@golf.com/admin123) are working. Database seeding appears to be working with 8 menu items available. All CRUD operations tested and functional."
+    message: "Comprehensive backend testing completed successfully. All 12 backend endpoints are working correctly including authentication, menu management, and order processing. Used external URL https://fairway-foods.preview.emergentagent.com/api for testing. Admin credentials (admin@golf.com/admin123) are working. Database seeding appears to be working with 8 menu items available. All CRUD operations tested and functional."
