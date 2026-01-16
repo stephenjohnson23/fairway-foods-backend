@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr, Field
 from typing import List, Optional
 from datetime import datetime, timedelta
@@ -13,7 +15,7 @@ import os
 import random
 import string
 from dotenv import load_dotenv
-from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email, send_password_reset_email
+from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email, send_password_reset_email, send_marketing_email, send_contact_form_email
 
 load_dotenv()
 
@@ -21,6 +23,24 @@ load_dotenv()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 app = FastAPI()
+
+# Serve the marketing website
+WEBSITE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "website")
+
+# Download endpoint for website ZIP
+@app.get("/api/download-website")
+async def download_website():
+    zip_path = os.path.join(WEBSITE_DIR, "fairway-foods-website.zip")
+    if os.path.exists(zip_path):
+        return FileResponse(
+            path=zip_path,
+            filename="fairway-foods-website.zip",
+            media_type="application/zip"
+        )
+    raise HTTPException(status_code=404, detail="ZIP file not found")
+
+if os.path.exists(WEBSITE_DIR):
+    app.mount("/website", StaticFiles(directory=WEBSITE_DIR, html=True), name="website")
 
 # CORS
 app.add_middleware(
@@ -338,6 +358,45 @@ async def reset_password(data: dict):
     
     return {"message": "Password reset successfully"}
 
+# Test Email Endpoint
+class TestEmailRequest(BaseModel):
+    to_email: EmailStr
+    template: str = "club_manager_launch"
+
+@app.post("/api/email/send-test")
+async def send_test_email(request: TestEmailRequest):
+    """Send a test marketing email"""
+    success = await send_marketing_email(request.to_email, request.template)
+    
+    if success:
+        return {"message": f"Test email sent successfully to {request.to_email}"}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to send email. Check email service configuration.")
+
+# Contact Form Endpoint
+class ContactFormRequest(BaseModel):
+    name: str
+    email: EmailStr
+    club: str
+    phone: Optional[str] = ""
+    message: Optional[str] = ""
+
+@app.post("/api/contact")
+async def submit_contact_form(request: ContactFormRequest):
+    """Handle website contact form submissions"""
+    success = await send_contact_form_email(
+        name=request.name,
+        email=request.email,
+        club=request.club,
+        phone=request.phone or "",
+        message=request.message or ""
+    )
+    
+    if success:
+        return {"success": True, "message": "Thank you! We'll be in touch within 24 hours."}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to send your message. Please try again or email us directly.")
+
 # Profile Endpoints
 @app.get("/api/profile")
 async def get_profile(user: dict = Depends(get_current_user)):
@@ -458,7 +517,8 @@ async def get_all_courses(user: dict = Depends(get_super_user)):
     return courses
 
 @app.post("/api/courses")
-async def create_course(course: GolfCourse, user: dict = Depends(get_admin_or_super_user)):
+async def create_course(course: GolfCourse, user: dict = Depends(get_super_user)):
+    """Create a new golf course (Super User only)"""
     course_dict = course.dict()
     course_dict["createdAt"] = datetime.utcnow()
     result = golfcourses_collection.insert_one(course_dict)
@@ -467,7 +527,8 @@ async def create_course(course: GolfCourse, user: dict = Depends(get_admin_or_su
     return course_dict
 
 @app.put("/api/courses/{course_id}")
-async def update_course(course_id: str, course: GolfCourseUpdate, user: dict = Depends(get_admin_or_super_user)):
+async def update_course(course_id: str, course: GolfCourseUpdate, user: dict = Depends(get_super_user)):
+    """Update a golf course (Super User only)"""
     update_data = {k: v for k, v in course.dict().items() if v is not None}
     if not update_data:
         raise HTTPException(status_code=400, detail="No data to update")
@@ -486,7 +547,8 @@ async def update_course(course_id: str, course: GolfCourseUpdate, user: dict = D
     return updated_course
 
 @app.delete("/api/courses/{course_id}")
-async def delete_course(course_id: str, user: dict = Depends(get_admin_or_super_user)):
+async def delete_course(course_id: str, user: dict = Depends(get_super_user)):
+    """Delete a golf course (Super User only)"""
     result = golfcourses_collection.delete_one({"_id": ObjectId(course_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Course not found")

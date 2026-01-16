@@ -10,6 +10,7 @@ load_dotenv(env_path)
 # Configure Resend
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 FROM_EMAIL = os.getenv("FROM_EMAIL", "onboarding@resend.dev")
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "hello@fairwayfoods.co.za")
 
 print(f"Email service initialized - API Key present: {bool(RESEND_API_KEY)}")
 
@@ -194,6 +195,96 @@ The Fairway Foods Team
     """
     
     await send_email(user_email, subject, html_content, text_content)
+
+
+async def send_contact_form_email(name: str, email: str, club: str, phone: str, message: str) -> bool:
+    """Send contact form submission to Fairway Foods team"""
+    
+    subject = f"🏌️ New Demo Request from {club}"
+    
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); padding: 30px; text-align: center;">
+                <h1 style="color: #fff; margin: 0;">⛳ New Demo Request</h1>
+            </div>
+            
+            <div style="padding: 30px; background: #fff;">
+                <h2 style="color: #2e7d32; margin-top: 0;">Contact Details</h2>
+                
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: bold; width: 140px;">Name:</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{name}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: bold;">Email:</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;"><a href="mailto:{email}" style="color: #2e7d32;">{email}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: bold;">Golf Club:</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{club}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee; font-weight: bold;">Phone:</td>
+                        <td style="padding: 12px; border-bottom: 1px solid #eee;">{phone or 'Not provided'}</td>
+                    </tr>
+                </table>
+                
+                <h3 style="color: #2e7d32; margin-top: 30px;">Message</h3>
+                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; border-left: 4px solid #2e7d32;">
+                    {message or 'No message provided'}
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #e8f5e9; border-radius: 8px; text-align: center;">
+                    <p style="margin: 0; color: #1b5e20;"><strong>Reply to this lead within 24 hours!</strong></p>
+                </div>
+            </div>
+            
+            <div style="background: #f5f5f5; padding: 20px; text-align: center; font-size: 12px; color: #666;">
+                This email was sent from the Fairway Foods website contact form.
+            </div>
+        </body>
+    </html>
+    """
+    
+    text_content = f"""
+New Demo Request from {club}
+
+Contact Details:
+- Name: {name}
+- Email: {email}
+- Golf Club: {club}
+- Phone: {phone or 'Not provided'}
+
+Message:
+{message or 'No message provided'}
+
+---
+Reply to this lead within 24 hours!
+    """
+    
+    # Send to admin email (configured in .env)
+    return await send_email(ADMIN_EMAIL, subject, html_content, text_content)
+
+
+async def send_marketing_email(to_email: str, template_name: str = "club_manager_launch") -> bool:
+    """Send marketing email using HTML template"""
+    
+    # Get the template path
+    template_path = Path(__file__).parent / "email_templates" / f"{template_name}.html"
+    
+    if not template_path.exists():
+        print(f"Template not found: {template_path}")
+        return False
+    
+    # Read the HTML template
+    with open(template_path, "r") as f:
+        html_content = f.read()
+    
+    subject = "Partner with Fairway Foods - Elevate Your Golf Club Experience ⛳"
+    
+    return await send_email(to_email, subject, html_content)
 
 
 async def send_password_reset_email(user_email: str, user_name: str, reset_code: str):

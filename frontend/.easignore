@@ -1,0 +1,54 @@
+# ========================================
+# EAS Build Ignore File
+# ========================================
+
+# Ignore corrupted files with special characters
+**/\xef\xbf\xbd*
+**/*\x00*
+**/*@@*
+**/@*@*
+
+# Ignore cache directories
+.metro-cache/
+.expo/
+.cache/
+**/.cache/
+**/node_modules/.cache/
+
+# Ignore build artifacts
+ios/
+android/
+build/
+dist/
+
+# Ignore test files
+__tests__/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+coverage/
+
+# Ignore development files
+*.log
+*.local
+.env.local
+.env.*.local
+
+# Ignore git
+.git/
+.gitignore
+
+# Ignore documentation
+*.md
+!README.md
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore TypeScript build info
+*.tsbuildinfo
