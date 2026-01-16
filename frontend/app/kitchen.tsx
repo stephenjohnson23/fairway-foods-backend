@@ -37,6 +37,7 @@ export default function KitchenDashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [newOrderCount, setNewOrderCount] = useState(0);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const previousOrderCount = useRef(0);
   const autoRefreshInterval = useRef<NodeJS.Timeout | null>(null);
 
