@@ -44,6 +44,7 @@ export default function AdminScreen() {
   const [courses, setCourses] = useState<GolfCourse[]>([]);
   const [selectedCourseId, setSelectedCourseId] = useState<string>('');
   const [userRole, setUserRole] = useState<string>('');
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
