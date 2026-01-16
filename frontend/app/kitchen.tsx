@@ -281,6 +281,39 @@ export default function KitchenDashboard() {
           </View>
         }
       />
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        visible={showLogoutModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowLogoutModal(false)}
+      >
+        <View style={styles.logoutModalOverlay}>
+          <View style={styles.logoutModalContent}>
+            <View style={styles.logoutModalIconContainer}>
+              <Ionicons name="log-out-outline" size={48} color="#f44336" />
+            </View>
+            <Text style={styles.logoutModalTitle}>Logout</Text>
+            <Text style={styles.logoutModalMessage}>Are you sure you want to logout?</Text>
+            <View style={styles.logoutModalButtons}>
+              <TouchableOpacity 
+                style={styles.logoutModalCancelButton}
+                onPress={() => setShowLogoutModal(false)}
+              >
+                <Text style={styles.logoutModalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.logoutModalConfirmButton}
+                onPress={confirmLogout}
+              >
+                <Ionicons name="log-out" size={18} color="#fff" />
+                <Text style={styles.logoutModalConfirmText}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
