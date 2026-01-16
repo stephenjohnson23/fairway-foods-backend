@@ -100,33 +100,15 @@ export default function MenuScreen() {
   };
 
   const handleLogout = async () => {
-    if (Platform.OS === 'web') {
-      // Use window.confirm for web
-      const confirmed = window.confirm('Are you sure you want to logout?');
-      if (confirmed) {
-        await AsyncStorage.removeItem('token');
-        await AsyncStorage.removeItem('user');
-        await AsyncStorage.removeItem('selectedCourseId');
-        router.replace('/');
-      }
-    } else {
-      Alert.alert(
-        'Logout',
-        'Are you sure you want to logout?',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Logout',
-            style: 'destructive',
-            onPress: async () => {
-              await AsyncStorage.removeItem('token');
-              await AsyncStorage.removeItem('user');
-              await AsyncStorage.removeItem('selectedCourseId');
-              router.replace('/');
-            },
-          },
-        ]
-      );
+    // Simple logout without confirmation for web reliability
+    try {
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('selectedCourseId');
+      router.replace('/');
+    } catch (error) {
+      console.error('Logout error:', error);
+      router.replace('/');
     }
   };
 
