@@ -102,11 +102,15 @@ export default function MenuScreen() {
   };
 
   const handleLogout = async () => {
-    // Simple logout without confirmation for web reliability
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = async () => {
     try {
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('user');
       await AsyncStorage.removeItem('selectedCourseId');
+      setShowLogoutModal(false);
       router.replace('/');
     } catch (error) {
       console.error('Logout error:', error);
