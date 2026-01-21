@@ -766,7 +766,8 @@
                         logout();
                     }
                 } else {
-                    showToast(data.detail || 'Login failed');
+                    const errorMsg = typeof data.detail === 'string' ? data.detail : 'Login failed';
+                    showToast(errorMsg);
                 }
             } catch (error) {
                 showToast('Connection error. Please try again.');
