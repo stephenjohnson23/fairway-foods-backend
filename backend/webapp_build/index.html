@@ -872,7 +872,7 @@
         // ============ COURSES ============
         async function loadCourses() {
             try {
-                const response = await fetch(`${API_URL}/golf-courses`, {
+                const response = await fetch(`${API_URL}/courses`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
                 
