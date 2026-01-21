@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: fairway-foods-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: fairway_foods
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: RESEND_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        value: noreply@fairwayfoods.co.za
+      - key: ADMIN_EMAIL
+        sync: false
