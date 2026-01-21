@@ -901,7 +901,7 @@
         // ============ MENU ============
         async function loadMenu() {
             try {
-                const response = await fetch(`${API_URL}/menu-items?courseId=${currentCourse.id}`, {
+                const response = await fetch(`${API_URL}/menu?courseId=${currentCourse.id}`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
                 
