@@ -762,8 +762,13 @@
                     } else if (currentUser.role === 'user') {
                         loadCourses();
                     } else {
-                        showToast('Please use the mobile app for staff access');
-                        logout();
+                        // Staff user - redirect to admin portal
+                        localStorage.setItem('staffToken', data.token);
+                        localStorage.setItem('staffUser', JSON.stringify(data.user));
+                        showToast('Redirecting to Staff Portal...');
+                        setTimeout(() => {
+                            window.location.href = 'admin.html';
+                        }, 1000);
                     }
                 } else {
                     const errorMsg = typeof data.detail === 'string' ? data.detail : 'Login failed';
