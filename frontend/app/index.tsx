@@ -114,10 +114,10 @@ export default function LoginScreen() {
         
         let targetRoute = '/select-course';
         
-        if (data.user.role === 'superuser') {
-          targetRoute = '/admin-panel';
-        } else if (data.user.role === 'admin') {
-          targetRoute = '/admin-panel';
+        if (data.user.role === 'superuser' || data.user.role === 'admin') {
+          // Check if desktop or mobile based on screen width
+          const isDesktop = Platform.OS === 'web' && typeof window !== 'undefined' && window.innerWidth >= 768;
+          targetRoute = isDesktop ? '/admin-panel' : '/admin';
         } else if (hasDefaultCourse) {
           if (data.user.role === 'kitchen') {
             targetRoute = '/kitchen';

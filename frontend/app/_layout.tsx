@@ -8,6 +8,7 @@ const DESKTOP_ROUTES = [
   '/admin-panel',
   '/user-management',
   '/course-management',
+  '/menu-management',
   '/kitchen',
   '/cashier',
 ];
@@ -86,9 +87,14 @@ export default function RootLayout() {
         <Stack.Screen name="cart" />
         <Stack.Screen name="orders" />
         <Stack.Screen name="admin" />
+        <Stack.Screen name="admin-panel" />
         <Stack.Screen name="kitchen" />
         <Stack.Screen name="cashier" />
         <Stack.Screen name="user-management" />
+        <Stack.Screen name="course-management" />
+        <Stack.Screen name="menu-management" />
+        <Stack.Screen name="profile" />
+        <Stack.Screen name="forgot-password" />
       </Stack>
     </WebWrapper>
   );

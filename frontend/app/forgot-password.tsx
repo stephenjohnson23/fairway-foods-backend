@@ -15,7 +15,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 
-const API_URL = Constants.expoConfig?.extra?.EXPO_BACKEND_URL || 'http://localhost:8001';
+const API_URL = Constants.expoConfig?.extra?.EXPO_BACKEND_URL || '';
 
 type Step = 'email' | 'code' | 'newPassword';
 

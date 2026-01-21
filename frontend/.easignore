@@ -1,12 +1,8 @@
 # ========================================
-# EAS Build Ignore File
+# EAS Build Ignore File  
 # ========================================
 
-# Ignore corrupted files with special characters
-**/\xef\xbf\xbd*
-**/*\x00*
-**/*@@*
-**/@*@*
+# Ignore any files with non-ASCII or special characters
 
 # Ignore cache directories
 .metro-cache/
@@ -14,6 +10,8 @@
 .cache/
 **/.cache/
 **/node_modules/.cache/
+tmp/
+*.tmp
 
 # Ignore build artifacts
 ios/

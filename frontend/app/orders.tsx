@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = Constants.expoConfig?.extra?.EXPO_BACKEND_URL || 'http://localhost:8001';
+const API_URL = Constants.expoConfig?.extra?.EXPO_BACKEND_URL || '';
 
 interface Order {
   id: string;

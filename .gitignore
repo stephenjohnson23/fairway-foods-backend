@@ -80,3 +80,19 @@ agenthub/agents/youtube/db
 android-sdk/
 .expo/
 .metro-cache/
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*
+-e 
+# Environment files
+*.env
+*.env.*

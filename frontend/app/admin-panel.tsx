@@ -21,6 +21,20 @@ import Constants from 'expo-constants';
 
 const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || Constants.expoConfig?.extra?.EXPO_BACKEND_URL || '';
 
+// Cross-platform confirm dialog
+const confirmAction = (title: string, message: string, onConfirm: () => void) => {
+  if (Platform.OS === 'web') {
+    if (window.confirm(`${title}\n\n${message}`)) {
+      onConfirm();
+    }
+  } else {
+    Alert.alert(title, message, [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Confirm', style: 'destructive', onPress: onConfirm },
+    ]);
+  }
+};
+
 const getBaseUrl = () => {
   if (Platform.OS === 'web') {
     // On web, use the same origin which should proxy /api/* requests
@@ -41,7 +55,7 @@ const getBaseUrl = () => {
     // Fallback to origin
     return origin;
   }
-  return API_URL || 'http://localhost:8001';
+  return API_URL || '';
 };
 const { width } = Dimensions.get('window');
 
@@ -340,22 +354,37 @@ export default function AdminPanelScreen() {
   };
 
   const handleDeleteCourse = async (courseId: string) => {
-    Alert.alert('Delete Course', 'Are you sure?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          const token = await AsyncStorage.getItem('token');
-          const baseUrl = getBaseUrl();
-          await fetch(`${baseUrl}/api/courses/${courseId}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` },
-          });
+    confirmAction('Delete Course', 'Are you sure you want to delete this course?', async () => {
+      const token = await AsyncStorage.getItem('token');
+      const baseUrl = getBaseUrl();
+      try {
+        const response = await fetch(`${baseUrl}/api/courses/${courseId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (response.ok) {
           loadAllData();
-        },
-      },
-    ]);
+          if (Platform.OS === 'web') {
+            alert('Course deleted successfully');
+          } else {
+            Alert.alert('Success', 'Course deleted');
+          }
+        } else {
+          const error = await response.json();
+          if (Platform.OS === 'web') {
+            alert(error.detail || 'Failed to delete course');
+          } else {
+            Alert.alert('Error', error.detail || 'Failed to delete course');
+          }
+        }
+      } catch (error) {
+        if (Platform.OS === 'web') {
+          alert('Failed to delete course');
+        } else {
+          Alert.alert('Error', 'Failed to delete course');
+        }
+      }
+    });
   };
 
   // Menu Management Functions
@@ -389,22 +418,41 @@ export default function AdminPanelScreen() {
   };
 
   const handleDeleteMenuItem = async (itemId: string) => {
-    Alert.alert('Delete Item', 'Are you sure?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          const token = await AsyncStorage.getItem('token');
-          const baseUrl = getBaseUrl();
-          await fetch(`${baseUrl}/api/menu/${itemId}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` },
-          });
+    confirmAction('Delete Item', 'Are you sure you want to delete this menu item?', async () => {
+      const token = await AsyncStorage.getItem('token');
+      const baseUrl = getBaseUrl();
+      console.log('Delete menu item - baseUrl:', baseUrl, 'itemId:', itemId, 'token present:', !!token);
+      try {
+        const response = await fetch(`${baseUrl}/api/menu/${itemId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        console.log('Delete menu response status:', response.status);
+        if (response.ok) {
           loadMenuItems();
-        },
-      },
-    ]);
+          if (Platform.OS === 'web') {
+            alert('Menu item deleted successfully');
+          } else {
+            Alert.alert('Success', 'Menu item deleted');
+          }
+        } else {
+          const error = await response.json();
+          console.log('Delete menu error:', error);
+          if (Platform.OS === 'web') {
+            alert(error.detail || 'Failed to delete item');
+          } else {
+            Alert.alert('Error', error.detail || 'Failed to delete item');
+          }
+        }
+      } catch (error) {
+        console.log('Delete menu catch error:', error);
+        if (Platform.OS === 'web') {
+          alert('Failed to delete item');
+        } else {
+          Alert.alert('Error', 'Failed to delete item');
+        }
+      }
+    });
   };
 
   // Order Management
@@ -447,60 +495,74 @@ export default function AdminPanelScreen() {
   };
 
   const handleDeleteOrder = async (orderId: string) => {
-    Alert.alert('Delete Order', 'Are you sure you want to delete this order?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          const token = await AsyncStorage.getItem('token');
-          const baseUrl = getBaseUrl();
-          try {
-            const response = await fetch(`${baseUrl}/api/orders/${orderId}`, {
-              method: 'DELETE',
-              headers: { 'Authorization': `Bearer ${token}` },
-            });
-            if (response.ok) {
-              loadAllData();
-              Alert.alert('Success', 'Order deleted');
-            } else {
-              Alert.alert('Error', 'Failed to delete order');
-            }
-          } catch (error) {
+    confirmAction('Delete Order', 'Are you sure you want to delete this order?', async () => {
+      const token = await AsyncStorage.getItem('token');
+      const baseUrl = getBaseUrl();
+      try {
+        const response = await fetch(`${baseUrl}/api/orders/${orderId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (response.ok) {
+          loadAllData();
+          if (Platform.OS === 'web') {
+            alert('Order deleted successfully');
+          } else {
+            Alert.alert('Success', 'Order deleted');
+          }
+        } else {
+          if (Platform.OS === 'web') {
+            alert('Failed to delete order');
+          } else {
             Alert.alert('Error', 'Failed to delete order');
           }
-        },
-      },
-    ]);
+        }
+      } catch (error) {
+        if (Platform.OS === 'web') {
+          alert('Failed to delete order');
+        } else {
+          Alert.alert('Error', 'Failed to delete order');
+        }
+      }
+    });
   };
 
   const handleDeleteUser = async (userId: string) => {
-    Alert.alert('Delete User', 'Are you sure you want to delete this user? This action cannot be undone.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          const token = await AsyncStorage.getItem('token');
-          const baseUrl = getBaseUrl();
-          try {
-            const response = await fetch(`${baseUrl}/api/users/${userId}`, {
-              method: 'DELETE',
-              headers: { 'Authorization': `Bearer ${token}` },
-            });
-            if (response.ok) {
-              loadAllData();
-              Alert.alert('Success', 'User deleted');
-            } else {
-              const error = await response.json();
-              Alert.alert('Error', error.detail || 'Failed to delete user');
-            }
-          } catch (error) {
-            Alert.alert('Error', 'Failed to delete user');
+    confirmAction('Delete User', 'Are you sure you want to delete this user? This action cannot be undone.', async () => {
+      const token = await AsyncStorage.getItem('token');
+      const baseUrl = getBaseUrl();
+      console.log('Delete user - baseUrl:', baseUrl, 'userId:', userId, 'token present:', !!token);
+      try {
+        const response = await fetch(`${baseUrl}/api/users/${userId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        console.log('Delete user response status:', response.status);
+        if (response.ok) {
+          loadAllData();
+          if (Platform.OS === 'web') {
+            alert('User deleted successfully');
+          } else {
+            Alert.alert('Success', 'User deleted');
           }
-        },
-      },
-    ]);
+        } else {
+          const error = await response.json();
+          console.log('Delete user error:', error);
+          if (Platform.OS === 'web') {
+            alert(error.detail || 'Failed to delete user');
+          } else {
+            Alert.alert('Error', error.detail || 'Failed to delete user');
+          }
+        }
+      } catch (error) {
+        console.log('Delete user catch error:', error);
+        if (Platform.OS === 'web') {
+          alert('Failed to delete user');
+        } else {
+          Alert.alert('Error', 'Failed to delete user');
+        }
+      }
+    });
   };
 
   const handleCreateOrder = async () => {
@@ -627,12 +689,12 @@ export default function AdminPanelScreen() {
       <View style={styles.sidebarMenu}>
         {[
           { id: 'dashboard', icon: 'grid', label: 'Dashboard' },
-          { id: 'users', icon: 'people', label: 'Users', badge: pendingUsers },
-          { id: 'courses', icon: 'golf', label: 'Courses' },
+          { id: 'users', icon: 'people', label: 'Users', badge: pendingUsers, superuserOnly: true },
+          { id: 'courses', icon: 'golf', label: 'Courses', superuserOnly: true },
           { id: 'menu', icon: 'restaurant', label: 'Menu' },
           { id: 'orders', icon: 'receipt', label: 'Orders', badge: pendingOrders },
         ].map((item) => (
-          (item.id !== 'users' || user?.role === 'superuser') && (
+          (!item.superuserOnly || user?.role === 'superuser') && (
             <TouchableOpacity
               key={item.id}
               style={[styles.sidebarItem, activeSection === item.id && styles.sidebarItemActive]}

@@ -39,6 +39,22 @@ async def download_website():
         )
     raise HTTPException(status_code=404, detail="ZIP file not found")
 
+@app.get("/api/download-webapp")
+async def download_webapp():
+    """Download the web app build as a ZIP file for self-hosting"""
+    zip_path = os.path.join(os.path.dirname(__file__), "fairway-webapp.zip")
+    if os.path.exists(zip_path):
+        return FileResponse(zip_path, filename="fairway-webapp.zip", media_type="application/zip")
+    raise HTTPException(status_code=404, detail="Web app ZIP not found")
+
+@app.get("/api/download-backend")
+async def download_backend():
+    """Download the backend code for Render.com deployment"""
+    zip_path = os.path.join(os.path.dirname(__file__), "fairway-backend-render.zip")
+    if os.path.exists(zip_path):
+        return FileResponse(zip_path, filename="fairway-backend-render.zip", media_type="application/zip")
+    raise HTTPException(status_code=404, detail="Backend ZIP not found")
+
 if os.path.exists(WEBSITE_DIR):
     app.mount("/website", StaticFiles(directory=WEBSITE_DIR, html=True), name="website")
 
@@ -736,8 +752,19 @@ async def set_default_course(user_id: str, data: dict, user: dict = Depends(get_
 async def create_user_by_super(user_data: dict, user: dict = Depends(get_super_user)):
     email = user_data.get("email")
     name = user_data.get("name")
+    password = user_data.get("password")
     role = user_data.get("role", "user")
     course_ids = user_data.get("courseIds", [])
+    
+    # Validation
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
+    if not name:
+        raise HTTPException(status_code=400, detail="Name is required")
+    if not password:
+        raise HTTPException(status_code=400, detail="Password is required")
+    if len(password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
     
     # Check if user already exists
     if users_collection.find_one({"email": email}):
@@ -746,14 +773,12 @@ async def create_user_by_super(user_data: dict, user: dict = Depends(get_super_u
     if role not in ["user", "admin", "kitchen", "cashier", "superuser"]:
         raise HTTPException(status_code=400, detail="Invalid role")
     
-    # Create default password (user should change it)
-    default_password = "change123"
-    
     new_user = {
         "email": email,
-        "password": hash_password(default_password),
+        "password": hash_password(password),
         "name": name,
         "role": role,
+        "status": "approved",  # Admin-created users are auto-approved
         "courseIds": course_ids,
         "createdAt": datetime.utcnow(),
         "passwordChanged": False
@@ -763,8 +788,7 @@ async def create_user_by_super(user_data: dict, user: dict = Depends(get_super_u
     
     return {
         "message": "User created successfully",
-        "userId": str(result.inserted_id),
-        "defaultPassword": default_password
+        "userId": str(result.inserted_id)
     }
 
 @app.put("/api/users/{user_id}/role")
@@ -943,6 +967,78 @@ async def delete_order(order_id: str, user: dict = Depends(get_super_user)):
         raise HTTPException(status_code=404, detail="Order not found")
     
     return {"message": "Order deleted successfully"}
+
+# Serve the web app build
+WEB_BUILD_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "web-build")
+
+# Mount static files for the web app build (must be before other routes)
+if os.path.exists(WEB_BUILD_DIR):
+    app.mount("/webapp/_expo", StaticFiles(directory=os.path.join(WEB_BUILD_DIR, "_expo")), name="webapp_expo")
+    app.mount("/webapp/assets", StaticFiles(directory=os.path.join(WEB_BUILD_DIR, "assets")), name="webapp_assets")
+    app.mount("/api/webapp/_expo", StaticFiles(directory=os.path.join(WEB_BUILD_DIR, "_expo")), name="api_webapp_expo")
+    app.mount("/api/webapp/assets", StaticFiles(directory=os.path.join(WEB_BUILD_DIR, "assets")), name="api_webapp_assets")
+
+@app.get("/webapp")
+@app.get("/webapp/")
+@app.get("/api/webapp")
+@app.get("/api/webapp/")
+async def serve_webapp_index():
+    """Serve the web app index page"""
+    index_path = os.path.join(WEB_BUILD_DIR, "index.html")
+    if os.path.exists(index_path):
+        # Read and modify index.html to fix asset paths for /api/webapp/ routing
+        with open(index_path, 'r') as f:
+            content = f.read()
+        # Replace absolute paths with api/webapp-prefixed paths
+        content = content.replace('href="/favicon.ico"', 'href="/api/webapp/favicon.ico"')
+        content = content.replace('src="/_expo/', 'src="/api/webapp/_expo/')
+        content = content.replace('href="/_expo/', 'href="/api/webapp/_expo/')
+        from fastapi.responses import HTMLResponse
+        return HTMLResponse(content=content)
+    raise HTTPException(status_code=404, detail="Web app not found")
+
+@app.get("/webapp/favicon.ico")
+@app.get("/api/webapp/favicon.ico")
+async def serve_webapp_favicon():
+    """Serve favicon"""
+    favicon_path = os.path.join(WEB_BUILD_DIR, "favicon.ico")
+    if os.path.exists(favicon_path):
+        return FileResponse(favicon_path)
+    raise HTTPException(status_code=404, detail="Favicon not found")
+
+@app.get("/webapp/{path:path}")
+@app.get("/api/webapp/{path:path}")
+async def serve_webapp_files(path: str):
+    """Serve web app static files"""
+    # Try exact path first
+    file_path = os.path.join(WEB_BUILD_DIR, path)
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return FileResponse(file_path)
+    
+    # Try with .html extension for routes
+    html_path = os.path.join(WEB_BUILD_DIR, f"{path}.html")
+    if os.path.exists(html_path):
+        # Read and modify HTML to fix asset paths
+        with open(html_path, 'r') as f:
+            content = f.read()
+        content = content.replace('href="/favicon.ico"', 'href="/api/webapp/favicon.ico"')
+        content = content.replace('src="/_expo/', 'src="/api/webapp/_expo/')
+        content = content.replace('href="/_expo/', 'href="/api/webapp/_expo/')
+        from fastapi.responses import HTMLResponse
+        return HTMLResponse(content=content)
+    
+    # Fallback to index.html for SPA routing
+    index_path = os.path.join(WEB_BUILD_DIR, "index.html")
+    if os.path.exists(index_path):
+        with open(index_path, 'r') as f:
+            content = f.read()
+        content = content.replace('href="/favicon.ico"', 'href="/api/webapp/favicon.ico"')
+        content = content.replace('src="/_expo/', 'src="/api/webapp/_expo/')
+        content = content.replace('href="/_expo/', 'href="/api/webapp/_expo/')
+        from fastapi.responses import HTMLResponse
+        return HTMLResponse(content=content)
+    
+    raise HTTPException(status_code=404, detail="File not found")
 
 if __name__ == "__main__":
     import uvicorn
