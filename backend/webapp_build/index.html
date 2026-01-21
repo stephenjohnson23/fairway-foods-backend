@@ -1063,9 +1063,9 @@
                     price: item.price,
                     quantity: item.quantity
                 })),
-                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                totalAmount: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
                 customerName,
-                teeOffTime: teeOffTime || null,
+                teeOffTime: teeOffTime || "",
                 courseId: currentCourse.id
             };
             
