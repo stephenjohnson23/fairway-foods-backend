@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1b5e20">
+    <title>Fairway Foods - Staff Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1b5e20 0%, #0d3d0f 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Login */
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #1b5e20;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1b5e20;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1b5e20 0%, #0d3d0f 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+            width: auto;
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+        
+        .dashboard.active {
+            display: block;
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1b5e20;
+        }
+        
+        /* Orders Table */
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .orders-grid {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-id {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .order-time {
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .order-customer {
+            font-size: 15px;
+            margin-top: 5px;
+        }
+        
+        .order-status {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-preparing { background: #cce5ff; color: #004085; }
+        .status-ready { background: #d4edda; color: #155724; }
+        .status-completed { background: #e2e3e5; color: #383d41; }
+        
+        .order-items {
+            margin-bottom: 15px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 18px;
+            color: #1b5e20;
+            padding-top: 10px;
+            border-top: 2px solid #eee;
+            margin-top: 10px;
+        }
+        
+        .order-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .order-tee-time {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn.active {
+            border-color: #1b5e20;
+            background: #1b5e20;
+            color: white;
+        }
+        
+        .tab-btn .count {
+            background: #ff5722;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        
+        .tab-btn.active .count {
+            background: white;
+            color: #1b5e20;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 200;
+        }
+        
+        .toast.visible {
+            opacity: 1;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        /* Refresh */
+        .refresh-btn {
+            background: #f5f5f5;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .refresh-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        /* Auto refresh indicator */
+        .auto-refresh {
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .header-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .order-actions {
+                flex-direction: column;
+            }
+            
+            .order-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <div class="login-container">
+            <h2>⛳ Staff Portal</h2>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" placeholder="staff@golf.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password">
+            </div>
+            <button class="btn btn-primary" onclick="login()">Sign In</button>
+            <p style="text-align: center; margin-top: 20px; color: #666; font-size: 13px;">
+                Staff accounts only (Admin, Kitchen, Cashier)
+            </p>
+        </div>
+    </div>
+    
+    <!-- Dashboard -->
+    <div id="dashboardScreen" class="dashboard">
+        <div class="header">
+            <h1>⛳ Fairway Foods Staff</h1>
+            <div class="header-info">
+                <span class="user-badge" id="userRole">Admin</span>
+                <div class="auto-refresh">
+                    <span class="pulse"></span>
+                    Auto-refresh: 30s
+                </div>
+                <button class="logout-btn" onclick="logout()">Sign Out</button>
+            </div>
+        </div>
+        
+        <div class="container">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>🕐 Pending Orders</h3>
+                    <div class="value" id="pendingCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>👨‍🍳 Preparing</h3>
+                    <div class="value" id="preparingCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>✅ Ready for Pickup</h3>
+                    <div class="value" id="readyCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>📦 Completed Today</h3>
+                    <div class="value" id="completedCount">0</div>
+                </div>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="filterOrders('all')" data-filter="all">
+                    All Orders
+                </button>
+                <button class="tab-btn" onclick="filterOrders('pending')" data-filter="pending">
+                    Pending <span class="count" id="pendingBadge">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterOrders('preparing')" data-filter="preparing">
+                    Preparing <span class="count" id="preparingBadge">0</span>
+                </button>
+                <button class="tab-btn" onclick="filterOrders('ready')" data-filter="ready">
+                    Ready <span class="count" id="readyBadge">0</span>
+                </button>
+            </div>
+            
+            <!-- Orders -->
+            <div class="section-title">
+                <span>Orders</span>
+                <button class="refresh-btn" onclick="loadOrders()">
+                    🔄 Refresh
+                </button>
+            </div>
+            
+            <div class="orders-grid" id="ordersGrid">
+                <div class="loading">Loading orders...</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // ============ CONFIGURATION ============
+        const API_URL = 'https://fairway-foods-backend.onrender.com/api';
+        
+        // ============ STATE ============
+        let currentUser = null;
+        let allOrders = [];
+        let currentFilter = 'all';
+        let refreshInterval = null;
+        
+        // ============ INITIALIZATION ============
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+        
+        function checkAuth() {
+            const token = localStorage.getItem('staffToken');
+            const user = localStorage.getItem('staffUser');
+            
+            if (token && user) {
+                currentUser = JSON.parse(user);
+                showDashboard();
+            }
+        }
+        
+        // ============ AUTH ============
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showToast('Please enter email and password');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Only allow staff roles
+                    if (data.user.role === 'user') {
+                        showToast('Access denied. Staff accounts only.');
+                        return;
+                    }
+                    
+                    localStorage.setItem('staffToken', data.token);
+                    localStorage.setItem('staffUser', JSON.stringify(data.user));
+                    currentUser = data.user;
+                    showDashboard();
+                } else {
+                    showToast(data.detail || 'Login failed');
+                }
+            } catch (error) {
+                showToast('Connection error. Please try again.');
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('staffToken');
+            localStorage.removeItem('staffUser');
+            currentUser = null;
+            if (refreshInterval) clearInterval(refreshInterval);
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('dashboardScreen').classList.remove('active');
+        }
+        
+        function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardScreen').classList.add('active');
+            document.getElementById('userRole').textContent = 
+                currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+            
+            loadOrders();
+            
+            // Auto refresh every 30 seconds
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(loadOrders, 30000);
+        }
+        
+        // ============ ORDERS ============
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('staffToken')}` }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load orders');
+                }
+                
+                allOrders = await response.json();
+                updateStats();
+                renderOrders();
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('ordersGrid').innerHTML = `
+                    <div class="empty-state">
+                        <p>Failed to load orders. Please try again.</p>
+                        <button class="btn btn-primary btn-sm" style="margin-top: 15px;" onclick="loadOrders()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+        
+        function updateStats() {
+            const pending = allOrders.filter(o => o.status === 'pending').length;
+            const preparing = allOrders.filter(o => o.status === 'preparing').length;
+            const ready = allOrders.filter(o => o.status === 'ready').length;
+            const completed = allOrders.filter(o => o.status === 'completed').length;
+            
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('preparingCount').textContent = preparing;
+            document.getElementById('readyCount').textContent = ready;
+            document.getElementById('completedCount').textContent = completed;
+            
+            document.getElementById('pendingBadge').textContent = pending;
+            document.getElementById('preparingBadge').textContent = preparing;
+            document.getElementById('readyBadge').textContent = ready;
+        }
+        
+        function filterOrders(filter) {
+            currentFilter = filter;
+            
+            // Update tab styles
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            
+            renderOrders();
+        }
+        
+        function renderOrders() {
+            let orders = allOrders;
+            
+            if (currentFilter !== 'all') {
+                orders = allOrders.filter(o => o.status === currentFilter);
+            }
+            
+            // Sort by date (newest first)
+            orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            const grid = document.getElementById('ordersGrid');
+            
+            if (orders.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <p>No ${currentFilter === 'all' ? '' : currentFilter} orders</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = orders.map(order => {
+                const date = new Date(order.createdAt);
+                const timeStr = date.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
+                const dateStr = date.toLocaleDateString('en-ZA');
+                
+                return `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">Order #${order.id.slice(-6).toUpperCase()}</div>
+                                <div class="order-time">${dateStr} at ${timeStr}</div>
+                                <div class="order-customer">👤 ${order.customerName || 'Guest'}</div>
+                                ${order.teeOffTime ? `<span class="order-tee-time">⛳ Tee-off: ${order.teeOffTime}</span>` : ''}
+                            </div>
+                            <span class="order-status status-${order.status}">${order.status}</span>
+                        </div>
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item">
+                                    <span>${item.quantity}x ${item.name}</span>
+                                    <span>R${(item.price * item.quantity).toFixed(2)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="order-total">
+                            <span>Total</span>
+                            <span>R${(order.totalAmount || order.total || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="order-actions">
+                            ${getOrderActions(order)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function getOrderActions(order) {
+            const role = currentUser.role;
+            
+            if (order.status === 'pending') {
+                if (role === 'kitchen' || role === 'admin' || role === 'superuser') {
+                    return `<button class="btn btn-warning btn-sm" onclick="updateStatus('${order.id}', 'preparing')">
+                        👨‍🍳 Start Preparing
+                    </button>`;
+                }
+            }
+            
+            if (order.status === 'preparing') {
+                if (role === 'kitchen' || role === 'admin' || role === 'superuser') {
+                    return `<button class="btn btn-success btn-sm" onclick="updateStatus('${order.id}', 'ready')">
+                        ✅ Mark Ready
+                    </button>`;
+                }
+            }
+            
+            if (order.status === 'ready') {
+                if (role === 'cashier' || role === 'admin' || role === 'superuser') {
+                    return `<button class="btn btn-info btn-sm" onclick="updateStatus('${order.id}', 'completed')">
+                        📦 Complete Order
+                    </button>`;
+                }
+            }
+            
+            if (order.status === 'completed') {
+                return `<span style="color: #666; font-size: 13px;">✓ Order completed</span>`;
+            }
+            
+            return '';
+        }
+        
+        async function updateStatus(orderId, newStatus) {
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('staffToken')}`
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                
+                if (response.ok) {
+                    showToast(`Order updated to ${newStatus}`);
+                    loadOrders();
+                } else {
+                    showToast('Failed to update order');
+                }
+            } catch (error) {
+                showToast('Connection error. Please try again.');
+            }
+        }
+        
+        // ============ UTILITIES ============
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 3000);
+        }
+    </script>
+</body>
+</html>
