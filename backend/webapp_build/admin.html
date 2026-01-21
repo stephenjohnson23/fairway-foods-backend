@@ -1153,7 +1153,14 @@
             try {
                 const res = await fetch(`${API_URL}/courses`);
                 if (res.ok) {
-                    allCourses = await res.json();
+                    let courses = await res.json();
+                    
+                    // Filter courses for non-superuser (admin only sees assigned courses)
+                    if (currentUser.role !== 'superuser' && currentUser.courseIds && currentUser.courseIds.length > 0) {
+                        courses = courses.filter(c => currentUser.courseIds.includes(c.id));
+                    }
+                    
+                    allCourses = courses;
                     renderCourses();
                     
                     // Update menu filter dropdown
