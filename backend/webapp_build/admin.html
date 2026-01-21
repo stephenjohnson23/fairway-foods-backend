@@ -898,7 +898,14 @@
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('staffToken')}` }
                 });
                 if (res.ok) {
-                    allOrders = await res.json();
+                    let orders = await res.json();
+                    
+                    // Filter orders for non-superuser (admin/kitchen/cashier only sees orders from assigned courses)
+                    if (currentUser.role !== 'superuser' && currentUser.courseIds && currentUser.courseIds.length > 0) {
+                        orders = orders.filter(o => currentUser.courseIds.includes(o.courseId));
+                    }
+                    
+                    allOrders = orders;
                     updateStats();
                     renderOrders();
                 }
