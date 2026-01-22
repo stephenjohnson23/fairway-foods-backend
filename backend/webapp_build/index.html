@@ -1000,6 +1000,12 @@
                 return;
             }
             
+            // Tee-off time is mandatory
+            if (!teeOffTime) {
+                showToast('Please enter your tee-off time');
+                return;
+            }
+            
             try {
                 const token = localStorage.getItem('token');
                 const headers = { 'Content-Type': 'application/json' };
