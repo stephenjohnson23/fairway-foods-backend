@@ -991,16 +991,23 @@
         async function placeOrder() {
             if (cart.length === 0) { showToast('Cart is empty'); return; }
             
-            const customerName = document.getElementById('customerName').value || currentUser.name;
+            const customerName = document.getElementById('customerName').value || currentUser.name || 'Guest';
             const teeOffTime = document.getElementById('teeOffTime').value;
             
+            // Guest must provide a name
+            if (currentUser.role === 'guest' && !document.getElementById('customerName').value) {
+                showToast('Please enter your name for pickup');
+                return;
+            }
+            
             try {
+                const token = localStorage.getItem('token');
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+                
                 const res = await fetch(`${API_URL}/orders`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
+                    headers,
                     body: JSON.stringify({
                         items: cart.map(i => ({ menuItemId: i.id, name: i.name, price: i.price, quantity: i.quantity })),
                         total: cart.reduce((s, i) => s + i.price * i.quantity, 0),
@@ -1014,7 +1021,13 @@
                     cart = [];
                     updateCartBadge();
                     showToast('Order placed!');
-                    navigateTo('orders');
+                    
+                    // For guests, show confirmation instead of orders list
+                    if (currentUser.role === 'guest') {
+                        showGuestOrderConfirmation();
+                    } else {
+                        navigateTo('orders');
+                    }
                 } else {
                     showToast('Failed to place order');
                 }
@@ -1023,8 +1036,32 @@
             }
         }
         
+        function showGuestOrderConfirmation() {
+            document.getElementById('ordersList').innerHTML = `
+                <div style="text-align: center; padding: 40px 20px;">
+                    <div style="font-size: 50px; margin-bottom: 20px;">✅</div>
+                    <h2 style="color: #2e7d32; margin-bottom: 10px;">Order Placed!</h2>
+                    <p style="color: #666; margin-bottom: 20px;">Your order has been sent to the kitchen.</p>
+                    <p style="color: #666; margin-bottom: 30px;">Please proceed to the counter for payment when your order is ready.</p>
+                    <button class="btn btn-primary" style="width: auto; padding: 12px 30px;" onclick="navigateTo('menu')">Order More</button>
+                </div>
+            `;
+            showScreen('ordersScreen');
+        }
+        
         // Customer: Orders
         async function loadCustomerOrders() {
+            // Guests can't view order history
+            if (currentUser.role === 'guest') {
+                document.getElementById('ordersList').innerHTML = `
+                    <div class="empty-state">
+                        <p>Sign in to view your order history.</p>
+                        <button class="btn btn-primary" style="width: auto; padding: 10px 20px; margin-top: 15px;" onclick="logout()">Sign In</button>
+                    </div>
+                `;
+                return;
+            }
+            
             try {
                 const res = await fetch(`${API_URL}/orders`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
