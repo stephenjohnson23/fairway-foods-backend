@@ -818,6 +818,13 @@
         // Init
         document.addEventListener('DOMContentLoaded', checkAuth);
         
+        // Convert order ID to numeric format
+        function getOrderNumber(orderId) {
+            // Convert hex to decimal and take last 6 digits
+            const num = parseInt(orderId.slice(-8), 16) % 1000000;
+            return num.toString().padStart(6, '0');
+        }
+        
         function checkAuth() {
             const token = localStorage.getItem('staffToken');
             const user = localStorage.getItem('staffUser');
