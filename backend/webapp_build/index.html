@@ -722,6 +722,55 @@
             }
         }
         
+        function continueAsGuest() {
+            // Set up guest user
+            currentUser = {
+                id: null,
+                name: 'Guest',
+                email: null,
+                role: 'guest',
+                status: 'approved',
+                courseIds: [] // Guest can see all courses
+            };
+            localStorage.setItem('user', JSON.stringify(currentUser));
+            localStorage.removeItem('token'); // No token for guest
+            
+            document.getElementById('headerRight').style.display = 'flex';
+            document.getElementById('userBadge').textContent = 'Guest';
+            document.getElementById('customerNav').style.display = 'flex';
+            
+            loadGuestCourses();
+        }
+        
+        async function loadGuestCourses() {
+            try {
+                const res = await fetch(`${API_URL}/courses`);
+                let courses = await res.json();
+                
+                if (courses.length === 1) {
+                    selectCourse(courses[0].id, courses[0].name);
+                    return;
+                }
+                
+                if (courses.length === 0) {
+                    document.getElementById('courseList').innerHTML = '<div class="empty-state"><p>No courses available.</p></div>';
+                    showScreen('courseScreen');
+                    return;
+                }
+                
+                document.getElementById('courseList').innerHTML = courses.map(c => `
+                    <div class="course-card" onclick="selectCourse('${c.id}', '${c.name}')">
+                        <h3>${c.name}</h3>
+                        <p>📍 ${c.location}</p>
+                    </div>
+                `).join('');
+                
+                showScreen('courseScreen');
+            } catch (e) {
+                showToast('Failed to load courses');
+            }
+        }
+        
         async function register() {
             const name = document.getElementById('registerName').value;
             const email = document.getElementById('registerEmail').value;
