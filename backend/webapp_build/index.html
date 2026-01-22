@@ -1076,14 +1076,20 @@
             };
             
             try {
+                const token = localStorage.getItem('token');
+                console.log('Placing order with token:', token ? 'exists' : 'missing');
+                console.log('Order data:', JSON.stringify(orderData));
+                
                 const response = await fetch(`${API_URL}/orders`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify(orderData)
                 });
+                
+                console.log('Response status:', response.status);
                 
                 if (response.ok) {
                     cart = [];
@@ -1091,10 +1097,13 @@
                     showToast('Order placed successfully!');
                     navigateTo('orders');
                 } else {
-                    showToast('Failed to place order');
+                    const errorData = await response.json().catch(() => ({}));
+                    console.log('Error response:', errorData);
+                    showToast(errorData.detail || 'Failed to place order');
                 }
             } catch (error) {
-                showToast('Connection error. Please try again.');
+                console.error('Order error:', error);
+                showToast('Connection error: ' + error.message);
             }
         }
         
