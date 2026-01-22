@@ -584,6 +584,47 @@
             </div>
         </div>
         
+        <!-- Staff: Menu Management -->
+        <div class="screen" id="staffMenuScreen">
+            <div class="staff-container" style="padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3>Menu Management</h3>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <select id="menuCourseFilter" onchange="loadStaffMenu()" style="padding: 6px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px;"></select>
+                        <button class="btn btn-sm btn-primary" onclick="openMenuModal()">+ Add</button>
+                    </div>
+                </div>
+                <div id="staffMenuList"></div>
+            </div>
+        </div>
+        
+        <!-- Staff: User Management -->
+        <div class="screen" id="staffUsersScreen">
+            <div class="staff-container" style="padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3>User Management</h3>
+                    <button class="btn btn-sm btn-primary" onclick="openUserModal()">+ Add User</button>
+                </div>
+                <div class="tabs" id="userTabs">
+                    <button class="tab-btn active" onclick="filterUsers('all')">All</button>
+                    <button class="tab-btn" onclick="filterUsers('pending')">Pending</button>
+                    <button class="tab-btn" onclick="filterUsers('approved')">Approved</button>
+                </div>
+                <div id="staffUsersList"></div>
+            </div>
+        </div>
+        
+        <!-- Staff: Course Management -->
+        <div class="screen" id="staffCoursesScreen">
+            <div class="staff-container" style="padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3>Course Management</h3>
+                    <button class="btn btn-sm btn-primary" onclick="openCourseModal()">+ Add Course</button>
+                </div>
+                <div id="staffCoursesList"></div>
+            </div>
+        </div>
+        
         <!-- Cart Badge (Customer) -->
         <div class="cart-badge" id="cartBadge" onclick="navigateTo('cart')">
             🛒 <span id="cartCount">0</span> - <span id="cartBadgeTotal">R0</span>
