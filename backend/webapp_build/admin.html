@@ -960,7 +960,7 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
                                 <div style="flex: 1; min-width: 200px;">
                                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                                        <strong>#${order.id.slice(-6).toUpperCase()}</strong>
+                                        <strong>#${getOrderNumber(order.id)}</strong>
                                         <span class="badge badge-${order.status}" style="font-size: 10px; padding: 2px 8px;">${order.status}</span>
                                         <span style="color: #666; font-size: 12px;">${timeStr}</span>
                                     </div>
