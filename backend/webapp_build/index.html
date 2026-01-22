@@ -1212,7 +1212,10 @@
         
         function navigateTo(section) {
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            event.target.closest('.nav-item')?.classList.add('active');
+            // Only try to add active class if called from a click event
+            if (typeof event !== 'undefined' && event && event.target) {
+                event.target.closest('.nav-item')?.classList.add('active');
+            }
             
             switch(section) {
                 case 'menu':
