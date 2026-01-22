@@ -695,6 +695,105 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Menu Item Modal -->
+        <div class="modal-overlay" id="menuModal">
+            <div class="modal">
+                <h2 id="menuModalTitle">Add Menu Item</h2>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="menuItemName" placeholder="Item name">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="menuItemDesc" placeholder="Description">
+                </div>
+                <div class="form-group">
+                    <label>Price (R)</label>
+                    <input type="number" id="menuItemPrice" placeholder="0.00" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="menuItemCategory">
+                        <option value="Starters">Starters</option>
+                        <option value="Mains">Mains</option>
+                        <option value="Desserts">Desserts</option>
+                        <option value="Beverages">Beverages</option>
+                        <option value="Snacks">Snacks</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="menuItemAvailable" checked> Available</label>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="hideModal('menuModal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveMenuItem()">Save</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Modal -->
+        <div class="modal-overlay" id="userModal">
+            <div class="modal">
+                <h2 id="userModalTitle">Add User</h2>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="editUserName" placeholder="Full name">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="editUserEmail" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="editUserRole">
+                        <option value="user">User (Customer)</option>
+                        <option value="kitchen">Kitchen Staff</option>
+                        <option value="cashier">Cashier</option>
+                        <option value="admin">Admin</option>
+                        <option value="superuser">Super User</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Password (leave blank to keep current)</label>
+                    <input type="password" id="editUserPassword" placeholder="New password">
+                </div>
+                <div class="form-group">
+                    <label>Assigned Courses</label>
+                    <div id="editUserCourses" style="max-height: 120px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; padding: 8px;"></div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="hideModal('userModal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveUser()">Save</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Course Modal -->
+        <div class="modal-overlay" id="courseModal">
+            <div class="modal">
+                <h2 id="courseModalTitle">Add Course</h2>
+                <div class="form-group">
+                    <label>Course Name</label>
+                    <input type="text" id="editCourseName" placeholder="Golf course name">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="editCourseLocation" placeholder="City, Region">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="editCourseDesc" placeholder="Description">
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="editCourseActive" checked> Active</label>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="hideModal('courseModal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveCourse()">Save</button>
+                </div>
+            </div>
+        </div>
     </div>
     
     <script>
@@ -708,6 +807,11 @@
         let activeCategory = 'All';
         let allOrders = [];
         let staffFilter = 'pending';
+        let allUsers = [];
+        let allCourses = [];
+        let allStaffMenu = [];
+        let editingId = null;
+        let userFilter = 'all';
         
         // Init
         document.addEventListener('DOMContentLoaded', checkAuth);
