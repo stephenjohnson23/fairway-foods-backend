@@ -612,8 +612,20 @@
         <!-- Bottom Navigation (Staff) -->
         <div class="bottom-nav" id="staffNav" style="display: none;">
             <button class="nav-item active" onclick="staffNavigateTo('dashboard')" data-nav="dashboard">
-                <span class="icon">📊</span>
+                <span class="icon">📋</span>
                 Orders
+            </button>
+            <button class="nav-item" onclick="staffNavigateTo('menu')" data-nav="menu" id="staffNavMenu" style="display: none;">
+                <span class="icon">🍽️</span>
+                Menu
+            </button>
+            <button class="nav-item" onclick="staffNavigateTo('users')" data-nav="users" id="staffNavUsers" style="display: none;">
+                <span class="icon">👥</span>
+                Users
+            </button>
+            <button class="nav-item" onclick="staffNavigateTo('courses')" data-nav="courses" id="staffNavCourses" style="display: none;">
+                <span class="icon">⛳</span>
+                Courses
             </button>
             <button class="nav-item" onclick="staffNavigateTo('profile')" data-nav="profile">
                 <span class="icon">👤</span>
