@@ -570,16 +570,10 @@
                 <div class="section" id="sectionOrders">
                     <div class="card">
                         <div class="card-header">
-                            <span class="card-title">All Orders</span>
+                            <span class="card-title">Orders</span>
                             <button class="btn btn-sm btn-secondary" onclick="loadOrders()">🔄 Refresh</button>
                         </div>
-                        <div class="tabs">
-                            <button class="tab-btn active" onclick="filterOrders('all')">All</button>
-                            <button class="tab-btn" onclick="filterOrders('pending')">Pending</button>
-                            <button class="tab-btn" onclick="filterOrders('preparing')">Preparing</button>
-                            <button class="tab-btn" onclick="filterOrders('ready')">Ready</button>
-                            <button class="tab-btn" onclick="filterOrders('completed')">Completed</button>
-                        </div>
+                        <div class="tabs" id="orderTabs"></div>
                         <div id="ordersContainer"></div>
                     </div>
                 </div>
