@@ -882,9 +882,33 @@
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
                 
-                const courses = await response.json();
+                let courses = await response.json();
+                
+                // Filter courses to only show user's assigned courses
+                if (currentUser && currentUser.courseIds && currentUser.courseIds.length > 0) {
+                    courses = courses.filter(c => currentUser.courseIds.includes(c.id));
+                }
                 
                 const courseList = document.getElementById('courseList');
+                
+                // If user has only one course, go directly to menu
+                if (courses.length === 1) {
+                    selectCourse(courses[0].id, courses[0].name);
+                    return;
+                }
+                
+                // If no courses assigned, show message
+                if (courses.length === 0) {
+                    courseList.innerHTML = `
+                        <div class="empty-state">
+                            <p>No courses assigned to your account.</p>
+                            <p style="color: #666; margin-top: 10px;">Please contact your administrator.</p>
+                        </div>
+                    `;
+                    showScreen('courseScreen');
+                    return;
+                }
+                
                 courseList.innerHTML = courses.map(course => `
                     <div class="course-card" onclick="selectCourse('${course.id}', '${course.name}')">
                         <h3>${course.name}</h3>
