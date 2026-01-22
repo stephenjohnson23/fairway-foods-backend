@@ -882,6 +882,12 @@
             document.getElementById('navCourses').style.display = currentUser.role === 'superuser' ? 'flex' : 'none';
             document.getElementById('navMenu').style.display = isAdmin ? 'flex' : 'none';
             
+            // For cashier/kitchen, default to pending orders and go to orders section
+            if (currentUser.role === 'cashier' || currentUser.role === 'kitchen') {
+                currentFilter = 'pending';
+                showSection('orders');
+            }
+            
             loadAllData();
             setInterval(loadOrders, 30000); // Auto refresh orders
         }
