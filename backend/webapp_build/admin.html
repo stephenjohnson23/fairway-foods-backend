@@ -939,29 +939,61 @@
             let orders = currentFilter === 'all' ? allOrders : allOrders.filter(o => o.status === currentFilter);
             orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             
-            const html = orders.slice(0, 20).map(order => `
-                <div class="order-card">
-                    <div class="order-header">
-                        <div>
-                            <strong>#${order.id.slice(-6).toUpperCase()}</strong>
-                            <div style="color: #666; font-size: 13px;">${new Date(order.createdAt).toLocaleString()}</div>
-                            <div>👤 ${order.customerName || 'Guest'}</div>
-                            ${order.teeOffTime ? `<div style="color: #1565c0; font-size: 12px;">⛳ Tee-off: ${order.teeOffTime}</div>` : ''}
+            // Compact view for cashier/kitchen
+            const isCompact = ['cashier', 'kitchen'].includes(currentUser.role);
+            
+            const html = orders.slice(0, 50).map(order => {
+                const timeStr = new Date(order.createdAt).toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
+                const itemsSummary = order.items.map(i => `${i.quantity}x ${i.name}`).join(', ');
+                
+                if (isCompact) {
+                    // Compact card for cashier/kitchen
+                    return `
+                        <div class="order-card" style="padding: 12px; margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <div style="flex: 1; min-width: 200px;">
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                        <strong>#${order.id.slice(-6).toUpperCase()}</strong>
+                                        <span class="badge badge-${order.status}" style="font-size: 10px; padding: 2px 8px;">${order.status}</span>
+                                        <span style="color: #666; font-size: 12px;">${timeStr}</span>
+                                    </div>
+                                    <div style="font-size: 13px;">👤 ${order.customerName || 'Guest'} ${order.teeOffTime ? `<span style="color: #1565c0;">⛳ ${order.teeOffTime}</span>` : ''}</div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 2px;">${itemsSummary}</div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <strong style="color: #1b5e20;">R${(order.totalAmount || order.total || 0).toFixed(2)}</strong>
+                                    ${getOrderActions(order)}
+                                </div>
+                            </div>
                         </div>
-                        <span class="badge badge-${order.status}">${order.status}</span>
-                    </div>
-                    <div class="order-items">
-                        ${order.items.map(i => `<div class="order-item"><span>${i.quantity}x ${i.name}</span><span>R${(i.price * i.quantity).toFixed(2)}</span></div>`).join('')}
-                    </div>
-                    <div class="order-total">
-                        <span>Total</span>
-                        <span>R${(order.totalAmount || order.total || 0).toFixed(2)}</span>
-                    </div>
-                    <div class="order-actions">
-                        ${getOrderActions(order)}
-                    </div>
-                </div>
-            `).join('') || '<p style="color: #666; padding: 20px;">No orders found</p>';
+                    `;
+                } else {
+                    // Full card for admin/superuser
+                    return `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div>
+                                    <strong>#${order.id.slice(-6).toUpperCase()}</strong>
+                                    <div style="color: #666; font-size: 13px;">${new Date(order.createdAt).toLocaleString()}</div>
+                                    <div>👤 ${order.customerName || 'Guest'}</div>
+                                    ${order.teeOffTime ? `<div style="color: #1565c0; font-size: 12px;">⛳ Tee-off: ${order.teeOffTime}</div>` : ''}
+                                </div>
+                                <span class="badge badge-${order.status}">${order.status}</span>
+                            </div>
+                            <div class="order-items">
+                                ${order.items.map(i => `<div class="order-item"><span>${i.quantity}x ${i.name}</span><span>R${(i.price * i.quantity).toFixed(2)}</span></div>`).join('')}
+                            </div>
+                            <div class="order-total">
+                                <span>Total</span>
+                                <span>R${(order.totalAmount || order.total || 0).toFixed(2)}</span>
+                            </div>
+                            <div class="order-actions">
+                                ${getOrderActions(order)}
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('') || '<p style="color: #666; padding: 20px;">No orders found</p>';
             
             document.getElementById('ordersContainer').innerHTML = html;
             document.getElementById('recentOrders').innerHTML = html;
@@ -971,11 +1003,12 @@
             const role = currentUser.role;
             const isAdmin = ['admin', 'superuser'].includes(role);
             
-            if (order.status === 'pending' && (role === 'kitchen' || isAdmin)) {
-                return `<button class="btn btn-sm btn-warning" onclick="updateOrderStatus('${order.id}', 'preparing')">👨‍🍳 Start Preparing</button>`;
+            // Cashier can move pending → preparing, and ready → completed
+            if (order.status === 'pending' && (role === 'kitchen' || role === 'cashier' || isAdmin)) {
+                return `<button class="btn btn-sm btn-warning" onclick="updateOrderStatus('${order.id}', 'preparing')">👨‍🍳 Preparing</button>`;
             }
-            if (order.status === 'preparing' && (role === 'kitchen' || isAdmin)) {
-                return `<button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order.id}', 'ready')">✅ Mark Ready</button>`;
+            if (order.status === 'preparing' && (role === 'kitchen' || role === 'cashier' || isAdmin)) {
+                return `<button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order.id}', 'ready')">✅ Ready</button>`;
             }
             if (order.status === 'ready' && (role === 'cashier' || isAdmin)) {
                 return `<button class="btn btn-sm btn-info" onclick="updateOrderStatus('${order.id}', 'completed')">📦 Complete</button>`;
