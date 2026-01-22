@@ -980,7 +980,7 @@
                         <div class="order-card">
                             <div class="order-header">
                                 <div>
-                                    <strong>#${order.id.slice(-6).toUpperCase()}</strong>
+                                    <strong>#${getOrderNumber(order.id)}</strong>
                                     <div style="color: #666; font-size: 13px;">${new Date(order.createdAt).toLocaleString()}</div>
                                     <div>👤 ${order.customerName || 'Guest'}</div>
                                     ${order.teeOffTime ? `<div style="color: #1565c0; font-size: 12px;">⛳ Tee-off: ${order.teeOffTime}</div>` : ''}
