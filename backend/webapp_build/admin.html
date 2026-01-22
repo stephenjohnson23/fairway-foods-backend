@@ -928,11 +928,38 @@
             document.getElementById('statCompleted').textContent = allOrders.filter(o => o.status === 'completed').length;
         }
         
+        function renderOrderTabs() {
+            const isStaff = ['cashier', 'kitchen'].includes(currentUser.role);
+            let tabs = [];
+            
+            if (isStaff) {
+                // For cashier/kitchen: Pending first, All at the end
+                tabs = [
+                    { filter: 'pending', label: 'Pending' },
+                    { filter: 'preparing', label: 'Preparing' },
+                    { filter: 'ready', label: 'Ready' },
+                    { filter: 'completed', label: 'Completed' },
+                    { filter: 'all', label: 'All' }
+                ];
+            } else {
+                // For admin/superuser: All first
+                tabs = [
+                    { filter: 'all', label: 'All' },
+                    { filter: 'pending', label: 'Pending' },
+                    { filter: 'preparing', label: 'Preparing' },
+                    { filter: 'ready', label: 'Ready' },
+                    { filter: 'completed', label: 'Completed' }
+                ];
+            }
+            
+            document.getElementById('orderTabs').innerHTML = tabs.map(tab => 
+                `<button class="tab-btn ${currentFilter === tab.filter ? 'active' : ''}" onclick="filterOrders('${tab.filter}')">${tab.label}</button>`
+            ).join('');
+        }
+        
         function filterOrders(filter) {
             currentFilter = filter;
-            document.querySelectorAll('#sectionOrders .tab-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(filter) || (filter === 'all' && btn.textContent === 'All'));
-            });
+            renderOrderTabs();
             renderOrders();
         }
         
