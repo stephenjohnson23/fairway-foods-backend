@@ -1019,7 +1019,7 @@
         async function updateOrderStatus(orderId, status) {
             try {
                 const res = await fetch(`${API_URL}/orders/${orderId}/status`, {
-                    method: 'PUT',
+                    method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem('staffToken')}`
@@ -1030,7 +1030,8 @@
                     showToast('Order updated');
                     loadOrders();
                 } else {
-                    showToast('Failed to update order');
+                    const err = await res.json();
+                    showToast(err.detail || 'Failed to update order');
                 }
             } catch (e) {
                 showToast('Connection error');
