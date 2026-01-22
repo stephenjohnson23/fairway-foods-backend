@@ -6,16 +6,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#2e7d32">
-    <title>Fairway Foods - Order Food on the Course</title>
+    <title>Fairway Foods</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -25,108 +20,106 @@
         }
         
         .app-container {
-            max-width: 480px;
+            max-width: 100%;
             margin: 0 auto;
             background: white;
             min-height: 100vh;
-            position: relative;
+        }
+        
+        /* Customer app container */
+        .customer-container {
+            max-width: 480px;
+            margin: 0 auto;
         }
         
         /* Header */
         .header {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             color: white;
-            padding: 20px;
-            text-align: center;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
         }
         
         .header h1 {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
         
         .header-subtitle {
-            font-size: 14px;
+            font-size: 12px;
             opacity: 0.9;
-            margin-top: 5px;
         }
         
-        /* Login Screen */
-        .screen {
-            display: none;
-            padding: 20px;
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .screen.active {
-            display: block;
+        .user-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
         }
         
-        .login-container {
-            padding-top: 40px;
+        .logout-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
         }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
+        /* Screens */
+        .screen { display: none; padding: 20px; }
+        .screen.active { display: block; }
         
+        /* Forms */
+        .form-group { margin-bottom: 16px; }
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 500;
             color: #555;
+            font-size: 14px;
         }
-        
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px 14px;
             border: 2px solid #e0e0e0;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 16px;
-            transition: border-color 0.2s;
         }
-        
         .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: #2e7d32;
         }
         
+        /* Buttons */
         .btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
         }
-        
-        .btn:active {
-            transform: scale(0.98);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: #f5f5f5;
-            color: #333;
-            margin-top: 10px;
-        }
-        
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
+        .btn-primary { background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white; }
+        .btn-secondary { background: #f5f5f5; color: #333; margin-top: 10px; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: #333; }
+        .btn-info { background: #17a2b8; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-sm { padding: 8px 14px; font-size: 13px; width: auto; }
         
         .link-btn {
             background: none;
@@ -138,255 +131,218 @@
             text-decoration: underline;
         }
         
-        /* Course Selection */
+        /* Login */
+        .login-container { padding-top: 40px; max-width: 400px; margin: 0 auto; }
+        
+        /* Course cards */
         .course-card {
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
             cursor: pointer;
-            transition: all 0.2s;
         }
+        .course-card:hover { border-color: #2e7d32; }
+        .course-card h3 { font-size: 16px; margin-bottom: 4px; }
+        .course-card p { color: #666; font-size: 13px; }
         
-        .course-card:hover, .course-card.selected {
-            border-color: #2e7d32;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
-        }
-        
-        .course-card h3 {
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-        
-        .course-card p {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        /* Menu Items */
+        /* Menu */
         .menu-categories {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             overflow-x: auto;
-            padding: 15px 0;
-            margin-bottom: 15px;
-            -webkit-overflow-scrolling: touch;
+            padding: 12px 0;
+            margin-bottom: 12px;
         }
-        
         .category-btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
             border-radius: 20px;
             background: #f0f0f0;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
             white-space: nowrap;
             cursor: pointer;
-            transition: all 0.2s;
         }
-        
-        .category-btn.active {
-            background: #2e7d32;
-            color: white;
-        }
+        .category-btn.active { background: #2e7d32; color: white; }
         
         .menu-item {
             background: white;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-        
-        .menu-item-info h4 {
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-        
-        .menu-item-info p {
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-        
-        .menu-item-price {
-            color: #2e7d32;
-            font-weight: 600;
-            font-size: 16px;
-        }
+        .menu-item-info h4 { font-size: 15px; margin-bottom: 2px; }
+        .menu-item-info p { color: #666; font-size: 12px; margin-bottom: 4px; }
+        .menu-item-price { color: #2e7d32; font-weight: 600; }
         
         .add-btn {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             border: none;
             background: #2e7d32;
             color: white;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
-        /* Cart */
+        /* Cart badge */
         .cart-badge {
             position: fixed;
             bottom: 80px;
             right: 20px;
             background: #2e7d32;
             color: white;
-            padding: 16px 24px;
-            border-radius: 30px;
+            padding: 12px 20px;
+            border-radius: 25px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(46, 125, 50, 0.4);
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
             z-index: 100;
             display: none;
+            font-size: 14px;
         }
+        .cart-badge.visible { display: flex; align-items: center; gap: 8px; }
         
-        .cart-badge.visible {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
+        /* Cart */
         .cart-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px;
+            padding: 12px;
             border-bottom: 1px solid #eee;
         }
-        
-        .cart-item-qty {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
+        .cart-item-qty { display: flex; align-items: center; gap: 10px; }
         .qty-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             border: 2px solid #2e7d32;
             background: white;
             color: #2e7d32;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
         }
-        
         .cart-total {
-            padding: 20px;
+            padding: 16px;
             background: #f9f9f9;
-            border-radius: 16px;
-            margin: 20px 0;
+            border-radius: 12px;
+            margin: 16px 0;
         }
-        
-        .cart-total-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
+        .cart-total-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
         .cart-total-row.total {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: #2e7d32;
             border-top: 2px solid #e0e0e0;
-            padding-top: 10px;
-            margin-top: 10px;
+            padding-top: 8px;
+            margin-top: 8px;
         }
         
         /* Orders */
         .order-card {
             background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
-        
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
+        .order-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .order-status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: 600;
+            text-transform: uppercase;
         }
+        .status-pending, .badge-pending { background: #fff3cd; color: #856404; }
+        .status-preparing, .badge-preparing { background: #cce5ff; color: #004085; }
+        .status-ready, .badge-ready { background: #d4edda; color: #155724; }
+        .status-completed, .badge-completed { background: #e2e3e5; color: #383d41; }
         
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-preparing { background: #cce5ff; color: #004085; }
-        .status-ready { background: #d4edda; color: #155724; }
-        .status-completed { background: #e2e3e5; color: #383d41; }
-        
-        /* Bottom Navigation */
+        /* Bottom nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
+            left: 0;
+            right: 0;
             background: white;
             display: flex;
             justify-content: space-around;
-            padding: 12px 0;
-            box-shadow: 0 -2px 20px rgba(0,0,0,0.1);
+            padding: 10px 0;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
             z-index: 100;
         }
-        
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 2px;
             background: none;
             border: none;
             color: #999;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
-            padding: 8px 16px;
+            padding: 6px 12px;
         }
+        .nav-item.active { color: #2e7d32; }
+        .nav-item .icon { font-size: 20px; }
         
-        .nav-item.active {
-            color: #2e7d32;
-        }
+        /* Staff specific */
+        .staff-container { max-width: 1200px; margin: 0 auto; }
         
-        .nav-item svg {
-            width: 24px;
-            height: 24px;
-        }
-        
-        /* Loading */
-        .loading {
+        .tabs {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .tab-btn.active { border-color: #2e7d32; background: #2e7d32; color: white; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .stat-card h3 { font-size: 12px; color: #666; margin-bottom: 4px; }
+        .stat-card .value { font-size: 28px; font-weight: 700; color: #2e7d32; }
+        
+        .staff-order-card {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #e0e0e0;
-            border-top-color: #2e7d32;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
         
         /* Toast */
@@ -404,275 +360,253 @@
             transition: opacity 0.3s;
             z-index: 200;
         }
+        .toast.visible { opacity: 1; }
         
-        .toast.visible {
-            opacity: 1;
-        }
+        /* Empty state */
+        .empty-state { text-align: center; padding: 40px 20px; color: #999; }
+        
+        /* Pending approval */
+        .pending-approval { text-align: center; padding: 60px 20px; }
+        .pending-approval h2 { margin-bottom: 10px; }
+        .pending-approval p { color: #666; }
         
         /* Modal */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 300;
         }
-        
-        .modal-overlay.visible {
-            display: flex;
-        }
-        
+        .modal-overlay.visible { display: flex; }
         .modal {
             background: white;
-            border-radius: 20px;
-            padding: 24px;
+            border-radius: 16px;
+            padding: 20px;
             width: 90%;
             max-width: 400px;
             max-height: 80vh;
             overflow-y: auto;
         }
+        .modal h2 { margin-bottom: 16px; font-size: 18px; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+        .modal-actions .btn { flex: 1; }
         
-        .modal h2 {
-            margin-bottom: 20px;
-        }
-        
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-        
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-        
-        /* User Info */
-        .user-info {
-            background: #f9f9f9;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .user-info h3 {
-            margin-bottom: 10px;
-        }
-        
-        .user-info p {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-        
-        /* Pending Approval */
-        .pending-approval {
-            text-align: center;
-            padding: 60px 20px;
-        }
-        
-        .pending-approval svg {
-            width: 100px;
-            height: 100px;
-            color: #ffc107;
-            margin-bottom: 20px;
-        }
-        
-        .pending-approval h2 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .pending-approval p {
-            color: #666;
-            line-height: 1.6;
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
         <div class="header">
-            <h1>⛳ Fairway Foods</h1>
-            <p class="header-subtitle" id="headerSubtitle">Order food on the course</p>
+            <div>
+                <h1>⛳ Fairway Foods</h1>
+                <p class="header-subtitle" id="headerSubtitle">Order food on the course</p>
+            </div>
+            <div class="header-right" id="headerRight" style="display: none;">
+                <span class="user-badge" id="userBadge"></span>
+                <button class="logout-btn" onclick="logout()">Sign Out</button>
+            </div>
         </div>
         
         <!-- Login Screen -->
         <div class="screen active" id="loginScreen">
-            <div class="login-container">
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" placeholder="your@email.com">
+            <div class="customer-container">
+                <div class="login-container">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password">
+                    </div>
+                    <button class="btn btn-primary" onclick="login()">Sign In</button>
+                    <button class="btn btn-secondary" onclick="showScreen('registerScreen')">Create Account</button>
+                    <button class="link-btn" onclick="showScreen('forgotPasswordScreen')">Forgot Password?</button>
                 </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter your password">
-                </div>
-                <button class="btn btn-primary" onclick="login()">Sign In</button>
-                <button class="btn btn-secondary" onclick="showScreen('registerScreen')">Create Account</button>
-                <button class="link-btn" onclick="showScreen('forgotPasswordScreen')">Forgot Password?</button>
             </div>
         </div>
         
         <!-- Register Screen -->
         <div class="screen" id="registerScreen">
-            <div class="login-container">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="registerName" placeholder="John Smith">
+            <div class="customer-container">
+                <div class="login-container">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="registerName" placeholder="John Smith">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="registerEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="registerPassword" placeholder="Create a password">
+                    </div>
+                    <button class="btn btn-primary" onclick="register()">Create Account</button>
+                    <button class="btn btn-secondary" onclick="showScreen('loginScreen')">Back to Sign In</button>
                 </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="registerEmail" placeholder="your@email.com">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="registerPassword" placeholder="Create a password">
-                </div>
-                <button class="btn btn-primary" onclick="register()">Create Account</button>
-                <button class="btn btn-secondary" onclick="showScreen('loginScreen')">Back to Sign In</button>
             </div>
         </div>
         
         <!-- Forgot Password Screen -->
         <div class="screen" id="forgotPasswordScreen">
-            <div class="login-container">
-                <h2 style="margin-bottom: 10px;">Reset Password</h2>
-                <p style="color: #666; margin-bottom: 20px;">Enter your email and we'll send you a reset code.</p>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="forgotEmail" placeholder="your@email.com">
+            <div class="customer-container">
+                <div class="login-container">
+                    <h2 style="margin-bottom: 10px;">Reset Password</h2>
+                    <p style="color: #666; margin-bottom: 20px; font-size: 14px;">Enter your email and we'll send you a reset code.</p>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="forgotEmail" placeholder="your@email.com">
+                    </div>
+                    <button class="btn btn-primary" onclick="sendResetCode()">Send Reset Code</button>
+                    <button class="btn btn-secondary" onclick="showScreen('loginScreen')">Back to Sign In</button>
                 </div>
-                <button class="btn btn-primary" onclick="sendResetCode()">Send Reset Code</button>
-                <button class="btn btn-secondary" onclick="showScreen('loginScreen')">Back to Sign In</button>
-            </div>
-        </div>
-        
-        <!-- Reset Code Screen -->
-        <div class="screen" id="resetCodeScreen">
-            <div class="login-container">
-                <h2 style="margin-bottom: 10px;">Enter Code</h2>
-                <p style="color: #666; margin-bottom: 20px;">Check your email for the 6-digit code.</p>
-                <div class="form-group">
-                    <label>Reset Code</label>
-                    <input type="text" id="resetCode" placeholder="123456" maxlength="6">
-                </div>
-                <div class="form-group">
-                    <label>New Password</label>
-                    <input type="password" id="newPassword" placeholder="Enter new password">
-                </div>
-                <button class="btn btn-primary" onclick="resetPassword()">Reset Password</button>
-                <button class="btn btn-secondary" onclick="showScreen('loginScreen')">Back to Sign In</button>
             </div>
         </div>
         
         <!-- Pending Approval Screen -->
         <div class="screen" id="pendingScreen">
-            <div class="pending-approval">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12,6 12,12 16,14"></polyline>
-                </svg>
-                <h2>Account Pending Approval</h2>
-                <p>Your account is being reviewed by the club administrator. You'll receive an email once approved.</p>
-                <button class="btn btn-secondary" style="margin-top: 30px;" onclick="logout()">Sign Out</button>
+            <div class="customer-container">
+                <div class="pending-approval">
+                    <div style="font-size: 60px; margin-bottom: 20px;">⏳</div>
+                    <h2>Account Pending Approval</h2>
+                    <p>Your account is being reviewed by the club administrator.</p>
+                    <button class="btn btn-secondary" style="margin-top: 30px; width: auto; padding: 12px 30px;" onclick="logout()">Sign Out</button>
+                </div>
             </div>
         </div>
         
-        <!-- Course Selection Screen -->
+        <!-- Customer: Course Selection -->
         <div class="screen" id="courseScreen">
-            <h2 style="margin-bottom: 20px;">Select Your Course</h2>
-            <div id="courseList"></div>
+            <div class="customer-container">
+                <h2 style="margin-bottom: 16px;">Select Your Course</h2>
+                <div id="courseList"></div>
+            </div>
         </div>
         
-        <!-- Menu Screen -->
+        <!-- Customer: Menu -->
         <div class="screen" id="menuScreen">
-            <div class="menu-categories" id="categoryTabs"></div>
-            <div id="menuList"></div>
+            <div class="customer-container">
+                <div class="menu-categories" id="categoryTabs"></div>
+                <div id="menuList"></div>
+            </div>
         </div>
         
-        <!-- Cart Screen -->
-        <div class="screen" id="cartScreen" style="padding-bottom: 100px;">
-            <h2 style="margin-bottom: 20px;">Your Order</h2>
-            <div id="cartItems"></div>
-            <div class="cart-total" id="cartTotal" style="display: none;">
-                <div class="cart-total-row">
-                    <span>Subtotal</span>
-                    <span id="subtotal">R0.00</span>
+        <!-- Customer: Cart -->
+        <div class="screen" id="cartScreen">
+            <div class="customer-container" style="padding-bottom: 100px;">
+                <h2 style="margin-bottom: 16px;">Your Order</h2>
+                <div id="cartItems"></div>
+                <div class="cart-total" id="cartTotal" style="display: none;">
+                    <div class="cart-total-row">
+                        <span>Subtotal</span>
+                        <span id="subtotal">R0.00</span>
+                    </div>
+                    <div class="cart-total-row total">
+                        <span>Total</span>
+                        <span id="totalAmount">R0.00</span>
+                    </div>
                 </div>
-                <div class="cart-total-row total">
-                    <span>Total</span>
-                    <span id="totalAmount">R0.00</span>
+                <div class="form-group">
+                    <label>Your Name (for pickup)</label>
+                    <input type="text" id="customerName" placeholder="Enter your name">
                 </div>
+                <div class="form-group">
+                    <label>Tee-off Time (optional)</label>
+                    <input type="time" id="teeOffTime">
+                </div>
+                <button class="btn btn-primary" id="placeOrderBtn" onclick="placeOrder()">Place Order</button>
             </div>
-            <div class="form-group">
-                <label>Your Name (for pickup)</label>
-                <input type="text" id="customerName" placeholder="Enter your name">
-            </div>
-            <div class="form-group">
-                <label>Tee-off Time (optional)</label>
-                <input type="time" id="teeOffTime">
-            </div>
-            <button class="btn btn-primary" id="placeOrderBtn" onclick="placeOrder()" style="margin-bottom: 20px;">Place Order</button>
         </div>
         
-        <!-- Orders Screen -->
+        <!-- Customer: Orders -->
         <div class="screen" id="ordersScreen">
-            <h2 style="margin-bottom: 20px;">Your Orders</h2>
-            <div id="ordersList"></div>
+            <div class="customer-container">
+                <h2 style="margin-bottom: 16px;">Your Orders</h2>
+                <div id="ordersList"></div>
+            </div>
         </div>
         
-        <!-- Profile Screen -->
+        <!-- Customer: Profile -->
         <div class="screen" id="profileScreen">
-            <h2 style="margin-bottom: 20px;">Profile</h2>
-            <div class="user-info" id="userInfo"></div>
-            <button class="btn btn-secondary" onclick="showChangePasswordModal()">Change Password</button>
-            <button class="btn btn-danger" style="margin-top: 10px;" onclick="logout()">Sign Out</button>
+            <div class="customer-container">
+                <h2 style="margin-bottom: 16px;">Profile</h2>
+                <div id="userInfo" style="background: #f9f9f9; padding: 16px; border-radius: 12px; margin-bottom: 16px;"></div>
+                <button class="btn btn-secondary" onclick="showPasswordModal()">Change Password</button>
+                <button class="btn btn-danger" style="margin-top: 10px;" onclick="logout()">Sign Out</button>
+            </div>
         </div>
         
-        <!-- Cart Badge -->
-        <div class="cart-badge" id="cartBadge" onclick="showScreen('cartScreen')">
-            🛒 <span id="cartCount">0</span> items - <span id="cartBadgeTotal">R0</span>
+        <!-- Staff: Dashboard -->
+        <div class="screen" id="staffDashboard">
+            <div class="staff-container" style="padding: 16px;">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>🕐 Pending</h3>
+                        <div class="value" id="statPending">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>👨‍🍳 Preparing</h3>
+                        <div class="value" id="statPreparing">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>✅ Ready</h3>
+                        <div class="value" id="statReady">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>📦 Done</h3>
+                        <div class="value" id="statCompleted">0</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3>Orders</h3>
+                    <button class="btn btn-sm btn-secondary" onclick="loadStaffOrders()">🔄 Refresh</button>
+                </div>
+                
+                <div class="tabs" id="staffOrderTabs"></div>
+                <div id="staffOrdersList"></div>
+            </div>
         </div>
         
-        <!-- Bottom Navigation -->
-        <div class="bottom-nav" id="bottomNav" style="display: none;">
-            <button class="nav-item active" onclick="navigateTo('menu')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 3h18v18H3zM3 9h18M9 21V9"></path>
-                </svg>
+        <!-- Cart Badge (Customer) -->
+        <div class="cart-badge" id="cartBadge" onclick="navigateTo('cart')">
+            🛒 <span id="cartCount">0</span> - <span id="cartBadgeTotal">R0</span>
+        </div>
+        
+        <!-- Bottom Navigation (Customer) -->
+        <div class="bottom-nav" id="customerNav" style="display: none;">
+            <button class="nav-item active" onclick="navigateTo('menu')" data-nav="menu">
+                <span class="icon">🍽️</span>
                 Menu
             </button>
-            <button class="nav-item" onclick="navigateTo('cart')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg>
+            <button class="nav-item" onclick="navigateTo('cart')" data-nav="cart">
+                <span class="icon">🛒</span>
                 Cart
             </button>
-            <button class="nav-item" onclick="navigateTo('orders')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                </svg>
+            <button class="nav-item" onclick="navigateTo('orders')" data-nav="orders">
+                <span class="icon">📋</span>
                 Orders
             </button>
-            <button class="nav-item" onclick="navigateTo('profile')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
+            <button class="nav-item" onclick="navigateTo('profile')" data-nav="profile">
+                <span class="icon">👤</span>
+                Profile
+            </button>
+        </div>
+        
+        <!-- Bottom Navigation (Staff) -->
+        <div class="bottom-nav" id="staffNav" style="display: none;">
+            <button class="nav-item active" onclick="staffNavigateTo('dashboard')" data-nav="dashboard">
+                <span class="icon">📊</span>
+                Orders
+            </button>
+            <button class="nav-item" onclick="staffNavigateTo('profile')" data-nav="profile">
+                <span class="icon">👤</span>
                 Profile
             </button>
         </div>
@@ -680,60 +614,73 @@
         <!-- Toast -->
         <div class="toast" id="toast"></div>
         
-        <!-- Change Password Modal -->
+        <!-- Password Modal -->
         <div class="modal-overlay" id="passwordModal">
             <div class="modal">
                 <h2>Change Password</h2>
                 <div class="form-group">
                     <label>Current Password</label>
-                    <input type="password" id="currentPassword" placeholder="Enter current password">
+                    <input type="password" id="currentPassword" placeholder="Current password">
                 </div>
                 <div class="form-group">
                     <label>New Password</label>
-                    <input type="password" id="newPasswordChange" placeholder="Enter new password">
+                    <input type="password" id="newPasswordInput" placeholder="New password">
                 </div>
-                <button class="btn btn-primary" onclick="changePassword()">Update Password</button>
-                <button class="btn btn-secondary" onclick="hideModal('passwordModal')">Cancel</button>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="hideModal('passwordModal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="changePassword()">Update</button>
+                </div>
             </div>
         </div>
     </div>
     
     <script>
-        // ============ CONFIGURATION ============
         const API_URL = 'https://fairway-foods-backend.onrender.com/api';
         
-        // ============ STATE ============
         let currentUser = null;
         let currentCourse = null;
         let menuItems = [];
         let cart = [];
         let categories = [];
         let activeCategory = 'All';
+        let allOrders = [];
+        let staffFilter = 'pending';
         
-        // ============ INITIALIZATION ============
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
-        });
+        // Init
+        document.addEventListener('DOMContentLoaded', checkAuth);
         
         function checkAuth() {
             const token = localStorage.getItem('token');
             const user = localStorage.getItem('user');
-            
             if (token && user) {
                 currentUser = JSON.parse(user);
-                
-                if (currentUser.status === 'pending') {
-                    showScreen('pendingScreen');
-                } else if (currentUser.role === 'user') {
-                    loadCourses();
-                } else {
-                    showToast('Please use the mobile app for staff access');
-                    logout();
-                }
+                initializeApp();
             }
         }
         
-        // ============ AUTH ============
+        function initializeApp() {
+            document.getElementById('headerRight').style.display = 'flex';
+            document.getElementById('userBadge').textContent = currentUser.role;
+            
+            if (currentUser.status === 'pending') {
+                showScreen('pendingScreen');
+            } else if (currentUser.role === 'user') {
+                // Customer flow
+                document.getElementById('customerNav').style.display = 'flex';
+                document.getElementById('staffNav').style.display = 'none';
+                loadCourses();
+            } else {
+                // Staff flow
+                document.getElementById('customerNav').style.display = 'none';
+                document.getElementById('staffNav').style.display = 'flex';
+                document.getElementById('headerSubtitle').textContent = 'Staff Portal';
+                loadStaffOrders();
+                showScreen('staffDashboard');
+                setInterval(loadStaffOrders, 30000);
+            }
+        }
+        
+        // Auth
         async function login() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -744,38 +691,24 @@
             }
             
             try {
-                const response = await fetch(`${API_URL}/auth/login`, {
+                const res = await fetch(`${API_URL}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
                 
-                const data = await response.json();
+                const data = await res.json();
                 
-                if (response.ok) {
+                if (res.ok) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
                     currentUser = data.user;
-                    
-                    if (currentUser.status === 'pending') {
-                        showScreen('pendingScreen');
-                    } else if (currentUser.role === 'user') {
-                        loadCourses();
-                    } else {
-                        // Staff user - redirect to admin portal
-                        localStorage.setItem('staffToken', data.token);
-                        localStorage.setItem('staffUser', JSON.stringify(data.user));
-                        showToast('Redirecting to Staff Portal...');
-                        setTimeout(() => {
-                            window.location.href = 'admin.html';
-                        }, 1000);
-                    }
+                    initializeApp();
                 } else {
-                    const errorMsg = typeof data.detail === 'string' ? data.detail : 'Login failed';
-                    showToast(errorMsg);
+                    showToast(typeof data.detail === 'string' ? data.detail : 'Login failed');
                 }
-            } catch (error) {
-                showToast('Connection error. Please try again.');
+            } catch (e) {
+                showToast('Connection error');
             }
         }
         
@@ -790,485 +723,490 @@
             }
             
             try {
-                const response = await fetch(`${API_URL}/auth/register`, {
+                const res = await fetch(`${API_URL}/auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, password })
                 });
                 
-                const data = await response.json();
-                
-                if (response.ok) {
+                if (res.ok) {
                     showToast('Account created! Waiting for approval.');
                     showScreen('loginScreen');
                 } else {
+                    const data = await res.json();
                     showToast(data.detail || 'Registration failed');
                 }
-            } catch (error) {
-                showToast('Connection error. Please try again.');
+            } catch (e) {
+                showToast('Connection error');
             }
         }
         
         async function sendResetCode() {
             const email = document.getElementById('forgotEmail').value;
-            
-            if (!email) {
-                showToast('Please enter your email');
-                return;
-            }
+            if (!email) { showToast('Please enter your email'); return; }
             
             try {
-                const response = await fetch(`${API_URL}/auth/forgot-password`, {
+                const res = await fetch(`${API_URL}/auth/forgot-password`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
                 });
-                
-                if (response.ok) {
+                if (res.ok) {
                     showToast('Reset code sent to your email');
-                    showScreen('resetCodeScreen');
                 } else {
-                    const data = await response.json();
-                    showToast(data.detail || 'Failed to send reset code');
+                    showToast('Failed to send reset code');
                 }
-            } catch (error) {
-                showToast('Connection error. Please try again.');
-            }
-        }
-        
-        async function resetPassword() {
-            const email = document.getElementById('forgotEmail').value;
-            const code = document.getElementById('resetCode').value;
-            const newPassword = document.getElementById('newPassword').value;
-            
-            if (!code || !newPassword) {
-                showToast('Please enter code and new password');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_URL}/auth/reset-password`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, code, new_password: newPassword })
-                });
-                
-                if (response.ok) {
-                    showToast('Password reset successful!');
-                    showScreen('loginScreen');
-                } else {
-                    const data = await response.json();
-                    showToast(data.detail || 'Reset failed');
-                }
-            } catch (error) {
-                showToast('Connection error. Please try again.');
+            } catch (e) {
+                showToast('Connection error');
             }
         }
         
         function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            localStorage.clear();
             currentUser = null;
             currentCourse = null;
             cart = [];
-            document.getElementById('bottomNav').style.display = 'none';
+            document.getElementById('headerRight').style.display = 'none';
+            document.getElementById('customerNav').style.display = 'none';
+            document.getElementById('staffNav').style.display = 'none';
+            document.getElementById('cartBadge').classList.remove('visible');
+            document.getElementById('headerSubtitle').textContent = 'Order food on the course';
             showScreen('loginScreen');
         }
         
-        // ============ COURSES ============
+        // Customer: Courses
         async function loadCourses() {
             try {
-                const response = await fetch(`${API_URL}/courses`, {
+                const res = await fetch(`${API_URL}/courses`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
                 
-                let courses = await response.json();
+                let courses = await res.json();
                 
-                // Filter courses to only show user's assigned courses
-                if (currentUser && currentUser.courseIds && currentUser.courseIds.length > 0) {
+                if (currentUser.courseIds && currentUser.courseIds.length > 0) {
                     courses = courses.filter(c => currentUser.courseIds.includes(c.id));
                 }
                 
-                const courseList = document.getElementById('courseList');
-                
-                // If user has only one course, go directly to menu
                 if (courses.length === 1) {
                     selectCourse(courses[0].id, courses[0].name);
                     return;
                 }
                 
-                // If no courses assigned, show message
                 if (courses.length === 0) {
-                    courseList.innerHTML = `
-                        <div class="empty-state">
-                            <p>No courses assigned to your account.</p>
-                            <p style="color: #666; margin-top: 10px;">Please contact your administrator.</p>
-                        </div>
-                    `;
+                    document.getElementById('courseList').innerHTML = '<div class="empty-state"><p>No courses assigned to your account.</p></div>';
                     showScreen('courseScreen');
                     return;
                 }
                 
-                courseList.innerHTML = courses.map(course => `
-                    <div class="course-card" onclick="selectCourse('${course.id}', '${course.name}')">
-                        <h3>${course.name}</h3>
-                        <p>📍 ${course.location}</p>
+                document.getElementById('courseList').innerHTML = courses.map(c => `
+                    <div class="course-card" onclick="selectCourse('${c.id}', '${c.name}')">
+                        <h3>${c.name}</h3>
+                        <p>📍 ${c.location}</p>
                     </div>
                 `).join('');
                 
                 showScreen('courseScreen');
-            } catch (error) {
+            } catch (e) {
                 showToast('Failed to load courses');
             }
         }
         
-        function selectCourse(courseId, courseName) {
-            currentCourse = { id: courseId, name: courseName };
-            document.getElementById('headerSubtitle').textContent = courseName;
+        function selectCourse(id, name) {
+            currentCourse = { id, name };
+            document.getElementById('headerSubtitle').textContent = name;
             loadMenu();
         }
         
-        // ============ MENU ============
+        // Customer: Menu
         async function loadMenu() {
             try {
-                const response = await fetch(`${API_URL}/menu?courseId=${currentCourse.id}`, {
+                const res = await fetch(`${API_URL}/menu?courseId=${currentCourse.id}`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
                 
-                menuItems = await response.json();
-                
-                // Get unique categories
-                categories = ['All', ...new Set(menuItems.map(item => item.category))];
+                menuItems = await res.json();
+                categories = ['All', ...new Set(menuItems.map(i => i.category))];
                 
                 renderCategories();
                 renderMenu();
-                
-                document.getElementById('bottomNav').style.display = 'flex';
                 showScreen('menuScreen');
-            } catch (error) {
+            } catch (e) {
                 showToast('Failed to load menu');
             }
         }
         
         function renderCategories() {
-            const categoryTabs = document.getElementById('categoryTabs');
-            categoryTabs.innerHTML = categories.map(cat => `
-                <button class="category-btn ${cat === activeCategory ? 'active' : ''}" 
-                        onclick="filterCategory('${cat}')">${cat}</button>
+            document.getElementById('categoryTabs').innerHTML = categories.map(c => `
+                <button class="category-btn ${c === activeCategory ? 'active' : ''}" onclick="filterCategory('${c}')">${c}</button>
             `).join('');
         }
         
-        function filterCategory(category) {
-            activeCategory = category;
+        function filterCategory(cat) {
+            activeCategory = cat;
             renderCategories();
             renderMenu();
         }
         
         function renderMenu() {
-            const filteredItems = activeCategory === 'All' 
-                ? menuItems.filter(item => item.available)
-                : menuItems.filter(item => item.category === activeCategory && item.available);
+            const items = activeCategory === 'All' 
+                ? menuItems.filter(i => i.available)
+                : menuItems.filter(i => i.category === activeCategory && i.available);
             
-            const menuList = document.getElementById('menuList');
-            
-            if (filteredItems.length === 0) {
-                menuList.innerHTML = `
-                    <div class="empty-state">
-                        <p>No items available in this category</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            menuList.innerHTML = filteredItems.map(item => `
+            document.getElementById('menuList').innerHTML = items.length ? items.map(i => `
                 <div class="menu-item">
                     <div class="menu-item-info">
-                        <h4>${item.name}</h4>
-                        <p>${item.description || ''}</p>
-                        <span class="menu-item-price">R${item.price.toFixed(2)}</span>
+                        <h4>${i.name}</h4>
+                        <p>${i.description || ''}</p>
+                        <span class="menu-item-price">R${i.price.toFixed(2)}</span>
                     </div>
-                    <button class="add-btn" onclick="addToCart('${item.id}')">+</button>
+                    <button class="add-btn" onclick="addToCart('${i.id}')">+</button>
                 </div>
-            `).join('');
+            `).join('') : '<div class="empty-state"><p>No items available</p></div>';
         }
         
-        // ============ CART ============
-        function addToCart(itemId) {
-            const item = menuItems.find(i => i.id === itemId);
+        // Customer: Cart
+        function addToCart(id) {
+            const item = menuItems.find(i => i.id === id);
             if (!item) return;
             
-            const existingItem = cart.find(c => c.id === itemId);
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                cart.push({ ...item, quantity: 1 });
-            }
+            const existing = cart.find(c => c.id === id);
+            if (existing) existing.quantity++;
+            else cart.push({ ...item, quantity: 1 });
             
             updateCartBadge();
-            showToast(`${item.name} added to cart`);
+            showToast(`${item.name} added`);
         }
         
         function updateCartBadge() {
-            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const count = cart.reduce((s, i) => s + i.quantity, 0);
+            const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
             
-            document.getElementById('cartCount').textContent = totalItems;
-            document.getElementById('cartBadgeTotal').textContent = `R${totalPrice.toFixed(0)}`;
-            
-            const cartBadge = document.getElementById('cartBadge');
-            if (totalItems > 0) {
-                cartBadge.classList.add('visible');
-            } else {
-                cartBadge.classList.remove('visible');
-            }
+            document.getElementById('cartCount').textContent = count;
+            document.getElementById('cartBadgeTotal').textContent = `R${total.toFixed(0)}`;
+            document.getElementById('cartBadge').classList.toggle('visible', count > 0);
         }
         
         function renderCart() {
             const cartItems = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
             
             if (cart.length === 0) {
-                cartItems.innerHTML = `
-                    <div class="empty-state">
-                        <p>Your cart is empty</p>
-                        <button class="btn btn-primary" style="margin-top: 20px; width: auto; padding: 12px 24px;" 
-                                onclick="navigateTo('menu')">Browse Menu</button>
-                    </div>
-                `;
-                cartTotal.style.display = 'none';
+                cartItems.innerHTML = '<div class="empty-state"><p>Your cart is empty</p></div>';
+                document.getElementById('cartTotal').style.display = 'none';
                 document.getElementById('placeOrderBtn').style.display = 'none';
                 return;
             }
             
-            cartItems.innerHTML = cart.map(item => `
+            cartItems.innerHTML = cart.map(i => `
                 <div class="cart-item">
                     <div>
-                        <h4>${item.name}</h4>
-                        <p style="color: #666;">R${item.price.toFixed(2)} each</p>
+                        <h4>${i.name}</h4>
+                        <p style="color: #666; font-size: 13px;">R${i.price.toFixed(2)} each</p>
                     </div>
                     <div class="cart-item-qty">
-                        <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)">-</button>
-                        <span>${item.quantity}</span>
-                        <button class="qty-btn" onclick="updateQuantity('${item.id}', 1)">+</button>
+                        <button class="qty-btn" onclick="updateQty('${i.id}', -1)">-</button>
+                        <span>${i.quantity}</span>
+                        <button class="qty-btn" onclick="updateQty('${i.id}', 1)">+</button>
                     </div>
                 </div>
             `).join('');
             
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const total = cart.reduce((s, i) => s + i.price * i.quantity, 0);
             document.getElementById('subtotal').textContent = `R${total.toFixed(2)}`;
             document.getElementById('totalAmount').textContent = `R${total.toFixed(2)}`;
-            
-            cartTotal.style.display = 'block';
+            document.getElementById('cartTotal').style.display = 'block';
             document.getElementById('placeOrderBtn').style.display = 'block';
         }
         
-        function updateQuantity(itemId, change) {
-            const item = cart.find(c => c.id === itemId);
+        function updateQty(id, change) {
+            const item = cart.find(c => c.id === id);
             if (!item) return;
             
             item.quantity += change;
-            
-            if (item.quantity <= 0) {
-                cart = cart.filter(c => c.id !== itemId);
-            }
+            if (item.quantity <= 0) cart = cart.filter(c => c.id !== id);
             
             updateCartBadge();
             renderCart();
         }
         
-        // ============ ORDERS ============
         async function placeOrder() {
-            if (cart.length === 0) {
-                showToast('Your cart is empty');
-                return;
-            }
+            if (cart.length === 0) { showToast('Cart is empty'); return; }
             
             const customerName = document.getElementById('customerName').value || currentUser.name;
             const teeOffTime = document.getElementById('teeOffTime').value;
             
-            const orderData = {
-                items: cart.map(item => ({
-                    menuItemId: item.id,
-                    name: item.name,
-                    price: item.price,
-                    quantity: item.quantity
-                })),
-                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-                customerName,
-                teeOffTime: teeOffTime || "",
-                courseId: currentCourse.id
-            };
-            
             try {
-                const token = localStorage.getItem('token');
-                console.log('Placing order with token:', token ? 'exists' : 'missing');
-                console.log('Order data:', JSON.stringify(orderData));
-                
-                const response = await fetch(`${API_URL}/orders`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(orderData)
-                });
-                
-                console.log('Response status:', response.status);
-                
-                if (response.ok) {
-                    cart = [];
-                    updateCartBadge();
-                    showToast('Order placed successfully!');
-                    navigateTo('orders');
-                } else {
-                    const errorData = await response.json().catch(() => ({}));
-                    console.log('Error response:', errorData);
-                    showToast(errorData.detail || 'Failed to place order');
-                }
-            } catch (error) {
-                console.error('Order error:', error);
-                showToast('Connection error: ' + error.message);
-            }
-        }
-        
-        async function loadOrders() {
-            try {
-                const response = await fetch(`${API_URL}/orders`, {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-                });
-                
-                let orders = await response.json();
-                
-                // Filter to show only current user's orders
-                if (currentUser && currentUser.id) {
-                    orders = orders.filter(o => o.userId === currentUser.id);
-                }
-                
-                const ordersList = document.getElementById('ordersList');
-                
-                if (orders.length === 0) {
-                    ordersList.innerHTML = `
-                        <div class="empty-state">
-                            <p>No orders yet</p>
-                            <button class="btn btn-primary" style="margin-top: 20px; width: auto; padding: 12px 24px;" 
-                                    onclick="navigateTo('menu')">Order Now</button>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                ordersList.innerHTML = orders.map(order => `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <span style="color: #666; font-size: 14px;">${new Date(order.createdAt).toLocaleDateString()}</span>
-                            <span class="order-status status-${order.status}">${order.status.toUpperCase()}</span>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            ${order.items.map(item => `
-                                <p style="font-size: 14px;">${item.quantity}x ${item.name}</p>
-                            `).join('')}
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-weight: 600;">
-                            <span>Total</span>
-                            <span style="color: #2e7d32;">R${(order.total || 0).toFixed(2)}</span>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                showToast('Failed to load orders');
-            }
-        }
-        
-        // ============ PROFILE ============
-        function renderProfile() {
-            const userInfo = document.getElementById('userInfo');
-            userInfo.innerHTML = `
-                <h3>${currentUser.name}</h3>
-                <p>📧 ${currentUser.email}</p>
-                <p>👤 ${currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)}</p>
-            `;
-        }
-        
-        function showChangePasswordModal() {
-            document.getElementById('passwordModal').classList.add('visible');
-        }
-        
-        function hideModal(modalId) {
-            document.getElementById(modalId).classList.remove('visible');
-        }
-        
-        async function changePassword() {
-            const currentPwd = document.getElementById('currentPassword').value;
-            const newPwd = document.getElementById('newPasswordChange').value;
-            
-            if (!currentPwd || !newPwd) {
-                showToast('Please fill all fields');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_URL}/profile/change-password`, {
+                const res = await fetch(`${API_URL}/orders`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     body: JSON.stringify({
-                        current_password: currentPwd,
-                        new_password: newPwd
+                        items: cart.map(i => ({ menuItemId: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+                        total: cart.reduce((s, i) => s + i.price * i.quantity, 0),
+                        customerName,
+                        teeOffTime: teeOffTime || "",
+                        courseId: currentCourse.id
                     })
                 });
                 
-                if (response.ok) {
-                    showToast('Password changed successfully');
-                    hideModal('passwordModal');
-                    document.getElementById('currentPassword').value = '';
-                    document.getElementById('newPasswordChange').value = '';
+                if (res.ok) {
+                    cart = [];
+                    updateCartBadge();
+                    showToast('Order placed!');
+                    navigateTo('orders');
                 } else {
-                    const data = await response.json();
-                    showToast(data.detail || 'Failed to change password');
+                    showToast('Failed to place order');
                 }
-            } catch (error) {
-                showToast('Connection error. Please try again.');
+            } catch (e) {
+                showToast('Connection error');
             }
         }
         
-        // ============ NAVIGATION ============
-        function showScreen(screenId) {
+        // Customer: Orders
+        async function loadCustomerOrders() {
+            try {
+                const res = await fetch(`${API_URL}/orders`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                
+                let orders = await res.json();
+                if (currentUser.id) orders = orders.filter(o => o.userId === currentUser.id);
+                
+                const list = document.getElementById('ordersList');
+                
+                if (orders.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><p>No orders yet</p></div>';
+                    return;
+                }
+                
+                list.innerHTML = orders.map(o => `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span style="color: #666; font-size: 13px;">${new Date(o.createdAt).toLocaleDateString()}</span>
+                            <span class="order-status status-${o.status}">${o.status}</span>
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            ${o.items.map(i => `<p style="font-size: 13px;">${i.quantity}x ${i.name}</p>`).join('')}
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-weight: 600;">
+                            <span>Total</span>
+                            <span style="color: #2e7d32;">R${(o.total || 0).toFixed(2)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                showToast('Failed to load orders');
+            }
+        }
+        
+        // Customer: Profile
+        function renderProfile() {
+            document.getElementById('userInfo').innerHTML = `
+                <h3 style="margin-bottom: 8px;">${currentUser.name}</h3>
+                <p style="color: #666; font-size: 14px;">📧 ${currentUser.email}</p>
+                <p style="color: #666; font-size: 14px;">👤 ${currentUser.role}</p>
+            `;
+        }
+        
+        // Staff: Orders
+        async function loadStaffOrders() {
+            try {
+                const res = await fetch(`${API_URL}/orders`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                
+                let orders = await res.json();
+                
+                if (currentUser.role !== 'superuser' && currentUser.courseIds && currentUser.courseIds.length > 0) {
+                    orders = orders.filter(o => currentUser.courseIds.includes(o.courseId));
+                }
+                
+                allOrders = orders;
+                updateStaffStats();
+                renderStaffTabs();
+                renderStaffOrders();
+            } catch (e) {
+                console.error('Error loading orders:', e);
+            }
+        }
+        
+        function updateStaffStats() {
+            document.getElementById('statPending').textContent = allOrders.filter(o => o.status === 'pending').length;
+            document.getElementById('statPreparing').textContent = allOrders.filter(o => o.status === 'preparing').length;
+            document.getElementById('statReady').textContent = allOrders.filter(o => o.status === 'ready').length;
+            document.getElementById('statCompleted').textContent = allOrders.filter(o => o.status === 'completed').length;
+        }
+        
+        function renderStaffTabs() {
+            const tabs = [
+                { filter: 'pending', label: 'Pending' },
+                { filter: 'preparing', label: 'Preparing' },
+                { filter: 'ready', label: 'Ready' },
+                { filter: 'completed', label: 'Completed' },
+                { filter: 'all', label: 'All' }
+            ];
+            
+            document.getElementById('staffOrderTabs').innerHTML = tabs.map(t => 
+                `<button class="tab-btn ${staffFilter === t.filter ? 'active' : ''}" onclick="filterStaffOrders('${t.filter}')">${t.label}</button>`
+            ).join('');
+        }
+        
+        function filterStaffOrders(filter) {
+            staffFilter = filter;
+            renderStaffTabs();
+            renderStaffOrders();
+        }
+        
+        function getOrderNumber(id) {
+            return (parseInt(id.slice(-8), 16) % 1000000).toString().padStart(6, '0');
+        }
+        
+        function renderStaffOrders() {
+            const orders = staffFilter === 'all' ? allOrders : allOrders.filter(o => o.status === staffFilter);
+            orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            const list = document.getElementById('staffOrdersList');
+            
+            if (orders.length === 0) {
+                list.innerHTML = '<div class="empty-state"><p>No orders</p></div>';
+                return;
+            }
+            
+            list.innerHTML = orders.slice(0, 50).map(o => {
+                const time = new Date(o.createdAt).toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' });
+                const items = o.items.map(i => `${i.quantity}x ${i.name}`).join(', ');
+                
+                return `
+                    <div class="staff-order-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                    <strong>#${getOrderNumber(o.id)}</strong>
+                                    <span class="badge badge-${o.status}">${o.status}</span>
+                                    <span style="color: #666; font-size: 12px;">${time}</span>
+                                </div>
+                                <div style="font-size: 13px;">👤 ${o.customerName || 'Guest'} ${o.teeOffTime ? `<span style="color: #1565c0;">⛳ ${o.teeOffTime}</span>` : ''}</div>
+                                <div style="font-size: 12px; color: #666; margin-top: 2px;">${items}</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <strong style="color: #2e7d32;">R${(o.total || 0).toFixed(2)}</strong>
+                                ${getStaffActions(o)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function getStaffActions(order) {
+            const role = currentUser.role;
+            const isAdmin = ['admin', 'superuser'].includes(role);
+            
+            if (order.status === 'pending') {
+                return `<button class="btn btn-sm btn-warning" onclick="updateOrderStatus('${order.id}', 'preparing')">👨‍🍳 Preparing</button>`;
+            }
+            if (order.status === 'preparing') {
+                return `<button class="btn btn-sm btn-success" onclick="updateOrderStatus('${order.id}', 'ready')">✅ Ready</button>`;
+            }
+            if (order.status === 'ready') {
+                return `<button class="btn btn-sm btn-info" onclick="updateOrderStatus('${order.id}', 'completed')">📦 Complete</button>`;
+            }
+            return '';
+        }
+        
+        async function updateOrderStatus(id, status) {
+            try {
+                const res = await fetch(`${API_URL}/orders/${id}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                
+                if (res.ok) {
+                    showToast('Order updated');
+                    loadStaffOrders();
+                } else {
+                    showToast('Failed to update');
+                }
+            } catch (e) {
+                showToast('Connection error');
+            }
+        }
+        
+        // Navigation
+        function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+            document.getElementById(id).classList.add('active');
         }
         
         function navigateTo(section) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            // Only try to add active class if called from a click event
-            if (typeof event !== 'undefined' && event && event.target) {
-                event.target.closest('.nav-item')?.classList.add('active');
-            }
+            document.querySelectorAll('#customerNav .nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`#customerNav [data-nav="${section}"]`)?.classList.add('active');
             
             switch(section) {
-                case 'menu':
-                    showScreen('menuScreen');
-                    break;
-                case 'cart':
-                    renderCart();
-                    showScreen('cartScreen');
-                    break;
-                case 'orders':
-                    loadOrders();
-                    showScreen('ordersScreen');
-                    break;
-                case 'profile':
-                    renderProfile();
-                    showScreen('profileScreen');
-                    break;
+                case 'menu': showScreen('menuScreen'); break;
+                case 'cart': renderCart(); showScreen('cartScreen'); break;
+                case 'orders': loadCustomerOrders(); showScreen('ordersScreen'); break;
+                case 'profile': renderProfile(); showScreen('profileScreen'); break;
             }
         }
         
-        // ============ UTILITIES ============
-        function showToast(message) {
+        function staffNavigateTo(section) {
+            document.querySelectorAll('#staffNav .nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`#staffNav [data-nav="${section}"]`)?.classList.add('active');
+            
+            if (section === 'dashboard') {
+                showScreen('staffDashboard');
+            } else if (section === 'profile') {
+                renderProfile();
+                showScreen('profileScreen');
+            }
+        }
+        
+        // Modals
+        function showPasswordModal() {
+            document.getElementById('passwordModal').classList.add('visible');
+        }
+        
+        function hideModal(id) {
+            document.getElementById(id).classList.remove('visible');
+        }
+        
+        async function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPwd = document.getElementById('newPasswordInput').value;
+            
+            if (!current || !newPwd) { showToast('Please fill all fields'); return; }
+            
+            try {
+                const res = await fetch(`${API_URL}/profile/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ current_password: current, new_password: newPwd })
+                });
+                
+                if (res.ok) {
+                    showToast('Password changed');
+                    hideModal('passwordModal');
+                } else {
+                    showToast('Failed to change password');
+                }
+            } catch (e) {
+                showToast('Connection error');
+            }
+        }
+        
+        // Toast
+        function showToast(msg) {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
+            toast.textContent = msg;
             toast.classList.add('visible');
             setTimeout(() => toast.classList.remove('visible'), 3000);
         }
