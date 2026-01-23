@@ -285,12 +285,12 @@ def generate_reset_code():
 @app.post("/api/auth/forgot-password")
 async def forgot_password(data: dict):
     """Request a password reset code"""
-    email = data.get("email", "").lower().strip()
+    email = data.get("email", "").strip()
     
     if not email:
         raise HTTPException(status_code=400, detail="Email is required")
     
-    user = users_collection.find_one({"email": email})
+    user = users_collection.find_one({"email": {"$regex": f"^{email}$", "$options": "i"}})
     
     # For security, always return success even if user doesn't exist
     if not user:
