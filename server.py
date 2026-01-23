@@ -15,7 +15,7 @@ import os
 import random
 import string
 from dotenv import load_dotenv
-from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email, send_password_reset_email, send_marketing_email, send_contact_form_email
+from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email, send_password_reset_email, send_marketing_email, send_contact_form_email, send_custom_marketing_email
 
 load_dotenv()
 
@@ -290,6 +290,7 @@ async def forgot_password(data: dict):
     if not email:
         raise HTTPException(status_code=400, detail="Email is required")
     
+    # Case-insensitive email search
     user = users_collection.find_one({"email": {"$regex": f"^{email}$", "$options": "i"}})
     
     # For security, always return success even if user doesn't exist
@@ -428,6 +429,69 @@ async def submit_contact_form(request: ContactFormRequest):
         return {"success": True, "message": "Thank you! We'll be in touch within 24 hours."}
     else:
         raise HTTPException(status_code=500, detail="Failed to send your message. Please try again or email us directly.")
+
+
+# Marketing Email Endpoint
+class MarketingEmailRequest(BaseModel):
+    emails: List[str]  # List of email addresses
+    subject: str
+    message: str  # HTML or plain text message
+    from_email: Optional[str] = "stephen@fairwayfoods.co.za"
+
+@app.post("/api/marketing/send")
+async def send_marketing_emails(request: MarketingEmailRequest, user: dict = Depends(get_current_user)):
+    """Send marketing emails to a list of recipients (superuser only)"""
+    
+    # Only superusers can send marketing emails
+    if user.get("role") != "superuser":
+        raise HTTPException(status_code=403, detail="Only super users can send marketing emails")
+    
+    if not request.emails:
+        raise HTTPException(status_code=400, detail="No email addresses provided")
+    
+    if not request.subject or not request.message:
+        raise HTTPException(status_code=400, detail="Subject and message are required")
+    
+    # Clean up email list
+    clean_emails = [e.strip() for e in request.emails if e.strip() and "@" in e]
+    
+    if not clean_emails:
+        raise HTTPException(status_code=400, detail="No valid email addresses provided")
+    
+    # Build HTML email with nice styling
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); padding: 20px; border-radius: 8px 8px 0 0;">
+                    <h1 style="color: white; margin: 0; font-size: 24px;">⛳ Fairway Foods</h1>
+                </div>
+                <div style="background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 8px 8px;">
+                    {request.message}
+                </div>
+                <div style="text-align: center; padding: 20px; color: #666; font-size: 12px;">
+                    <p>Fairway Foods - Order food on the course</p>
+                    <p><a href="https://fairwayfoods.co.za" style="color: #2e7d32;">fairwayfoods.co.za</a></p>
+                </div>
+            </div>
+        </body>
+    </html>
+    """
+    
+    # Send emails
+    results = await send_custom_marketing_email(
+        to_emails=clean_emails,
+        subject=request.subject,
+        html_content=html_content,
+        from_email=request.from_email
+    )
+    
+    return {
+        "success": True,
+        "message": f"Sent {results['sent']} of {results['total']} emails",
+        "results": results
+    }
+
 
 # Profile Endpoints
 @app.get("/api/profile")

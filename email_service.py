@@ -18,7 +18,7 @@ print(f"Email service initialized - API Key present: {bool(RESEND_API_KEY)}")
 if RESEND_API_KEY:
     resend.api_key = RESEND_API_KEY
 
-async def send_email(to_email: str, subject: str, html_content: str, text_content: str = "") -> bool:
+async def send_email(to_email: str, subject: str, html_content: str, text_content: str = "", from_email: str = None) -> bool:
     """Send an email using Resend"""
     
     if not RESEND_API_KEY:
@@ -26,8 +26,11 @@ async def send_email(to_email: str, subject: str, html_content: str, text_conten
         return False
     
     try:
+        # Use custom from_email if provided, otherwise use default
+        sender_email = from_email if from_email else FROM_EMAIL
+        
         params = {
-            "from": f"Fairway Foods <{FROM_EMAIL}>",
+            "from": f"Fairway Foods <{sender_email}>",
             "to": [to_email],
             "subject": subject,
             "html": html_content,
@@ -285,6 +288,44 @@ async def send_marketing_email(to_email: str, template_name: str = "club_manager
     subject = "Partner with Fairway Foods - Elevate Your Golf Club Experience ⛳"
     
     return await send_email(to_email, subject, html_content)
+
+
+async def send_custom_marketing_email(
+    to_emails: list, 
+    subject: str, 
+    html_content: str, 
+    from_email: str = None
+) -> dict:
+    """
+    Send custom marketing email to multiple recipients
+    Returns dict with success count and failures
+    """
+    results = {
+        "total": len(to_emails),
+        "sent": 0,
+        "failed": 0,
+        "failures": []
+    }
+    
+    for email in to_emails:
+        try:
+            success = await send_email(
+                to_email=email.strip(),
+                subject=subject,
+                html_content=html_content,
+                from_email=from_email
+            )
+            if success:
+                results["sent"] += 1
+            else:
+                results["failed"] += 1
+                results["failures"].append(email)
+        except Exception as e:
+            print(f"Failed to send to {email}: {str(e)}")
+            results["failed"] += 1
+            results["failures"].append(email)
+    
+    return results
 
 
 async def send_password_reset_email(user_email: str, user_name: str, reset_code: str):
