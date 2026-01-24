@@ -385,3 +385,177 @@ The Fairway Foods Team
     """
     
     return await send_email(user_email, subject, html_content, text_content)
+
+
+async def send_welcome_email(user_email: str, user_name: str) -> bool:
+    """Send welcome email when user signs up"""
+    subject = "Welcome to Fairway Foods! ⛳🍽️"
+    
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+                    <h1 style="color: white; margin: 0;">⛳ Welcome to Fairway Foods!</h1>
+                </div>
+                
+                <div style="background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 8px 8px;">
+                    <h2 style="color: #2e7d32;">Hi {user_name}! 👋</h2>
+                    
+                    <p>Thank you for signing up with Fairway Foods - your on-course food ordering companion!</p>
+                    
+                    <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <h3 style="margin-top: 0; color: #2e7d32;">What happens next?</h3>
+                        <ul style="padding-left: 20px;">
+                            <li>Your account is pending approval by the club administrator</li>
+                            <li>You'll receive an email once approved</li>
+                            <li>Then you can start ordering delicious food on the course!</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <h3 style="margin-top: 0; color: #2e7d32;">🍽️ How it works:</h3>
+                        <ol style="padding-left: 20px;">
+                            <li><strong>Browse</strong> - Check out our delicious menu</li>
+                            <li><strong>Order</strong> - Add items to your cart and checkout</li>
+                            <li><strong>Enjoy</strong> - Your food will be ready at your tee-off time!</li>
+                        </ol>
+                    </div>
+                    
+                    <p style="margin-top: 30px;">
+                        See you on the course!<br>
+                        <strong>The Fairway Foods Team</strong>
+                    </p>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; color: #666; font-size: 12px;">
+                    <p><a href="https://fairwayfoods.co.za" style="color: #2e7d32;">fairwayfoods.co.za</a></p>
+                </div>
+            </div>
+        </body>
+    </html>
+    """
+    
+    return await send_email(user_email, subject, html_content)
+
+
+async def send_password_changed_email(user_email: str, user_name: str) -> bool:
+    """Send notification when password is changed"""
+    subject = "Your Fairway Foods Password Has Been Changed 🔐"
+    
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+                    <h1 style="color: white; margin: 0;">⛳ Fairway Foods</h1>
+                </div>
+                
+                <div style="background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 8px 8px;">
+                    <h2 style="color: #2e7d32;">Password Changed Successfully 🔐</h2>
+                    
+                    <p>Hi {user_name},</p>
+                    
+                    <p>This is a confirmation that your Fairway Foods password has been successfully changed.</p>
+                    
+                    <div style="background-color: #fff3e0; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ff9800;">
+                        <p style="margin: 0;"><strong>⚠️ Didn't make this change?</strong></p>
+                        <p style="margin: 10px 0 0 0;">If you didn't change your password, please contact us immediately or use the "Forgot Password" feature to secure your account.</p>
+                    </div>
+                    
+                    <p style="margin-top: 30px;">
+                        Best regards,<br>
+                        <strong>The Fairway Foods Team</strong>
+                    </p>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; color: #666; font-size: 12px;">
+                    <p><a href="https://fairwayfoods.co.za" style="color: #2e7d32;">fairwayfoods.co.za</a></p>
+                </div>
+            </div>
+        </body>
+    </html>
+    """
+    
+    return await send_email(user_email, subject, html_content)
+
+
+async def send_order_confirmation_email(user_email: str, user_name: str, order_details: dict) -> bool:
+    """Send order confirmation email"""
+    subject = f"Order Confirmed! #{order_details.get('order_number', 'N/A')} ⛳🍽️"
+    
+    # Build items list HTML
+    items_html = ""
+    for item in order_details.get('items', []):
+        items_html += f"""
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #eee;">{item.get('name', 'Item')}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">{item.get('quantity', 1)}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">R{item.get('price', 0):.2f}</td>
+            </tr>
+        """
+    
+    total = order_details.get('total', 0)
+    tee_off_time = order_details.get('tee_off_time', 'Not specified')
+    course_name = order_details.get('course_name', 'Your Golf Course')
+    
+    html_content = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
+                    <h1 style="color: white; margin: 0;">⛳ Order Confirmed!</h1>
+                </div>
+                
+                <div style="background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 8px 8px;">
+                    <h2 style="color: #2e7d32;">Thanks for your order, {user_name}! 🎉</h2>
+                    
+                    <div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                        <p style="margin: 0; font-size: 14px; color: #666;">Order Number</p>
+                        <p style="margin: 5px 0; font-size: 28px; font-weight: bold; color: #2e7d32;">#{order_details.get('order_number', 'N/A')}</p>
+                    </div>
+                    
+                    <div style="background-color: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                        <p style="margin: 0;"><strong>📍 Course:</strong> {course_name}</p>
+                        <p style="margin: 10px 0 0 0;"><strong>⏰ Tee-Off Time:</strong> {tee_off_time}</p>
+                    </div>
+                    
+                    <h3 style="color: #2e7d32; margin-top: 30px;">Order Details:</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background-color: #f5f5f5;">
+                                <th style="padding: 10px; text-align: left;">Item</th>
+                                <th style="padding: 10px; text-align: center;">Qty</th>
+                                <th style="padding: 10px; text-align: right;">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {items_html}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background-color: #e8f5e9;">
+                                <td colspan="2" style="padding: 15px; font-weight: bold;">Total</td>
+                                <td style="padding: 15px; text-align: right; font-weight: bold; font-size: 18px; color: #2e7d32;">R{total:.2f}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin: 30px 0;">
+                        <p style="margin: 0; text-align: center;"><strong>🏌️ Your order will be ready for pickup at your tee-off time!</strong></p>
+                    </div>
+                    
+                    <p style="margin-top: 30px;">
+                        Enjoy your round!<br>
+                        <strong>The Fairway Foods Team</strong>
+                    </p>
+                </div>
+                
+                <div style="text-align: center; padding: 20px; color: #666; font-size: 12px;">
+                    <p><a href="https://fairwayfoods.co.za" style="color: #2e7d32;">fairwayfoods.co.za</a></p>
+                </div>
+            </div>
+        </body>
+    </html>
+    """
+    
+    return await send_email(user_email, subject, html_content)

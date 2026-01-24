@@ -15,7 +15,7 @@ import os
 import random
 import string
 from dotenv import load_dotenv
-from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email, send_password_reset_email, send_marketing_email, send_contact_form_email, send_custom_marketing_email
+from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email, send_password_reset_email, send_marketing_email, send_contact_form_email, send_custom_marketing_email, send_welcome_email, send_password_changed_email, send_order_confirmation_email
 
 load_dotenv()
 
@@ -226,7 +226,13 @@ async def register(user_data: UserRegister):
     try:
         await send_registration_notification_to_admin(user_data.name, user_data.email)
     except Exception as e:
-        print(f"Failed to send notification email: {str(e)}")
+        print(f"Failed to send admin notification email: {str(e)}")
+    
+    # Send welcome email to user
+    try:
+        await send_welcome_email(user_data.email, user_data.name)
+    except Exception as e:
+        print(f"Failed to send welcome email: {str(e)}")
     
     return {
         "message": "Registration submitted. Your account is pending approval by the administrator.",
@@ -390,6 +396,12 @@ async def reset_password(data: dict):
             "$unset": {"resetCode": "", "resetCodeExpires": ""}
         }
     )
+    
+    # Send password changed notification email
+    try:
+        await send_password_changed_email(user.get("email"), user.get("name", "User"))
+    except Exception as e:
+        print(f"Failed to send password changed email: {str(e)}")
     
     return {"message": "Password reset successfully"}
 
@@ -739,8 +751,38 @@ async def create_user_order(order: CreateOrder, user: dict = Depends(get_current
     order_dict["createdAt"] = datetime.utcnow()
     order_dict["userId"] = str(user["_id"])
     result = orders_collection.insert_one(order_dict)
-    order_dict["id"] = str(result.inserted_id)
+    order_id = str(result.inserted_id)
+    order_dict["id"] = order_id
     del order_dict["_id"]
+    
+    # Send order confirmation email
+    try:
+        # Get course name
+        course_name = "Your Golf Course"
+        if order.courseId:
+            course = golf_courses_collection.find_one({"_id": ObjectId(order.courseId)})
+            if course:
+                course_name = course.get("name", "Your Golf Course")
+        
+        # Generate order number (last 6 digits of order ID)
+        order_number = order_id[-6:].upper()
+        
+        order_details = {
+            "order_number": order_number,
+            "items": [{"name": item.name, "quantity": item.quantity, "price": item.price} for item in order.items],
+            "total": order.totalAmount,
+            "tee_off_time": order.teeOffTime or "Not specified",
+            "course_name": course_name
+        }
+        
+        await send_order_confirmation_email(
+            user.get("email"),
+            user.get("name", "Valued Customer"),
+            order_details
+        )
+    except Exception as e:
+        print(f"Failed to send order confirmation email: {str(e)}")
+    
     return order_dict
 
 @app.get("/api/orders")
