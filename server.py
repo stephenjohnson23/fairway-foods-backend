@@ -760,7 +760,7 @@ async def create_user_order(order: CreateOrder, user: dict = Depends(get_current
         # Get course name
         course_name = "Your Golf Course"
         if order.courseId:
-            course = golf_courses_collection.find_one({"_id": ObjectId(order.courseId)})
+            course = golfcourses_collection.find_one({"_id": ObjectId(order.courseId)})
             if course:
                 course_name = course.get("name", "Your Golf Course")
         
