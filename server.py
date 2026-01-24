@@ -267,6 +267,7 @@ async def login(user_data: UserLogin):
             "email": user["email"],
             "name": user["name"],
             "role": user.get("role", "user"),
+            "courseIds": user.get("courseIds", []),
             "defaultCourseId": user.get("defaultCourseId"),
             "defaultCourse": default_course,
             "profile": {
