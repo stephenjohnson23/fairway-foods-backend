@@ -154,6 +154,7 @@ class UpdateOrderStatus(BaseModel):
     status: str
 
 class UserProfile(BaseModel):
+    name: Optional[str] = None
     displayName: Optional[str] = None
     phone: Optional[str] = None
     membershipNumber: Optional[str] = None
