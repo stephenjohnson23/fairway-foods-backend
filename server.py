@@ -16,6 +16,7 @@ import random
 import string
 from dotenv import load_dotenv
 from email_service import send_registration_notification_to_admin, send_approval_email, send_rejection_email, send_password_reset_email, send_marketing_email, send_contact_form_email, send_custom_marketing_email, send_welcome_email, send_password_changed_email, send_order_confirmation_email
+from whatsapp_service import send_order_confirmation_whatsapp, send_order_ready_whatsapp, send_order_status_whatsapp
 
 load_dotenv()
 
@@ -59,6 +60,18 @@ async def download_html():
             headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
         )
     raise HTTPException(status_code=404, detail="index.html not found")
+
+@app.get("/api/facebook-banner")
+async def get_facebook_banner():
+    """View the Facebook banner HTML"""
+    html_path = os.path.join(os.path.dirname(__file__), "webapp_build", "facebook-banner.html")
+    if os.path.exists(html_path):
+        return FileResponse(
+            path=html_path, 
+            media_type="text/html",
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
+        )
+    raise HTTPException(status_code=404, detail="Facebook banner not found")
 
 @app.get("/api/download-backend")
 async def download_backend():
@@ -360,7 +373,6 @@ async def verify_reset_code(data: dict):
     
     return {"message": "Code verified successfully", "verified": True}
 
-
 @app.post("/api/auth/reset-password")
 async def reset_password(data: dict):
     """Reset password using verified code"""
@@ -406,7 +418,6 @@ async def reset_password(data: dict):
         print(f"Failed to send password changed email: {str(e)}")
     
     return {"message": "Password reset successfully"}
-
 
 # Test Email Endpoint
 class TestEmailRequest(BaseModel):
@@ -783,8 +794,17 @@ async def create_user_order(order: CreateOrder, user: dict = Depends(get_current
             user.get("name", "Valued Customer"),
             order_details
         )
+        
+        # Send WhatsApp notification if user has a phone number
+        user_phone = user.get("phone") or user.get("whatsapp")
+        if user_phone:
+            await send_order_confirmation_whatsapp(
+                user_phone,
+                user.get("name", "Valued Customer"),
+                order_details
+            )
     except Exception as e:
-        print(f"Failed to send order confirmation email: {str(e)}")
+        print(f"Failed to send order confirmation: {str(e)}")
     
     return order_dict
 
@@ -819,6 +839,25 @@ async def update_order_status(order_id: str, status_update: UpdateOrderStatus):
         raise HTTPException(status_code=404, detail="Order not found")
     
     updated_order = orders_collection.find_one({"_id": ObjectId(order_id)})
+    
+    # Send WhatsApp notification when order is ready
+    if status_update.status == "ready":
+        try:
+            user_id = updated_order.get("userId")
+            if user_id:
+                user = users_collection.find_one({"_id": ObjectId(user_id)})
+                if user:
+                    user_phone = user.get("phone") or user.get("whatsapp")
+                    if user_phone:
+                        order_number = order_id[-6:].upper()
+                        await send_order_ready_whatsapp(
+                            user_phone,
+                            user.get("name", "Valued Customer"),
+                            order_number
+                        )
+        except Exception as e:
+            print(f"Failed to send order ready WhatsApp: {str(e)}")
+    
     updated_order["id"] = str(updated_order["_id"])
     del updated_order["_id"]
     if "createdAt" in updated_order:
