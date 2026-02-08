@@ -360,10 +360,16 @@ async def verify_reset_code(data: dict):
     
     return {"message": "Code verified successfully", "verified": True}
 
+Robot
+Hey Stephen, Quick input needed :
+Ask QuestionAgent will continue working after your reply
+
+Here's the updated code for server.py. Find and replace the reset_password function:
+
 @app.post("/api/auth/reset-password")
 async def reset_password(data: dict):
     """Reset password using verified code"""
-    email = data.get("email", "").lower().strip()
+    email = data.get("email", "").strip()
     code = data.get("code", "").strip()
     new_password = data.get("newPassword", "")
     
@@ -373,7 +379,8 @@ async def reset_password(data: dict):
     if len(new_password) < 6:
         raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
     
-    user = users_collection.find_one({"email": email})
+    # Case-insensitive email search
+    user = users_collection.find_one({"email": {"$regex": f"^{email}$", "$options": "i"}})
     
     if not user:
         raise HTTPException(status_code=400, detail="Invalid request")
@@ -388,11 +395,11 @@ async def reset_password(data: dict):
         raise HTTPException(status_code=400, detail="Reset code has expired")
     
     # Hash new password and clear reset code
-    hashed_password = pwd_context.hash(new_password)
+    hashed_password = hash_password(new_password)
     users_collection.update_one(
         {"_id": user["_id"]},
         {
-            "$set": {"hashed_password": hashed_password, "password": hashed_password},
+            "$set": {"password": hashed_password},
             "$unset": {"resetCode": "", "resetCodeExpires": ""}
         }
     )
@@ -404,6 +411,7 @@ async def reset_password(data: dict):
         print(f"Failed to send password changed email: {str(e)}")
     
     return {"message": "Password reset successfully"}
+
 
 # Test Email Endpoint
 class TestEmailRequest(BaseModel):
