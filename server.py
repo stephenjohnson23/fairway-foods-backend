@@ -360,11 +360,6 @@ async def verify_reset_code(data: dict):
     
     return {"message": "Code verified successfully", "verified": True}
 
-Robot
-Hey Stephen, Quick input needed :
-Ask QuestionAgent will continue working after your reply
-
-Here's the updated code for server.py. Find and replace the reset_password function:
 
 @app.post("/api/auth/reset-password")
 async def reset_password(data: dict):
