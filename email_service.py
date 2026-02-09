@@ -9,7 +9,7 @@ load_dotenv(env_path)
 
 # Configure Resend
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
-FROM_EMAIL = os.getenv("FROM_EMAIL", "onboarding@resend.dev")
+FROM_EMAIL = os.getenv("FROM_EMAIL", "stephen@fairwayfoods.co.za")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "hello@fairwayfoods.co.za")
 
 print(f"Email service initialized - API Key present: {bool(RESEND_API_KEY)}")
