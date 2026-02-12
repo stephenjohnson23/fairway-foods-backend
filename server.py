@@ -182,6 +182,21 @@ async def debug_check_password(data: dict):
     
     return result
 
+@app.get("/api/debug/list-users")
+async def debug_list_users():
+    """Debug endpoint to list all users (emails and roles only)"""
+    users = list(users_collection.find({}, {"email": 1, "role": 1, "name": 1, "status": 1}))
+    return [
+        {
+            "id": str(u["_id"]),
+            "email": u.get("email"),
+            "name": u.get("name"),
+            "role": u.get("role"),
+            "status": u.get("status")
+        }
+        for u in users
+    ]
+
 @app.get("/api/download-webapp")
 async def download_webapp():
     """Download the web app build as a ZIP file for self-hosting"""
