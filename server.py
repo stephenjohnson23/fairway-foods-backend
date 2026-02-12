@@ -28,10 +28,83 @@ app = FastAPI()
 # Serve the marketing website
 WEBSITE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "website")
 
+# Downloads page with clickable links
+@app.get("/api/downloads", response_class=FileResponse)
+async def downloads_page():
+    """HTML page with download links"""
+    from fastapi.responses import HTMLResponse
+    html_content = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Fairway Foods - Downloads</title>
+        <style>
+            body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+            h1 { color: #2e7d32; }
+            .download-btn { 
+                display: block; 
+                background: #2e7d32; 
+                color: white; 
+                padding: 15px 25px; 
+                text-decoration: none; 
+                border-radius: 8px; 
+                margin: 15px 0;
+                text-align: center;
+            }
+            .download-btn:hover { background: #1b5e20; }
+            .view-btn { 
+                display: block; 
+                background: #17a2b8; 
+                color: white; 
+                padding: 10px 20px; 
+                text-decoration: none; 
+                border-radius: 8px; 
+                margin: 10px 0;
+                text-align: center;
+                font-size: 14px;
+            }
+            .view-btn:hover { background: #138496; }
+            .section { margin: 30px 0; padding: 20px; background: #f5f5f5; border-radius: 8px; }
+            h3 { margin-top: 0; }
+        </style>
+    </head>
+    <body>
+        <h1>⛳ Fairway Foods Downloads</h1>
+        
+        <div class="section">
+            <h3>🌐 Marketing Website (with WhatsApp button)</h3>
+            <a class="download-btn" href="/api/download-website" download>Download website.zip</a>
+            <a class="view-btn" href="/api/view-website-source" target="_blank">📄 View Source (Copy & Paste)</a>
+        </div>
+        
+        <div class="section">
+            <h3>📱 Web App (with WhatsApp button)</h3>
+            <a class="download-btn" href="/api/download-html" download>Download index.html</a>
+            <a class="download-btn" href="/api/download-webapp" download>Download webapp.zip (Full Package)</a>
+            <a class="view-btn" href="/api/view-source" target="_blank">📄 View Source (Copy & Paste)</a>
+        </div>
+        
+        <div class="section">
+            <h3>⚙️ Backend Files</h3>
+            <a class="download-btn" href="/api/download-backend" download>Download backend.zip (Render-ready)</a>
+        </div>
+        
+        <div class="section">
+            <h3>📧 Email Templates</h3>
+            <a class="download-btn" href="/api/download-email-templates" download>Download email_templates.zip</a>
+        </div>
+        
+        <hr>
+        <p><small>If downloads don't start, right-click and select "Save link as..."</small></p>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
 # Download endpoint for website ZIP
 @app.get("/api/download-website")
 async def download_website():
-    zip_path = os.path.join(WEBSITE_DIR, "fairway-foods-website.zip")
+    zip_path = os.path.join(os.path.dirname(__file__), "fairway-foods-website.zip")
     if os.path.exists(zip_path):
         return FileResponse(
             path=zip_path,
@@ -39,6 +112,18 @@ async def download_website():
             media_type="application/zip"
         )
     raise HTTPException(status_code=404, detail="ZIP file not found")
+
+@app.get("/api/view-website-source")
+async def view_website_source():
+    """View the raw website HTML source code as plain text"""
+    html_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "website", "index.html")
+    if os.path.exists(html_path):
+        return FileResponse(
+            path=html_path, 
+            media_type="text/plain",
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
+        )
+    raise HTTPException(status_code=404, detail="Website index.html not found")
 
 @app.get("/api/download-webapp")
 async def download_webapp():
@@ -57,6 +142,30 @@ async def download_html():
             path=html_path, 
             filename="index.html", 
             media_type="text/html",
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
+        )
+    raise HTTPException(status_code=404, detail="index.html not found")
+
+@app.get("/api/preview-app")
+async def preview_app():
+    """Preview the app without downloading"""
+    html_path = os.path.join(os.path.dirname(__file__), "webapp_build", "index.html")
+    if os.path.exists(html_path):
+        return FileResponse(
+            path=html_path, 
+            media_type="text/html",
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
+        )
+    raise HTTPException(status_code=404, detail="index.html not found")
+
+@app.get("/api/view-source")
+async def view_source():
+    """View the raw HTML source code as plain text"""
+    html_path = os.path.join(os.path.dirname(__file__), "webapp_build", "index.html")
+    if os.path.exists(html_path):
+        return FileResponse(
+            path=html_path, 
+            media_type="text/plain",
             headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
         )
     raise HTTPException(status_code=404, detail="index.html not found")
@@ -80,6 +189,14 @@ async def download_backend():
     if os.path.exists(zip_path):
         return FileResponse(zip_path, filename="fairway-backend-render.zip", media_type="application/zip")
     raise HTTPException(status_code=404, detail="Backend ZIP not found")
+
+@app.get("/api/download-email-templates")
+async def download_email_templates():
+    """Download email templates"""
+    zip_path = os.path.join(os.path.dirname(__file__), "email_templates.zip")
+    if os.path.exists(zip_path):
+        return FileResponse(zip_path, filename="email_templates.zip", media_type="application/zip")
+    raise HTTPException(status_code=404, detail="Email templates ZIP not found")
 
 if os.path.exists(WEBSITE_DIR):
     app.mount("/website", StaticFiles(directory=WEBSITE_DIR, html=True), name="website")
@@ -1078,7 +1195,7 @@ async def update_user(user_id: str, user_data: dict, user: dict = Depends(get_su
         update_fields["courseIds"] = user_data["courseIds"]
     if "status" in user_data:
         update_fields["status"] = user_data["status"]
-   if "password" in user_data and user_data["password"]:
+    if "password" in user_data and user_data["password"]:
         # Hash the new password using the same method as registration
         update_fields["password"] = hash_password(user_data["password"])
     
