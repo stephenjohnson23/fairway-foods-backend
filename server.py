@@ -406,14 +406,17 @@ def get_super_user(user: dict = Depends(get_current_user)):
 # Auth Endpoints
 @app.post("/api/auth/register")
 async def register(user_data: UserRegister):
-    # Check if user exists
-    if users_collection.find_one({"email": user_data.email}):
+    # Normalize email to lowercase
+    email_lower = user_data.email.lower().strip()
+    
+    # Check if user exists (case-insensitive)
+    if users_collection.find_one({"email": {"$regex": f"^{email_lower}$", "$options": "i"}}):
         raise HTTPException(status_code=400, detail="Email already registered")
     
     # Create user with pending status
     course_ids = [user_data.courseId] if user_data.courseId else []
     user = {
-        "email": user_data.email,
+        "email": email_lower,  # Store as lowercase
         "password": hash_password(user_data.password),
         "name": user_data.name,
         "role": "user",
@@ -430,7 +433,7 @@ async def register(user_data: UserRegister):
         superuser_emails = [su["email"] for su in superusers if su.get("email")]
         
         if superuser_emails:
-            await send_registration_notification_to_admin(superuser_emails, user_data.email, user_data.name)
+            await send_registration_notification_to_admin(superuser_emails, email_lower, user_data.name)
             print(f"Registration notification sent to {len(superuser_emails)} superuser(s)")
         else:
             print("No superusers found to notify")
@@ -439,7 +442,7 @@ async def register(user_data: UserRegister):
     
     # Send welcome email to user
     try:
-        await send_welcome_email(user_data.email, user_data.name)
+        await send_welcome_email(email_lower, user_data.name)
     except Exception as e:
         print(f"Failed to send welcome email: {str(e)}")
     
@@ -451,7 +454,9 @@ async def register(user_data: UserRegister):
 
 @app.post("/api/auth/login")
 async def login(user_data: UserLogin):
-    user = users_collection.find_one({"email": user_data.email})
+    # Normalize email to lowercase for case-insensitive lookup
+    email_lower = user_data.email.lower().strip()
+    user = users_collection.find_one({"email": {"$regex": f"^{email_lower}$", "$options": "i"}})
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
@@ -1132,7 +1137,7 @@ async def set_default_course(user_id: str, data: dict, user: dict = Depends(get_
 
 @app.post("/api/users/create")
 async def create_user_by_super(user_data: dict, user: dict = Depends(get_super_user)):
-    email = user_data.get("email")
+    email = user_data.get("email", "").lower().strip()  # Normalize to lowercase
     name = user_data.get("name")
     password = user_data.get("password")
     role = user_data.get("role", "user")
@@ -1148,15 +1153,15 @@ async def create_user_by_super(user_data: dict, user: dict = Depends(get_super_u
     if len(password) < 6:
         raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
     
-    # Check if user already exists
-    if users_collection.find_one({"email": email}):
+    # Check if user already exists (case-insensitive)
+    if users_collection.find_one({"email": {"$regex": f"^{email}$", "$options": "i"}}):
         raise HTTPException(status_code=400, detail="User with this email already exists")
     
     if role not in ["user", "admin", "kitchen", "cashier", "superuser"]:
         raise HTTPException(status_code=400, detail="Invalid role")
     
     new_user = {
-        "email": email,
+        "email": email,  # Already lowercase
         "password": hash_password(password),
         "name": name,
         "role": role,
@@ -1276,11 +1281,16 @@ async def update_user(user_id: str, user_data: dict, user: dict = Depends(get_su
     if "name" in user_data:
         update_fields["name"] = user_data["name"]
     if "email" in user_data:
-        # Check if email is already taken by another user
-        existing = users_collection.find_one({"email": user_data["email"], "_id": {"$ne": ObjectId(user_id)}})
+        # Normalize email to lowercase
+        new_email = user_data["email"].lower().strip()
+        # Check if email is already taken by another user (case-insensitive)
+        existing = users_collection.find_one({
+            "email": {"$regex": f"^{new_email}$", "$options": "i"}, 
+            "_id": {"$ne": ObjectId(user_id)}
+        })
         if existing:
             raise HTTPException(status_code=400, detail="Email already in use")
-        update_fields["email"] = user_data["email"]
+        update_fields["email"] = new_email
     if "role" in user_data:
         update_fields["role"] = user_data["role"]
     if "courseIds" in user_data:
