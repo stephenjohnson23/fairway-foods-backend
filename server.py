@@ -235,9 +235,16 @@ async def register(user_data: UserRegister):
     }
     result = users_collection.insert_one(user)
     
-    # Send email notification to super user
+    # Get all superuser emails and notify them
     try:
-        await send_registration_notification_to_admin(user_data.name, user_data.email)
+        superusers = list(users_collection.find({"role": "superuser"}, {"email": 1}))
+        superuser_emails = [su["email"] for su in superusers if su.get("email")]
+        
+        if superuser_emails:
+            await send_registration_notification_to_admin(superuser_emails, user_data.email, user_data.name)
+            print(f"Registration notification sent to {len(superuser_emails)} superuser(s)")
+        else:
+            print("No superusers found to notify")
     except Exception as e:
         print(f"Failed to send admin notification email: {str(e)}")
     
