@@ -125,6 +125,18 @@ async def view_website_source():
         )
     raise HTTPException(status_code=404, detail="Website index.html not found")
 
+@app.get("/api/view-server-py")
+async def view_server_py():
+    """View the server.py source code as plain text"""
+    py_path = os.path.join(os.path.dirname(__file__), "server.py")
+    if os.path.exists(py_path):
+        return FileResponse(
+            path=py_path, 
+            media_type="text/plain",
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"}
+        )
+    raise HTTPException(status_code=404, detail="server.py not found")
+
 @app.get("/api/download-webapp")
 async def download_webapp():
     """Download the web app build as a ZIP file for self-hosting"""
