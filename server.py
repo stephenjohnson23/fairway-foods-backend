@@ -392,7 +392,27 @@ async def register(user_data: UserRegister):
 @app.post("/api/auth/login")
 async def login(user_data: UserLogin):
     user = users_collection.find_one({"email": user_data.email})
-    if not user or not verify_password(user_data.password, user["password"]):
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    # Check password - try both 'password' and 'hashed_password' fields for backward compatibility
+    password_valid = False
+    
+    # First try the standard 'password' field (bcrypt)
+    if user.get("password"):
+        try:
+            password_valid = verify_password(user_data.password, user["password"])
+        except:
+            pass
+    
+    # If not valid, try 'hashed_password' field (passlib) - for backward compatibility
+    if not password_valid and user.get("hashed_password"):
+        try:
+            password_valid = pwd_context.verify(user_data.password, user["hashed_password"])
+        except:
+            pass
+    
+    if not password_valid:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Check if account is pending approval
