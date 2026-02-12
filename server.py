@@ -137,6 +137,51 @@ async def view_server_py():
         )
     raise HTTPException(status_code=404, detail="server.py not found")
 
+@app.post("/api/debug/check-password")
+async def debug_check_password(data: dict):
+    """Debug endpoint to check password fields for a user"""
+    email = data.get("email")
+    test_password = data.get("password")
+    
+    if not email:
+        return {"error": "Email required"}
+    
+    user = users_collection.find_one({"email": email})
+    if not user:
+        return {"error": "User not found", "email": email}
+    
+    result = {
+        "email": email,
+        "has_password_field": "password" in user,
+        "has_hashed_password_field": "hashed_password" in user,
+        "password_field_starts_with": user.get("password", "")[:20] + "..." if user.get("password") else None,
+        "hashed_password_field_starts_with": user.get("hashed_password", "")[:20] + "..." if user.get("hashed_password") else None,
+    }
+    
+    if test_password:
+        # Test bcrypt on password field
+        if user.get("password"):
+            try:
+                result["bcrypt_password_valid"] = verify_password(test_password, user["password"])
+            except Exception as e:
+                result["bcrypt_password_error"] = str(e)
+        
+        # Test passlib on hashed_password field
+        if user.get("hashed_password"):
+            try:
+                result["passlib_hashed_password_valid"] = pwd_context.verify(test_password, user["hashed_password"])
+            except Exception as e:
+                result["passlib_hashed_password_error"] = str(e)
+        
+        # Test passlib on password field (in case it was hashed with passlib)
+        if user.get("password"):
+            try:
+                result["passlib_password_valid"] = pwd_context.verify(test_password, user["password"])
+            except Exception as e:
+                result["passlib_password_error"] = str(e)
+    
+    return result
+
 @app.get("/api/download-webapp")
 async def download_webapp():
     """Download the web app build as a ZIP file for self-hosting"""
